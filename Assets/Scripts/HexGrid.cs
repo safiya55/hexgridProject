@@ -11,10 +11,13 @@ public class HexGrid : MonoBehaviour
 
     HexCell[] cells;
     Canvas gridCanvas;               // Reference to the Canvas
+    HexMesh hexMesh;
 
     void Awake()
     {
         gridCanvas = GetComponentInChildren<Canvas>();  // Locate the Canvas
+		hexMesh = GetComponentInChildren<HexMesh>();
+     
 
         cells = new HexCell[height * width];
         for (int z = 0, i = 0; z < height; z++)
@@ -25,23 +28,34 @@ public class HexGrid : MonoBehaviour
             }
         }
     }
+    void Start()
+    {
+            hexMesh.Triangulate(cells); // This will triangulate the cells
+    }
+
 
     void CreateCell(int x, int z, int i)
     {
         Vector3 position;
-        position.x = x * (HexMetrics.innerRadius * 2f);
+        position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
         position.y = 0f;
         position.z = z * (HexMetrics.outerRadius * 1.5f);
 
 
+        // Instantiate the HexCell
         HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
 
+        // Assign the HexCoordinates to the cell
+        cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+
+        // Instantiate and position the label
         Text label = Instantiate<Text>(cellLabelPrefab);
         label.rectTransform.SetParent(gridCanvas.transform, false);
-        label.rectTransform.anchoredPosition =
-            new Vector2(position.x, position.z);
-        label.text = x.ToString() + "\n" + z.ToString();
+        label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
+
+        // Set the label text to show the coordinates of the cell
+        label.text = cell.coordinates.ToStringOnSeparateLines();  // Displaying coordinates using HexCoordinates
     }
 }
