@@ -26,7 +26,50 @@ public struct HexCoordinates
         this.z = z;
     }
 
+    public static HexCoordinates FromPosition(Vector3 position)
+    {
+        // Calculate the x-coordinate based on the world position's x value
+        float x = position.x / (HexMetrics.innerRadius * 2f);
 
+        // The y-coordinate is simply the negative of x to ensure the staggered pattern
+        float y = -x;
+
+        // Calculate the offset for the z-coordinate (staggering every two rows)
+        float offset = position.z / (HexMetrics.outerRadius * 3f);
+
+        // Adjust x and y for the offset
+        x -= offset;
+        y -= offset;
+
+        // Round the x and y values to the nearest integers
+        int iX = Mathf.RoundToInt(x);
+        int iY = Mathf.RoundToInt(y);
+
+        // Calculate the z-coordinate based on the rule X + Y + Z = 0
+        int iZ = Mathf.RoundToInt(-x - y);
+
+        // Check for rounding errors to ensure X + Y + Z = 0
+        if (iX + iY + iZ != 0)
+        {
+            // Calculate the delta for each coordinate
+            float dX = Mathf.Abs(x - iX);
+            float dY = Mathf.Abs(y - iY);
+            float dZ = Mathf.Abs(-x - y - iZ);
+
+            // Discard the coordinate with the largest rounding delta and reconstruct it
+            if (dX > dY && dX > dZ)
+            {
+                iX = -iY - iZ;
+            }
+            else if (dZ > dY)
+            {
+                iZ = -iX - iY;
+            }
+        }
+
+        // Return the final hex coordinates
+        return new HexCoordinates(iX, iZ);
+    }
 
     public static HexCoordinates FromOffsetCoordinates(int x, int z)
     {
