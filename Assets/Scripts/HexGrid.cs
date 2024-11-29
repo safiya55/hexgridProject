@@ -36,43 +36,13 @@ public class HexGrid : MonoBehaviour
         hexMesh.Triangulate(cells); // This will triangulate the cells
     }
 
-    void Update()
+    public void ColorCell(Vector3 position, Color color)
     {
-        // Detect left mouse button click
-        if (Input.GetMouseButton(0))
-        {
-            HandleInput();
-        }
-    }
-
-    void HandleInput()
-    {
-        // Create a ray from the camera to the mouse position
-        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        RaycastHit hit;
-
-        // Check if the ray hits any collider in the scene
-        if (Physics.Raycast(inputRay, out hit))
-        {
-            TouchCell(hit.point); // Pass the hit point to TouchCell
-        }
-    }
-
-    public void TouchCell(Vector3 position)
-    {
-        // Convert world space position to grid space
         position = transform.InverseTransformPoint(position);
-
-        // Find the closest cell using the HexCoordinates class
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-
-       // Calculate the array index for the touched cell in the grid
-         int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
-
-        // Get the cell at the calculated index
+        int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
         HexCell cell = cells[index];
-
+        cell.color = color;
         hexMesh.Triangulate(cells);
     }
 
