@@ -6,7 +6,7 @@ using UnityEngine.UI;  // Add this for UI components
 public class HexGrid : MonoBehaviour
 {
     public Color defaultColor = Color.white;
-	public Color touchedColor = Color.magenta;
+	public Color touchedColor = Color.green;
     public int width = 6;
     public int height = 6;
     public HexCell cellPrefab;       // HexCell prefab
@@ -40,6 +40,7 @@ public class HexGrid : MonoBehaviour
     {
         position = transform.InverseTransformPoint(position);
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+        Debug.Log("touched at " + coordinates.ToString());
         int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
         HexCell cell = cells[index];
         cell.color = color;

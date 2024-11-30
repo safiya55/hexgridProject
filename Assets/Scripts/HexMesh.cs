@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class HexMesh : MonoBehaviour
@@ -14,7 +14,7 @@ public class HexMesh : MonoBehaviour
     {
         // Get the MeshFilter component and create a new mesh for the hex grid
         GetComponent<MeshFilter>().mesh = hexMesh = new Mesh();
-        meshCollider = gameObject.AddComponent<MeshCollider>(); //// Ensure MeshCollider is attached
+        meshCollider = gameObject.AddComponent<MeshCollider>(); // Ensure MeshCollider is attached
         hexMesh.name = "Hex Mesh";
 
         // Initialize the lists for vertices and triangles
