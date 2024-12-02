@@ -105,5 +105,7 @@ public class HexGrid : MonoBehaviour
 
         // Set the label text to show the coordinates of the cell
         label.text = cell.coordinates.ToStringOnSeparateLines();  // Displaying coordinates using HexCoordinates
+
+        cell.uiRect = label.rectTransform;
     }
 }
