@@ -222,38 +222,60 @@ public class HexMesh : MonoBehaviour
                 TriangulateCornerTerraces(
                     bottom, bottomCell, left, leftCell, right, rightCell
                 );
-                return;
             }
 
             //If the right edge is flat, then we have to begin terracing from the left instead of the bottom.
-            if (rightEdgeType == HexEdgeType.Flat)
+            else if (rightEdgeType == HexEdgeType.Flat)
             {
                 TriangulateCornerTerraces(
                     left, leftCell, right, rightCell, bottom, bottomCell
                 );
-                return;
             }
-
-            TriangulateCornerTerracesCliff(
-                bottom, bottomCell, left, leftCell, right, rightCell
-            );
-            return;
+            else
+            {
+                TriangulateCornerTerracesCliff(
+                    bottom, bottomCell, left, leftCell, right, rightCell
+                );
+            }
         }
 
         //If the left edge is flat, then we have to begin from the right.
-        if (rightEdgeType == HexEdgeType.Slope)
+        else if (rightEdgeType == HexEdgeType.Slope)
         {
             if (leftEdgeType == HexEdgeType.Flat)
             {
                 TriangulateCornerTerraces(
                     right, rightCell, bottom, bottomCell, left, leftCell
                 );
-                return;
+            }
+            else
+            {
+                TriangulateCornerCliffTerraces(
+                    bottom, bottomCell, left, leftCell, right, rightCell
+                );
             }
         }
 
-        AddTriangle(bottom, left, right);
-        AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
+        else if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
+        {
+            if (leftCell.Elevation < rightCell.Elevation)
+            {
+                TriangulateCornerCliffTerraces(
+                    right, rightCell, bottom, bottomCell, left, leftCell
+                );
+            }
+            else
+            {
+                TriangulateCornerTerracesCliff(
+                    left, leftCell, right, rightCell, bottom, bottomCell
+                );
+            }
+        }
+        else
+        {
+            AddTriangle(bottom, left, right);
+            AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
+        }
     }
 
     void TriangulateCornerTerraces(
@@ -301,6 +323,13 @@ public class HexMesh : MonoBehaviour
     {
         //make connection on side of triangle from 2 bottom to side on the right
         float b = 1f / (rightCell.Elevation - beginCell.Elevation);
+
+        //make sure that the interpolators are always positive.
+        if (b < 0)
+        {
+            b = -b;
+        }
+
         Vector3 boundary = Vector3.Lerp(begin, right, b);
         Color boundaryColor = Color.Lerp(beginCell.color, rightCell.color, b);
 
@@ -308,6 +337,45 @@ public class HexMesh : MonoBehaviour
         //does the bottom part
         TriangulateBoundaryTriangle(
             begin, beginCell, left, leftCell, boundary, boundaryColor
+        );
+
+        //completes the top part by add a rotated boundary triangle if there is a slope.
+        if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
+        {
+            TriangulateBoundaryTriangle(
+                left, leftCell, right, rightCell, boundary, boundaryColor
+            );
+        }
+        else
+        {
+            //Otherwise a simple triangle suffices.
+            AddTriangle(left, right, boundary);
+            AddTriangleColor(leftCell.color, rightCell.color, boundaryColor);
+        }
+    }
+
+    void TriangulateCornerCliffTerraces(
+            Vector3 begin, HexCell beginCell,
+            Vector3 left, HexCell leftCell,
+            Vector3 right, HexCell rightCell
+        )
+    {
+        //make connection on side of triangle from 2 bottom to side on the right
+        float b = 1f / (leftCell.Elevation - beginCell.Elevation);
+
+        //make sure that the interpolators are always positive.
+        if (b < 0)
+        {
+            b = -b;
+        }
+
+        Vector3 boundary = Vector3.Lerp(begin, left, b);
+        Color boundaryColor = Color.Lerp(beginCell.color, leftCell.color, b);
+
+        //If the top edge is a slope, we again need to connect terraces and a cliff.
+        //does the bottom part
+        TriangulateBoundaryTriangle(
+            right, rightCell, begin, beginCell, boundary, boundaryColor
         );
 
         //completes the top part by add a rotated boundary triangle if there is a slope.
