@@ -12,12 +12,15 @@ public class HexGrid : MonoBehaviour
     public HexCell cellPrefab;       // HexCell prefab
     public Text cellLabelPrefab;     // Text prefab for cell labels
 
+    public Texture2D noiseSource;
+
     HexCell[] cells;
     Canvas gridCanvas;               // Reference to the Canvas
     HexMesh hexMesh;
 
     void Awake()
     {
+        HexMetrics.noiseSource = noiseSource;
         gridCanvas = GetComponentInChildren<Canvas>();  // Locate the Canvas
 		hexMesh = GetComponentInChildren<HexMesh>();
      
@@ -40,6 +43,11 @@ public class HexGrid : MonoBehaviour
     {
         hexMesh.Triangulate(cells);
     }
+
+    void OnEnable () {
+		HexMetrics.noiseSource = noiseSource;
+	}
+
 
     public HexCell GetCell(Vector3 position)
     {
