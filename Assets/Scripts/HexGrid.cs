@@ -115,5 +115,9 @@ public class HexGrid : MonoBehaviour
         label.text = cell.coordinates.ToStringOnSeparateLines();  // Displaying coordinates using HexCoordinates
 
         cell.uiRect = label.rectTransform;
+
+        //make sure that the perturbation is applied immediately
+        //Otherwise the grid would start out flat
+        cell.Elevation = 0;
     }
 }

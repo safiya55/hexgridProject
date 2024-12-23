@@ -53,22 +53,34 @@ public class HexMesh : MonoBehaviour
     //using direction to identify the parts
     void Triangulate(HexDirection direction, HexCell cell)
     {
-        Vector3 center = cell.transform.localPosition;
+        Vector3 center = cell.Position;
         Vector3 v1 = center + HexMetrics.GetFirstSolidCorner(direction);
         Vector3 v2 = center + HexMetrics.GetSecondSolidCorner(direction);
 
-        AddTriangle(center, v1, v2);
+        //Doubling the vertices and triangles adds a bit more variety to our cell's edges. 
+        //Let's make them even more rugged by tripling the vertices.
+        Vector3 e1 = Vector3.Lerp(v1, v2, 1f / 3f);
+		Vector3 e2 = Vector3.Lerp(v1, v2, 2f / 3f);
+
+        AddTriangle(center, v1, e1);
         AddTriangleColor(cell.color, cell.color, cell.color);
+        AddTriangle(center, e1, v2);
+		AddTriangleColor(cell.color, cell.color, cell.color);
+        AddTriangle(center, e2, v2);
+		AddTriangleColor(cell.color, cell.color, cell.color);
+        
+
 
         if (direction <= HexDirection.SE)
         {
-            TriangulateConnection(direction, cell, v1, v2);
+            TriangulateConnection(direction, cell, v1, e1, e2, v2);
         }
     }
 
     void TriangulateConnection(
-        HexDirection direction, HexCell cell, Vector3 v1, Vector3 v2
-    )
+            HexDirection direction, HexCell cell, 
+            Vector3 v1,  Vector3 e1, Vector3 e2, Vector3 v2
+        )
     {
         HexCell neighbor = cell.GetNeighbor(direction);
         if (neighbor == null)
@@ -79,7 +91,12 @@ public class HexMesh : MonoBehaviour
         Vector3 bridge = HexMetrics.GetBridge(direction);
         Vector3 v3 = v1 + bridge;
         Vector3 v4 = v2 + bridge;
-        v3.y = v4.y = neighbor.Elevation * HexMetrics.elevationStep;
+        v3.y = v4.y = neighbor.Position.y;
+
+        //compute extra edge vertices for the neighboring cell. 
+        //We can compute those after bridging to the other side.
+        Vector3 e3 = Vector3.Lerp(v3, v4, 1f / 3f);
+		Vector3 e4 = Vector3.Lerp(v3, v4, 2f / 3f);
 
         //decide whether to insert terraces or not.
         if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
@@ -88,8 +105,13 @@ public class HexMesh : MonoBehaviour
         }
         else
         {
+            //triangulation of the edge. 
             //take care of the flats and cliffs.
-            AddQuad(v1, v2, v3, v4);
+            AddQuad(v1, e1, v3, e3);
+			AddQuadColor(cell.color, neighbor.color);
+			AddQuad(e1, e2, e3, e4);
+			AddQuadColor(cell.color, neighbor.color);
+			AddQuad(e2, v2, e4, v4);
             AddQuadColor(cell.color, neighbor.color);
         }
 
@@ -97,7 +119,7 @@ public class HexMesh : MonoBehaviour
         if (direction <= HexDirection.E && nextNeighbor != null)
         {
             Vector3 v5 = v2 + HexMetrics.GetBridge(direction.Next());
-            v5.y = nextNeighbor.Elevation * HexMetrics.elevationStep;
+            v5.y = nextNeighbor.Position.y;
 
             //figure out what the lowest cell is.
             if (cell.Elevation <= neighbor.Elevation)
@@ -423,8 +445,28 @@ public class HexMesh : MonoBehaviour
     Vector3 Perturb (Vector3 position) {
 		Vector4 sample = HexMetrics.SampleNoise(position);
         position.x += (sample.x * 2f - 1f) * HexMetrics.cellPerturbStrength;
-		position.y += (sample.y * 2f - 1f) * HexMetrics.cellPerturbStrength;
 		position.z += (sample.z * 2f - 1f) * HexMetrics.cellPerturbStrength;
 		return position;
+	}
+
+    void TriangulateEdgeFan (Vector3 center, EdgeVertices edge, Color color) {
+		AddTriangle(center, edge.v1, edge.v2);
+		AddTriangleColor(color, color, color);
+		AddTriangle(center, edge.v2, edge.v3);
+		AddTriangleColor(color, color, color);
+		AddTriangle(center, edge.v3, edge.v4);
+		AddTriangleColor(color, color, color);
+	}
+
+    void TriangulateEdgeStrip (
+		EdgeVertices e1, Color c1,
+		EdgeVertices e2, Color c2
+	) {
+		AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
+		AddQuadColor(c1, c2);
+		AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
+		AddQuadColor(c1, c2);
 	}
 }
