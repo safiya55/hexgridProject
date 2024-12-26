@@ -2,13 +2,28 @@ using UnityEngine;
 
 public class HexCell : MonoBehaviour
 {
+    public HexGridChunk chunk;
     public HexCoordinates coordinates;
     public Color color;
-    private int elevation;
+    private int elevation = int.MinValue;
     public RectTransform uiRect;
 
     [SerializeField]
     HexCell[] neighbors;
+
+    //Whenever a cell is refreshed, it simply refreshes its chunk.
+    void Refresh () {
+		if (chunk) {
+			chunk.Refresh();
+            //refresh the chunks of all neighbors
+            for (int i = 0; i < neighbors.Length; i++) {
+				HexCell neighbor = neighbors[i];
+				if (neighbor != null && neighbor.chunk != chunk) {
+					neighbor.chunk.Refresh();
+				}
+			}
+		}
+	}
 
     public HexCell GetNeighbor(HexDirection direction)
     {
@@ -30,6 +45,9 @@ public class HexCell : MonoBehaviour
         }
         set
         {
+            if (elevation == value) {
+				return;
+			}
             elevation = value;
             Vector3 position = transform.localPosition;
             position.y = value * HexMetrics.elevationStep;
@@ -42,8 +60,23 @@ public class HexCell : MonoBehaviour
             Vector3 uiPosition = uiRect.localPosition;
             uiPosition.z =  -position.y;
             uiRect.localPosition = uiPosition;
+            Refresh();
+            
         }
     }
+
+    public Color Color {
+		get {
+			return color;
+		}
+		set {
+			if (color == value) {
+				return;
+			}
+			color = value;
+			Refresh();
+		}
+	}
 
     //to get a cell's edge type in a certain direction.
     public HexEdgeType GetEdgeType(HexDirection direction)

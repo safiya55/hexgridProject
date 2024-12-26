@@ -1,0 +1,35 @@
+using UnityEngine;
+using UnityEngine.UI;
+
+public class HexGridChunk : MonoBehaviour 
+{
+    HexCell[] cells;
+
+	HexMesh hexMesh;
+	Canvas gridCanvas;
+
+	void Awake () {
+		gridCanvas = GetComponentInChildren<Canvas>();
+		hexMesh = GetComponentInChildren<HexMesh>();
+
+		cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
+	}
+
+	void LateUpdate () {
+		hexMesh.Triangulate(cells);
+		enabled = false;
+	}
+
+    public void Refresh () {
+		hexMesh.Triangulate(cells);
+	}
+
+    //puts the cell in its own array. 
+    //Then it sets the parents of the cell and its UI.
+    public void AddCell (int index, HexCell cell) {
+		cells[index] = cell;
+		cell.chunk = this;
+		cell.transform.SetParent(transform, false);
+		cell.uiRect.SetParent(gridCanvas.transform, false);
+	}
+}
