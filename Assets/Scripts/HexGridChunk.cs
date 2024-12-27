@@ -14,13 +14,23 @@ public class HexGridChunk : MonoBehaviour
 
 		cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
 	}
-	
-	void Start () {
+
+    public void Refresh () {
+		enabled = true;
+	}
+
+    //diff between update and late update
+    //Each frame, the Update methods of enabled components are invoked at some point, 
+    //in arbitrary order. After that's finished, the same happens with LateUpdate methods. 
+    //So there are two update steps, an early and a late one.
+    void LateUpdate () {
 		hexMesh.Triangulate(cells);
+		enabled = false;
 	}
 
     public void AddCell (int index, HexCell cell) {
 		cells[index] = cell;
+        cell.chunk = this;
 		cell.transform.SetParent(transform, false);
 		cell.uiRect.SetParent(gridCanvas.transform, false);
 	}
