@@ -484,7 +484,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: -0.071730465, y: 0.006873672, z: 0.009508076, w: 0.9973551}
-  m_LocalPosition: {x: 166, y: 59, z: 56}
+  m_LocalPosition: {x: 1, y: 6, z: 9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1005,6 +1005,7 @@ MonoBehaviour:
   swivelMaxZoom: 45
   moveSpeedMinZoom: 400
   moveSpeedMaxZoom: 100
+  rotationSpeed: 180
   grid: {fileID: 1340313918}
 --- !u!1 &535489496
 GameObject:
