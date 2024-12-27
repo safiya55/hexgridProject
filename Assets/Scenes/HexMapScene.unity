@@ -2332,7 +2332,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2284416787139723125, guid: 713ae62de3175ea488f6da7bfbe7a262, type: 3}
       propertyPath: m_Name
-      value: HexCellLabel
+      value: Hex Cell Label
       objectReference: {fileID: 0}
     - target: {fileID: 4129510126518390619, guid: 713ae62de3175ea488f6da7bfbe7a262, type: 3}
       propertyPath: m_FontData.m_Alignment
@@ -2364,7 +2364,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6421845706542797460, guid: 713ae62de3175ea488f6da7bfbe7a262, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6421845706542797460, guid: 713ae62de3175ea488f6da7bfbe7a262, type: 3}
       propertyPath: m_SizeDelta.y
