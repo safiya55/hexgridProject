@@ -52,6 +52,19 @@ public class HexGrid : MonoBehaviour
 		}
 	}
 
+    public HexCell GetCell (HexCoordinates coordinates) {
+		int z = coordinates.Z;
+        if (z < 0 || z >= cellCountZ) {
+			return null;
+		}
+		int x = coordinates.X + z / 2;
+        if (x < 0 || x >= cellCountX) {
+			return null;
+		}
+		return cells[x + z * cellCountX];
+	}
+
+
     void OnEnable () {
 		HexMetrics.noiseSource = noiseSource;
 	}
@@ -142,5 +155,11 @@ public class HexGrid : MonoBehaviour
 
         //add the cell to the chunk
 		chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
+	}
+
+    public void ShowUI (bool visible) {
+		for (int i = 0; i < chunks.Length; i++) {
+			chunks[i].ShowUI(visible);
+		}
 	}
 }

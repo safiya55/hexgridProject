@@ -16,6 +16,7 @@ public class HexMapEditor : MonoBehaviour
 
     bool applyElevation = true;
 
+    //defines the radius of the effect of our edit.
     int brushSize;
 
     void Awake()
@@ -38,7 +39,7 @@ public class HexMapEditor : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
         {
-            EditCell(hexGrid.GetCell(hit.point));
+            EditCells(hexGrid.GetCell(hit.point));
         }
     }
 
@@ -50,14 +51,36 @@ public class HexMapEditor : MonoBehaviour
 		}
     }
     
-    void EditCell(HexCell cell)
+    void EditCells (HexCell center) 
     {
-        if (applyColor) {
-			cell.Color = activeColor;
+        //get x and z coordinate of centre
+        int centerX = center.coordinates.X;
+		int centerZ = center.coordinates.Z;
+
+        for (int r = 0, z = centerZ - brushSize; z <= centerZ; z++, r++) 
+        {
+            for (int x = centerX - r; x <= centerX + brushSize; x++) {
+				EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
+			}
 		}
 
-        if (applyElevation) {
-			cell.Elevation = activeElevation;
+        for (int r = 0, z = centerZ + brushSize; z > centerZ; z--, r++) {
+			for (int x = centerX - brushSize; x <= centerX + r; x++) {
+				EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
+			}
+		}
+	}
+    
+    void EditCell(HexCell cell)
+    {
+        //prevent a null-reference-exception
+        if (cell) {
+			if (applyColor) {
+				cell.Color = activeColor;
+			}
+			if (applyElevation) {
+				cell.Elevation = activeElevation;
+			}
 		}
     }
 
@@ -72,5 +95,9 @@ public class HexMapEditor : MonoBehaviour
 
     public void SetBrushSize (float size) {
 		brushSize = (int)size;
+	}
+
+    public void ShowUI (bool visible) {
+		hexGrid.ShowUI(visible);
 	}
 }
