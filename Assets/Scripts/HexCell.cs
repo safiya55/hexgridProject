@@ -141,4 +141,42 @@ public class HexCell : MonoBehaviour
 			hasIncomingRiver && incomingRiver == direction ||
 			hasOutgoingRiver && outgoingRiver == direction;
 	}
+
+    public void RemoveOutgoingRiver () {
+		if (!hasOutgoingRiver) {
+			return;
+		}
+		hasOutgoingRiver = false;
+		RefreshSelfOnly();
+
+        //removes neighboring rivers
+		HexCell neighbor = GetNeighbor(outgoingRiver);
+		neighbor.hasIncomingRiver = false;
+		neighbor.RefreshSelfOnly();
+	}
+
+    void RefreshSelfOnly () {
+		chunk.Refresh();
+	}
+
+    //Removing the incoming river works the same way.
+    public void RemoveIncomingRiver () {
+		if (!hasIncomingRiver) {
+			return;
+		}
+		hasIncomingRiver = false;
+		RefreshSelfOnly();
+
+		HexCell neighbor = GetNeighbor(incomingRiver);
+		neighbor.hasOutgoingRiver = false;
+		neighbor.RefreshSelfOnly();
+	}
+
+    //removing the entire river just means removing both 
+    //the outgoing and incoming river parts.
+    public void RemoveRiver () {
+		RemoveOutgoingRiver();
+		RemoveIncomingRiver();
+	}
+
 }
