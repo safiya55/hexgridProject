@@ -97,4 +97,7 @@ public class HexMapEditor : MonoBehaviour
 		applyElevation = toggle;
 	}
 
+    public void ShowUI (bool visible) {
+		hexGrid.ShowUI(visible);
+	}
 }

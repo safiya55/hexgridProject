@@ -13,6 +13,9 @@ public class HexGridChunk : MonoBehaviour
 		hexMesh = GetComponentInChildren<HexMesh>();
 
 		cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
+
+		//changed to initially set to true cause otherwise grid just wont show
+		ShowUI(true);
 	}
 
     public void Refresh () {
@@ -35,5 +38,8 @@ public class HexGridChunk : MonoBehaviour
 		cell.uiRect.SetParent(gridCanvas.transform, false);
 	}
 
+	public void ShowUI (bool visible) {
+		gridCanvas.gameObject.SetActive(visible);
+	}
 
 }
