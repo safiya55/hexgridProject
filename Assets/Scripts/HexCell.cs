@@ -179,4 +179,37 @@ public class HexCell : MonoBehaviour
 		RemoveIncomingRiver();
 	}
 
+    public void SetOutgoingRiver (HexDirection direction) {
+        //dont do anything if river already exist
+		if (hasOutgoingRiver && outgoingRiver == direction) {
+			return;
+		}
+
+        //ensure that there is a neighbor in the desired direction. 
+        //Also, rivers cannot flow uphill. 
+        //So we'll have to abort if the neighbor has a higher elevation.
+        HexCell neighbor = GetNeighbor(direction);
+		if (!neighbor || elevation < neighbor.elevation) {
+			return;
+		}
+
+        //clear previous outgoing river n remove incoming river, 
+        //if it overlaps with new outgoing river.
+        RemoveOutgoingRiver();
+		if (hasIncomingRiver && incomingRiver == direction) {
+			RemoveIncomingRiver();
+		}
+
+        //setting the outgoing river.
+        hasOutgoingRiver = true;
+		outgoingRiver = direction;
+		RefreshSelfOnly();
+
+        //set the incoming river of the other cell, 
+        //after removing its current incoming river, if any.
+        neighbor.RemoveIncomingRiver();
+		neighbor.hasIncomingRiver = true;
+		neighbor.incomingRiver = direction.Opposite();
+		neighbor.RefreshSelfOnly();
+	}
 }
