@@ -6,8 +6,8 @@ public class HexMesh : MonoBehaviour
 {
     Mesh hexMesh;
     static List<Vector3> vertices = new List<Vector3>();
-	static List<Color> colors = new List<Color>();
-	static List<int> triangles = new List<int>();
+    static List<Color> colors = new List<Color>();
+    static List<int> triangles = new List<int>();
 
     MeshCollider meshCollider; // Reference to the MeshCollider
 
@@ -58,13 +58,20 @@ public class HexMesh : MonoBehaviour
                 center + HexMetrics.GetSecondSolidCorner(direction)
             );
 
-            //detect whether there is a river flowing through its edge
-            if (cell.HasRiverThroughEdge(direction)) {
-                //drop the middle edge vertex to the stream bed's height.
-			    e.v3.y = cell.StreamBedY;
-		    }
-
-            TriangulateEdgeFan(center, e, cell.color);
+            if (cell.HasRiver) //if river triangulate triangle into a channel
+            {
+                //detect whether there is a river flowing through its edge
+                if (cell.HasRiverThroughEdge(direction))
+                {
+                    //drop the middle edge vertex to the stream bed's height.
+                    e.v3.y = cell.StreamBedY;
+                    TriangulateWithRiver(direction, cell, center, e);
+                }
+            }
+            else //else keep using a traingle fan
+            {
+                TriangulateEdgeFan(center, e, cell.color);
+            }
 
             if (direction <= HexDirection.SE)
             {
@@ -72,6 +79,12 @@ public class HexMesh : MonoBehaviour
             }
         }
     }
+
+    void TriangulateWithRiver (
+		HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+	) {
+	
+	}
 
     void TriangulateConnection
         (
@@ -90,11 +103,12 @@ public class HexMesh : MonoBehaviour
             e1.v1 + bridge,
             e1.v5 + bridge
         );
-        
+
         //close holes that develop in terrain when triangulating connection
-        if (cell.HasRiverThroughEdge(direction)) {
-			e2.v3.y = neighbor.StreamBedY;
-		}
+        if (cell.HasRiverThroughEdge(direction))
+        {
+            e2.v3.y = neighbor.StreamBedY;
+        }
 
         //decide whether to insert terraces or not.
         if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
@@ -454,7 +468,7 @@ public class HexMesh : MonoBehaviour
         AddTriangle(center, edge.v2, edge.v4);
         AddTriangleColor(color, color, color);
         AddTriangle(center, edge.v3, edge.v4);
-		AddTriangleColor(color, color, color);
+        AddTriangleColor(color, color, color);
         AddTriangle(center, edge.v4, edge.v5);
         AddTriangleColor(color, color, color);
     }
@@ -469,7 +483,7 @@ public class HexMesh : MonoBehaviour
         AddQuad(e1.v2, e1.v4, e2.v2, e2.v4);
         AddQuadColor(c1, c2);
         AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
-		AddQuadColor(c1, c2);
+        AddQuadColor(c1, c2);
         AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
         AddQuadColor(c1, c2);
     }
