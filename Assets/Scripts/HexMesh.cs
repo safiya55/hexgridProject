@@ -58,6 +58,12 @@ public class HexMesh : MonoBehaviour
                 center + HexMetrics.GetSecondSolidCorner(direction)
             );
 
+            //detect whether there is a river flowing through its edge
+            if (cell.HasRiverThroughEdge(direction)) {
+                //drop the middle edge vertex to the stream bed's height.
+			    e.v3.y = cell.StreamBedY;
+		    }
+
             TriangulateEdgeFan(center, e, cell.color);
 
             if (direction <= HexDirection.SE)
@@ -67,9 +73,10 @@ public class HexMesh : MonoBehaviour
         }
     }
 
-    void TriangulateConnection(
-        HexDirection direction, HexCell cell, EdgeVertices e1
-    )
+    void TriangulateConnection
+        (
+            HexDirection direction, HexCell cell, EdgeVertices e1
+        )
     {
         HexCell neighbor = cell.GetNeighbor(direction);
         if (neighbor == null)
@@ -83,6 +90,11 @@ public class HexMesh : MonoBehaviour
             e1.v1 + bridge,
             e1.v5 + bridge
         );
+        
+        //close holes that develop in terrain when triangulating connection
+        if (cell.HasRiverThroughEdge(direction)) {
+			e2.v3.y = neighbor.StreamBedY;
+		}
 
         //decide whether to insert terraces or not.
         if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
