@@ -80,10 +80,45 @@ public class HexMesh : MonoBehaviour
         }
     }
 
+    //to create a channel straight across the cell part
     void TriangulateWithRiver (
-		HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
-	) {
-	
+		    HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+	    ) 
+    {
+        //stretch centre into a line. line need to have same width as channel
+        //find the left vertex by moving ¼ of the way from the center to the 
+        //first corner of the previous part.
+        Vector3 centerL = center +
+			HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
+
+        //for the right vertex. In this case, we need the second corner of the next part.
+        Vector3 centerR = center +
+			HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
+
+        //middle line can be found by creating edge vertices between the center and edge.
+        EdgeVertices m = new EdgeVertices(
+			Vector3.Lerp(centerL, e.v1, 0.5f),
+			Vector3.Lerp(centerR, e.v5, 0.5f),
+			1f / 6f
+		);
+
+        //adjust the middle vertex of the middle edge, 
+        //as well as the center, so they become channel bottoms.
+        m.v3.y = center.y = e.v3.y;
+
+        //use TriangulateEdgeStrip to fill the space between the middle and edge lines.
+        TriangulateEdgeStrip(m, cell.Color, e, cell.Color);
+
+        AddTriangle(centerL, m.v1, m.v2);
+		AddTriangleColor(cell.Color, cell.Color, cell.Color);
+        AddQuad(centerL, center, m.v2, m.v3);
+		AddQuadColor(cell.Color);
+		AddQuad(center, centerR, m.v3, m.v4);
+		AddQuadColor(cell.Color);
+
+		AddTriangle(centerR, m.v4, m.v5);
+		AddTriangleColor(cell.Color, cell.Color, cell.Color);
+
 	}
 
     void TriangulateConnection
@@ -220,6 +255,12 @@ public class HexMesh : MonoBehaviour
         triangles.Add(vertexIndex + 2);
         triangles.Add(vertexIndex + 3);
     }
+    void AddQuadColor (Color color) {
+		colors.Add(color);
+		colors.Add(color);
+		colors.Add(color);
+		colors.Add(color);
+	}
 
     void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
     {
