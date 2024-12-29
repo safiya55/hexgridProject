@@ -62,6 +62,23 @@ public class HexCell : MonoBehaviour
             Vector3 uiPosition = uiRect.localPosition;
             uiPosition.z = -position.y;
             uiRect.localPosition = uiPosition;
+
+
+			//Preventing Uphill Rivers and remove them
+			if (
+				hasOutgoingRiver &&
+				elevation < GetNeighbor(outgoingRiver).elevation
+			) {
+				RemoveOutgoingRiver();
+			}
+			if (
+				hasIncomingRiver &&
+				elevation > GetNeighbor(incomingRiver).elevation
+			) {
+				RemoveIncomingRiver();
+			}
+
+
             Refresh();
         }
     }
@@ -212,4 +229,6 @@ public class HexCell : MonoBehaviour
 		neighbor.incomingRiver = direction.Opposite();
 		neighbor.RefreshSelfOnly();
 	}
+
+	
 }

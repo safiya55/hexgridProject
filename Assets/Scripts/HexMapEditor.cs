@@ -4,6 +4,12 @@ using UnityEngine.EventSystems;
 public class HexMapEditor : MonoBehaviour
 {
 
+    enum OptionalToggle {
+		Ignore, Yes, No
+	}
+	
+	OptionalToggle riverMode;
+
     public Color[] colors;
 
     public HexGrid hexGrid;
@@ -99,5 +105,9 @@ public class HexMapEditor : MonoBehaviour
 
     public void ShowUI (bool visible) {
 		hexGrid.ShowUI(visible);
+	}
+
+    public void SetRiverMode (int mode) {
+		riverMode = (OptionalToggle)mode;
 	}
 }
