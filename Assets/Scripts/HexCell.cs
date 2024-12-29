@@ -2,19 +2,23 @@ using UnityEngine;
 
 public class HexCell : MonoBehaviour
 {
-    //river info
-    bool hasIncomingRiver, hasOutgoingRiver;
-    HexDirection incomingRiver, outgoingRiver;
 
     public HexCoordinates coordinates;
-    public Color color;
     private int elevation = int.MinValue;
     public RectTransform uiRect;
 
+    public HexGridChunk chunk;
+    public Color color;
+   
+	//river info
+    bool hasIncomingRiver;
+	bool hasOutgoingRiver;
+    HexDirection incomingRiver;
+	HexDirection outgoingRiver;
+	
     [SerializeField]
     HexCell[] neighbors;
-
-    public HexGridChunk chunk;
+    
 
     void Refresh () {
 		if (chunk) {
