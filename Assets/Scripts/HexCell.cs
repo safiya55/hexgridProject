@@ -234,5 +234,13 @@ public class HexCell : MonoBehaviour
 		neighbor.RefreshSelfOnly();
 	}
 
+	//to retrieve the vertical position of its stream bed.
+	public float StreamBedY {
+		get {
+			return
+				(elevation + HexMetrics.streamBedElevationOffset) *
+				HexMetrics.elevationStep;
+		}
+	}
 	
 }
