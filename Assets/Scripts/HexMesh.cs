@@ -65,7 +65,18 @@ public class HexMesh : MonoBehaviour
                 {
                     //drop the middle edge vertex to the stream bed's height.
                     e.v3.y = cell.StreamBedY;
-                    TriangulateWithRiver(direction, cell, center, e);
+
+                    //Triangulating a part that has only the beginning or end of a river is 
+                    //different enough that it warrants its own method. So check for it in 
+                    //Triangulate and invoke the appropriate method.
+                    if (cell.HasRiverBeginOrEnd)
+                    {
+                        TriangulateWithRiverBeginOrEnd(direction, cell, center, e);
+                    }
+                    else
+                    {
+                        TriangulateWithRiver(direction, cell, center, e);
+                    }
                 }
             }
             else //else keep using a traingle fan
@@ -80,27 +91,45 @@ public class HexMesh : MonoBehaviour
         }
     }
 
+    //terminate the channel at the center
+    void TriangulateWithRiverBeginOrEnd (
+		HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+	) {
+        //create a middle edge between the center and outer edge. 
+		EdgeVertices m = new EdgeVertices(
+			Vector3.Lerp(center, e.v1, 0.5f),
+			Vector3.Lerp(center, e.v5, 0.5f)
+		);
+
+         // Adjust the middle vertex to match the streambed height
+         m.v3.y = e.v3.y;
+         // Triangulate geometry
+        TriangulateEdgeStrip(m, cell.Color, e, cell.Color); // Riverbanks
+        TriangulateEdgeFan(center, m, cell.Color);         // Terminating fan
+	}
+
+
     //to create a channel straight across the cell part
-    void TriangulateWithRiver (
-		    HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
-	    ) 
+    void TriangulateWithRiver(
+            HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+        )
     {
         //stretch centre into a line. line need to have same width as channel
         //find the left vertex by moving ¼ of the way from the center to the 
         //first corner of the previous part.
         Vector3 centerL = center +
-			HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
+            HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
 
         //for the right vertex. In this case, we need the second corner of the next part.
         Vector3 centerR = center +
-			HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
+            HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
 
         //middle line can be found by creating edge vertices between the center and edge.
         EdgeVertices m = new EdgeVertices(
-			Vector3.Lerp(centerL, e.v1, 0.5f),
-			Vector3.Lerp(centerR, e.v5, 0.5f),
-			1f / 6f
-		);
+            Vector3.Lerp(centerL, e.v1, 0.5f),
+            Vector3.Lerp(centerR, e.v5, 0.5f),
+            1f / 6f
+        );
 
         //adjust the middle vertex of the middle edge, 
         //as well as the center, so they become channel bottoms.
@@ -110,16 +139,16 @@ public class HexMesh : MonoBehaviour
         TriangulateEdgeStrip(m, cell.Color, e, cell.Color);
 
         AddTriangle(centerL, m.v1, m.v2);
-		AddTriangleColor(cell.Color, cell.Color, cell.Color);
+        AddTriangleColor(cell.Color, cell.Color, cell.Color);
         AddQuad(centerL, center, m.v2, m.v3);
-		AddQuadColor(cell.Color);
-		AddQuad(center, centerR, m.v3, m.v4);
-		AddQuadColor(cell.Color);
+        AddQuadColor(cell.Color);
+        AddQuad(center, centerR, m.v3, m.v4);
+        AddQuadColor(cell.Color);
 
-		AddTriangle(centerR, m.v4, m.v5);
-		AddTriangleColor(cell.Color, cell.Color, cell.Color);
+        AddTriangle(centerR, m.v4, m.v5);
+        AddTriangleColor(cell.Color, cell.Color, cell.Color);
 
-	}
+    }
 
     void TriangulateConnection
         (
@@ -255,12 +284,13 @@ public class HexMesh : MonoBehaviour
         triangles.Add(vertexIndex + 2);
         triangles.Add(vertexIndex + 3);
     }
-    void AddQuadColor (Color color) {
-		colors.Add(color);
-		colors.Add(color);
-		colors.Add(color);
-		colors.Add(color);
-	}
+    void AddQuadColor(Color color)
+    {
+        colors.Add(color);
+        colors.Add(color);
+        colors.Add(color);
+        colors.Add(color);
+    }
 
     void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
     {
