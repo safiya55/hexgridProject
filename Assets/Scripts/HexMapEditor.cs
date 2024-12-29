@@ -24,6 +24,11 @@ public class HexMapEditor : MonoBehaviour
 
     int brushSize;
 
+    //Elements to detect Drag to create river
+    bool isDrag;
+	HexDirection dragDirection;
+	HexCell previousCell;
+
 	public void SetBrushSize (float size) 
     {
 		brushSize = (int)size;
@@ -42,6 +47,9 @@ public class HexMapEditor : MonoBehaviour
         {
             HandleInput();
         }
+        else {
+			previousCell = null;
+		}
     }
 
     void HandleInput()
@@ -50,10 +58,44 @@ public class HexMapEditor : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
         {
-            EditCells(hexGrid.GetCell(hit.point));
+            // current cell is the one that we find based on the hit point.
+            //After we're done editing cells this update, 
+            //that cell becomes the previous cell for the next update.
+            HexCell currentCell = hexGrid.GetCell(hit.point);
+            if (previousCell && previousCell != currentCell) {
+				ValidateDrag(currentCell);
+			}
+			else {
+				isDrag = false;
+			}
+			EditCells(currentCell);
+			previousCell = currentCell;
 
         }
+        else 
+        {
+            //set to null when not dragging
+			previousCell = null;
+		}
     }
+
+    void ValidateDrag (HexCell currentCell) {
+        //validate a drag by verifying that the current cell 
+        //is a neighbor of the previous cell. 
+        //by looping through its neighbors
+		for (
+			dragDirection = HexDirection.NE;
+			dragDirection <= HexDirection.NW;
+			dragDirection++
+		) {
+            // If we find a match we know the drag direction
+			if (previousCell.GetNeighbor(dragDirection) == currentCell) {
+				isDrag = true;
+				return;
+			}
+		}
+		isDrag = false;
+	}
 
     void EditCells (HexCell center) 
     {
@@ -82,6 +124,19 @@ public class HexMapEditor : MonoBehaviour
 			}
 			if (applyElevation) {
 				cell.Elevation = activeElevation;
+			}
+
+            //code to remove rivers
+            if (riverMode == OptionalToggle.No) {
+				cell.RemoveRiver();
+			}
+			else if (isDrag && riverMode == OptionalToggle.Yes) {
+                //This will draw a river from the previous cell to the current cell. 
+                //But it ignores the brush size.
+				HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
+				if (otherCell) {
+					otherCell.SetOutgoingRiver(dragDirection);
+				}
 			}
 		}
     }
