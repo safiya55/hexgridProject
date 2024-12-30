@@ -1,13 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class HexMesh : MonoBehaviour
 {
     Mesh hexMesh;
-    static List<Vector3> vertices = new List<Vector3>();
-    static List<Color> colors = new List<Color>();
-    static List<int> triangles = new List<int>();
+    [NonSerialized] List<Vector3> vertices;
+    [NonSerialized] List<Color> colors;
+    [NonSerialized] List<int> triangles;
 
     MeshCollider meshCollider; // Reference to the MeshCollider
 
@@ -19,20 +20,25 @@ public class HexMesh : MonoBehaviour
         hexMesh.name = "Hex Mesh";
     }
 
-    public void Clear () {
-		hexMesh.Clear();
-		vertices.Clear();
-		colors.Clear();
-		triangles.Clear();
-	}
+    public void Clear()
+    {
+        hexMesh.Clear();
+        vertices = ListPool<Vector3>.Get();
+        colors = ListPool<Color>.Get();
+        triangles = ListPool<int>.Get();
+    }
 
-	public void Apply () {
-		hexMesh.SetVertices(vertices);
+    public void Apply()
+    {
+        hexMesh.SetVertices(vertices);
+		ListPool<Vector3>.Add(vertices);
 		hexMesh.SetColors(colors);
+		ListPool<Color>.Add(colors);
 		hexMesh.SetTriangles(triangles, 0);
+		ListPool<int>.Add(triangles);
 		hexMesh.RecalculateNormals();
 		meshCollider.sharedMesh = hexMesh;
-	}
+    }
 
     //add color data for each triangle
     public void AddTriangleColor(Color c1, Color c2, Color c3)
@@ -101,5 +107,25 @@ public class HexMesh : MonoBehaviour
         triangles.Add(vertexIndex + 1);
         triangles.Add(vertexIndex + 2);
     }
+
+    public static class ListPool<T>
+    {
+        static Stack<List<T>> stack = new Stack<List<T>>();
+        public static List<T> Get()
+        {
+            if (stack.Count > 0)
+            {
+                return stack.Pop();
+            }
+            return new List<T>();
+        }
+        public static void Add(List<T> list)
+        {
+            list.Clear();
+            stack.Push(list);
+        }
+    }
+
+
 
 }
