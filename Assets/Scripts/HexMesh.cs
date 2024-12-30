@@ -92,21 +92,22 @@ public class HexMesh : MonoBehaviour
     }
 
     //terminate the channel at the center
-    void TriangulateWithRiverBeginOrEnd (
-		HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
-	) {
+    void TriangulateWithRiverBeginOrEnd(
+        HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+    )
+    {
         //create a middle edge between the center and outer edge. 
-		EdgeVertices m = new EdgeVertices(
-			Vector3.Lerp(center, e.v1, 0.5f),
-			Vector3.Lerp(center, e.v5, 0.5f)
-		);
+        EdgeVertices m = new EdgeVertices(
+            Vector3.Lerp(center, e.v1, 0.5f),
+            Vector3.Lerp(center, e.v5, 0.5f)
+        );
 
-         // Adjust the middle vertex to match the streambed height
-         m.v3.y = e.v3.y;
-         // Triangulate geometry
+        // Adjust the middle vertex to match the streambed height
+        m.v3.y = e.v3.y;
+        // Triangulate geometry
         TriangulateEdgeStrip(m, cell.Color, e, cell.Color); // Riverbanks
         TriangulateEdgeFan(center, m, cell.Color);         // Terminating fan
-	}
+    }
 
 
     //to create a channel straight across the cell part
@@ -114,15 +115,36 @@ public class HexMesh : MonoBehaviour
             HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
         )
     {
-        //stretch centre into a line. line need to have same width as channel
-        //find the left vertex by moving ¼ of the way from the center to the 
-        //first corner of the previous part.
-        Vector3 centerL = center +
-            HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
+        //If the cell has a river going through the opposite direction as well as 
+        //the direction that we're working with, then it must be a straight river.
+        Vector3 centerL, centerR;
+        if (cell.HasRiverThroughEdge(direction.Opposite()))
+        {
+            //stretch centre into a line. line need to have same width as channel
+            //find the left vertex by moving ¼ of the way from the center to the 
+            //first corner of the previous part.
+             centerL = center +
+                HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
 
-        //for the right vertex. In this case, we need the second corner of the next part.
-        Vector3 centerR = center +
-            HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
+            //for the right vertex. In this case, we need the second corner of the next part.
+             centerR = center +
+                HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
+        }
+        else if (cell.HasRiverThroughEdge(direction.Next())) {
+			centerL = center;
+			centerR = Vector3.Lerp(center, e.v5, 2f / 3f);
+		}
+		else if (cell.HasRiverThroughEdge(direction.Previous())) {
+			centerL = Vector3.Lerp(center, e.v1, 2f / 3f);
+			centerR = center;
+		}
+        else
+        { //Otherwise, let's revert back to a single point by collapsing the center line.
+            centerL = centerR = center;
+        }
+
+        //determine the final center by averaging them.
+        center = Vector3.Lerp(centerL, centerR, 0.5f);
 
         //middle line can be found by creating edge vertices between the center and edge.
         EdgeVertices m = new EdgeVertices(
