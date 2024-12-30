@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
@@ -10,13 +11,18 @@ public class HexMesh : MonoBehaviour
     [NonSerialized] List<Color> colors;
     [NonSerialized] List<int> triangles;
 
+    public bool useCollider, useColors;
+
     MeshCollider meshCollider; // Reference to the MeshCollider
 
     void Awake()
     {
         // Get the MeshFilter component and create a new mesh for the hex grid
         GetComponent<MeshFilter>().mesh = hexMesh = new Mesh();
-        meshCollider = gameObject.AddComponent<MeshCollider>(); // Ensure MeshCollider is attached
+        if (useCollider)
+        {
+            meshCollider = gameObject.AddComponent<MeshCollider>(); // Ensure MeshCollider is attached
+        }
         hexMesh.name = "Hex Mesh";
     }
 
@@ -24,20 +30,26 @@ public class HexMesh : MonoBehaviour
     {
         hexMesh.Clear();
         vertices = ListPool<Vector3>.Get();
-        colors = ListPool<Color>.Get();
-        triangles = ListPool<int>.Get();
+		if (useColors) {
+			colors = ListPool<Color>.Get();
+		}
+		triangles = ListPool<int>.Get();
     }
 
     public void Apply()
     {
         hexMesh.SetVertices(vertices);
 		ListPool<Vector3>.Add(vertices);
-		hexMesh.SetColors(colors);
-		ListPool<Color>.Add(colors);
+		if (useColors) {
+			hexMesh.SetColors(colors);
+			ListPool<Color>.Add(colors);
+		}
 		hexMesh.SetTriangles(triangles, 0);
 		ListPool<int>.Add(triangles);
 		hexMesh.RecalculateNormals();
-		meshCollider.sharedMesh = hexMesh;
+		if (useCollider) {
+			meshCollider.sharedMesh = hexMesh;
+		}
     }
 
     //add color data for each triangle
