@@ -138,9 +138,19 @@ public class HexMesh : MonoBehaviour
 			centerL = Vector3.Lerp(center, e.v1, 2f / 3f);
 			centerR = center;
 		}
+        //detect the direction of our curving river
+        else if (cell.HasRiverThroughEdge(direction.Next2())) {
+			centerL = center;
+			centerR = center +
+				HexMetrics.GetSolidEdgeMiddle(direction.Next()) *
+                (0.5f * HexMetrics.innerToOuter);
+		}
         else
         { //Otherwise, let's revert back to a single point by collapsing the center line.
-            centerL = centerR = center;
+            centerL = center +
+				HexMetrics.GetSolidEdgeMiddle(direction.Previous()) * 0.5f;
+			centerR = center;
+
         }
 
         //determine the final center by averaging them.
