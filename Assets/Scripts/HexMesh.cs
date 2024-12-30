@@ -78,6 +78,11 @@ public class HexMesh : MonoBehaviour
                         TriangulateWithRiver(direction, cell, center, e);
                     }
                 }
+                else
+                { //when the cell has a river, but it doesn't flow through the current direction.
+                    TriangulateAdjacentToRiver(direction, cell, center, e);
+                }
+
             }
             else //else keep using a traingle fan
             {
@@ -123,33 +128,36 @@ public class HexMesh : MonoBehaviour
             //stretch centre into a line. line need to have same width as channel
             //find the left vertex by moving ¼ of the way from the center to the 
             //first corner of the previous part.
-             centerL = center +
-                HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
+            centerL = center +
+               HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
 
             //for the right vertex. In this case, we need the second corner of the next part.
-             centerR = center +
-                HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
+            centerR = center +
+               HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
         }
-        else if (cell.HasRiverThroughEdge(direction.Next())) {
-			centerL = center;
-			centerR = Vector3.Lerp(center, e.v5, 2f / 3f);
-		}
-		else if (cell.HasRiverThroughEdge(direction.Previous())) {
-			centerL = Vector3.Lerp(center, e.v1, 2f / 3f);
-			centerR = center;
-		}
+        else if (cell.HasRiverThroughEdge(direction.Next()))
+        {
+            centerL = center;
+            centerR = Vector3.Lerp(center, e.v5, 2f / 3f);
+        }
+        else if (cell.HasRiverThroughEdge(direction.Previous()))
+        {
+            centerL = Vector3.Lerp(center, e.v1, 2f / 3f);
+            centerR = center;
+        }
         //detect the direction of our curving river
-        else if (cell.HasRiverThroughEdge(direction.Next2())) {
-			centerL = center;
-			centerR = center +
-				HexMetrics.GetSolidEdgeMiddle(direction.Next()) *
+        else if (cell.HasRiverThroughEdge(direction.Next2()))
+        {
+            centerL = center;
+            centerR = center +
+                HexMetrics.GetSolidEdgeMiddle(direction.Next()) *
                 (0.5f * HexMetrics.innerToOuter);
-		}
+        }
         else
         { //Otherwise, let's revert back to a single point by collapsing the center line.
             centerL = center +
-				HexMetrics.GetSolidEdgeMiddle(direction.Previous()) * 0.5f;
-			centerR = center;
+                HexMetrics.GetSolidEdgeMiddle(direction.Previous()) * 0.5f;
+            centerR = center;
 
         }
 
@@ -601,4 +609,17 @@ public class HexMesh : MonoBehaviour
         triangles.Add(vertexIndex + 1);
         triangles.Add(vertexIndex + 2);
     }
+
+    void TriangulateAdjacentToRiver (
+		HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+	) {
+		EdgeVertices m = new EdgeVertices(
+			Vector3.Lerp(center, e.v1, 0.5f),
+			Vector3.Lerp(center, e.v5, 0.5f)
+		);
+		
+		TriangulateEdgeStrip(m, cell.Color, e, cell.Color);
+		TriangulateEdgeFan(center, m, cell.Color);
+	}
+
 }
