@@ -309,4 +309,16 @@ public class HexCell : MonoBehaviour
 			return false;
 		}
 	}
+
+	public void RemoveRoads () {
+		for (int i = 0; i < neighbors.Length; i++) {
+			if (roads[i]) {
+				roads[i] = false; //remove road
+				//disable the corresponding roads of the cell's neighbors
+				neighbors[i].roads[(int)((HexDirection)i).Opposite()] = false;
+				neighbors[i].RefreshSelfOnly(); //refresh cells neighbor
+				RefreshSelfOnly(); //cell refresh self
+			}
+		}
+	}
 }
