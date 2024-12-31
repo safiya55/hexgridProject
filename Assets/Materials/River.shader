@@ -46,9 +46,8 @@ Shader "Custom/River"
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
-            if (IN.uv_MainTex.y < 0) {
-				IN.uv_MainTex.y += 1;
-			}
+            IN.uv_MainTex.y -= _Time.y;
+            IN.uv_MainTex.y = frac(IN.uv_MainTex.y);
             o.Albedo.rg = IN.uv_MainTex;
         }
         ENDCG
