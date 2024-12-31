@@ -127,6 +127,29 @@ public class HexGridChunk : MonoBehaviour
         // Triangulate geometry
         TriangulateEdgeStrip(m, cell.Color, e, cell.Color); // Riverbanks
         TriangulateEdgeFan(center, m, cell.Color);         // Terminating fan
+
+        // check whether we have an incoming river, to determine the flow direction. 
+        //Then we can insert another river quad between the middle and edge.
+        bool reversed = cell.HasIncomingRiver;
+		TriangulateRiverQuad(
+			m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, reversed
+		);
+
+        //The part between the center and middle is a triangle, so we cannot use TriangulateRiverQuad. 
+        //The only significant difference is that the center vertex sits in the middle of the river. 
+        //So its U coordinate is always ½.
+        center.y = m.v2.y = m.v4.y = cell.RiverSurfaceY;
+		rivers.AddTriangle(center, m.v2, m.v4);
+		if (reversed) {
+			rivers.AddTriangleUV(
+				new Vector2(0.5f, 1f), new Vector2(1f, 0f), new Vector2(0f, 0f)
+			);
+		}
+		else {
+			rivers.AddTriangleUV(
+				new Vector2(0.5f, 0f), new Vector2(0f, 1f), new Vector2(1f, 1f)
+			);
+		}
     }
 
 	    //to create a channel straight across the cell part
