@@ -622,7 +622,7 @@ public class HexGridChunk : MonoBehaviour
 		Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4,
 		float y, float v, bool reversed
 	) {
-		TriangulateRiverQuad(v1, v2, v3, v4, y, y, reversed);
+		TriangulateRiverQuad(v1, v2, v3, v4, y, y, v, reversed);
 	}
     
     void TriangulateRiverQuad (
