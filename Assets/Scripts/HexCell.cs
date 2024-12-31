@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class HexCell : MonoBehaviour
 {
+	[SerializeField]
+	bool[] roads;
 
     public HexCoordinates coordinates;
     private int elevation = int.MinValue;
