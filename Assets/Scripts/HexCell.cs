@@ -242,5 +242,13 @@ public class HexCell : MonoBehaviour
 				HexMetrics.elevationStep;
 		}
 	}
+
+	public float RiverSurfaceY {
+		get {
+			return// to retrieve the vertical position of its river's surface.
+				(elevation + HexMetrics.riverSurfaceElevationOffset) *
+				HexMetrics.elevationStep;
+		}
+	}
 	
 }
