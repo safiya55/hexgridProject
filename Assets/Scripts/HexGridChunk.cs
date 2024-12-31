@@ -202,8 +202,10 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddTriangle(centerR, m.v4, m.v5);
         terrain.AddTriangleColor(cell.Color, cell.Color, cell.Color);
 
-        TriangulateRiverQuad(centerL, centerR, m.v2, m.v4, cell.RiverSurfaceY);
-		TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY);
+        //reverse direction when dealing with incoming river
+        bool reversed = cell.IncomingRiver == direction;
+        TriangulateRiverQuad(centerL, centerR, m.v2, m.v4, cell.RiverSurfaceY, reversed);
+		TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, reversed);
 
     }
 
@@ -588,10 +590,15 @@ public class HexGridChunk : MonoBehaviour
 
     void TriangulateRiverQuad (
 		Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4,
-		float y
+		float y, bool reversed
 	) {
 		v1.y = v2.y = v3.y = v4.y = y;
 		rivers.AddQuad(v1, v2, v3, v4);
-        rivers.AddQuadUV(0f, 1f, 0f, 1f);
+        if (reversed) {
+			rivers.AddQuadUV(1f, 0f, 1f, 0f);
+		}
+		else {
+			rivers.AddQuadUV(0f, 1f, 0f, 1f);
+		}
 	}
 }
