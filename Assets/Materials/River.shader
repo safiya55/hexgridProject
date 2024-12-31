@@ -39,16 +39,21 @@ Shader "Custom/River"
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            // Albedo comes from a texture tinted by color
-            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-            o.Albedo = c.rgb;
-            // Metallic and smoothness come from slider variables
-            o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;
-            o.Alpha = c.a;
-            IN.uv_MainTex.y -= _Time.y;
-            IN.uv_MainTex.y = frac(IN.uv_MainTex.y);
-            o.Albedo.rg = IN.uv_MainTex;
+            float2 uv = IN.uv_MainTex;
+            uv.x *= 0.0625;uv.x = uv.x * 0.0625 + _Time.y * 0.005;
+			uv.y -= _Time.y * 0.25;
+			float4 noise = tex2D(_MainTex, uv);
+
+            float2 uv2 = IN.uv_MainTex;
+			uv2.x = uv2.x * 0.0625 - _Time.y * 0.0052;
+			uv2.y -= _Time.y * 0.23;
+			float4 noise2 = tex2D(_MainTex, uv2);
+			
+			fixed4 c = _Color * (noise.r * noise2.a);
+			o.Albedo = c.rgb;
+			o.Metallic = _Metallic;
+			o.Smoothness = _Glossiness;
+			o.Alpha = c.a;
         }
         ENDCG
     }
