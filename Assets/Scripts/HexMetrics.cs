@@ -6,7 +6,7 @@ public static class HexMetrics
     public const int chunkSizeX = 5, chunkSizeZ = 5;
     public const float elevationPerturbStrength = 1.5f;
     public const float noiseScale = 0.003f;
-    public const float cellPerturbStrength = 0f; //4f;
+    public const float cellPerturbStrength = 4f;
     public static Texture2D noiseSource;
 
     public const float outerToInner = 0.866025404f;
@@ -32,7 +32,7 @@ public static class HexMetrics
     public const float verticalTerraceStepSize = 1f / (terracesPerSlope + 1);
 
     //how deep the river is dug
-    public const float streamBedElevationOffset = -1f;
+    public const float streamBedElevationOffset = -1.75f;
 
 
     static Vector3[] corners = {
