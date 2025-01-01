@@ -91,6 +91,13 @@ public class HexCell : MonoBehaviour
 				RemoveIncomingRiver();
 			}
 
+			// check for roads in all directions. 
+			//If an elevation difference has become too great, an existing road has to be removed.
+			for (int i = 0; i < roads.Length; i++) {
+				if (roads[i] && GetElevationDifference((HexDirection)i) > 1) {
+					SetRoad(i, false);
+				}
+			}
 
 			Refresh();
 		}
@@ -262,14 +269,14 @@ public class HexCell : MonoBehaviour
 		//setting the outgoing river.
 		hasOutgoingRiver = true;
 		outgoingRiver = direction;
-		RefreshSelfOnly();
 
 		//set the incoming river of the other cell, 
 		//after removing its current incoming river, if any.
 		neighbor.RemoveIncomingRiver();
 		neighbor.hasIncomingRiver = true;
 		neighbor.incomingRiver = direction.Opposite();
-		neighbor.RefreshSelfOnly();
+		
+		SetRoad((int)direction, false);
 	}
 
 	//to retrieve the vertical position of its stream bed.
