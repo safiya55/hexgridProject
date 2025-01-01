@@ -299,10 +299,14 @@ public class HexCell : MonoBehaviour
 		return roads[(int)direction];
 	}
 
-	public bool HasRoads { //know whether a cell has at least one road
-		get {
-			for (int i = 0; i < roads.Length; i++) {
-				if (roads[i]) {
+	public bool HasRoads
+	{ //know whether a cell has at least one road
+		get
+		{
+			for (int i = 0; i < roads.Length; i++)
+			{
+				if (roads[i])
+				{
 					return true; //road found
 				}
 			}
@@ -310,15 +314,37 @@ public class HexCell : MonoBehaviour
 		}
 	}
 
-	public void RemoveRoads () {
-		for (int i = 0; i < neighbors.Length; i++) {
-			if (roads[i]) {
-				roads[i] = false; //remove road
-				//disable the corresponding roads of the cell's neighbors
-				neighbors[i].roads[(int)((HexDirection)i).Opposite()] = false;
-				neighbors[i].RefreshSelfOnly(); //refresh cells neighbor
-				RefreshSelfOnly(); //cell refresh self
+	public void AddRoad(HexDirection direction)
+	{
+		if (!roads[(int)direction] && !HasRiverThroughEdge(direction)  &&
+			GetElevationDifference(direction) <= 1)
+		{
+			SetRoad((int)direction, true);
+		}
+	}
+
+	public void RemoveRoads()
+	{
+		for (int i = 0; i < neighbors.Length; i++)
+		{
+			if (roads[i])
+			{
+				SetRoad(i, false);
 			}
 		}
+	}
+
+	void SetRoad(int index, bool state)
+	{
+		roads[index] = state; //remove road
+						  //disable the corresponding roads of the cell's neighbors
+		neighbors[index].roads[(int)((HexDirection)index).Opposite()] = state;
+		neighbors[index].RefreshSelfOnly(); //refresh cells neighbor
+		RefreshSelfOnly(); //cell refresh self
+	}
+
+	public int GetElevationDifference (HexDirection direction) {
+		int difference = elevation - GetNeighbor(direction).elevation;
+		return difference >= 0 ? difference : -difference;
 	}
 }
