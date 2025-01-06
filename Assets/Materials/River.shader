@@ -24,19 +24,19 @@ Shader "Custom/River"
             float2 uv_MainTex;
         };
 
-         // Input structure
-            struct Attributes
-            {
-                float3 position : POSITION;
-                float2 uv : TEXCOORD0;
-            };
+        // Input structure
+        struct Attributes
+        {
+            float3 position : POSITION;
+            float2 uv : TEXCOORD0;
+        };
 
-             // Input structure
-             struct Varyings
-             {
-                 float3 positionHCS : SV_POSITION;
-                 float2 uv : TEXCOORD0;
-             };
+        // Input structure
+        struct Varyings
+        {
+            float3 positionHCS : SV_POSITION;
+            float2 uv : TEXCOORD0;
+        };
 
         half _Glossiness;
         half _Metallic;
