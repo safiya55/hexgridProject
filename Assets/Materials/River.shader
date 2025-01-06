@@ -9,15 +9,13 @@ Shader "Custom/River"
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" "RenderPipeline" = "Universal Pipeline"}
         LOD 200
 
-        CGPROGRAM
-        // Physically based Standard lighting model, and enable shadows on all light types
+        HLSLPROGRAM
         #pragma surface surf Standard alpha 
-
-        // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
+        #include "packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
         sampler2D _MainTex;
 
@@ -26,15 +24,25 @@ Shader "Custom/River"
             float2 uv_MainTex;
         };
 
+         // Input structure
+            struct Attributes
+            {
+                float3 position : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+             // Input structure
+             struct Varyings
+             {
+                 float3 positionHCS : SV_POSITION;
+                 float2 uv : TEXCOORD0;
+             };
+
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
 
-        // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
-        // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
-        // #pragma instancing_options assumeuniformscaling
         UNITY_INSTANCING_BUFFER_START(Props)
-            // put more per-instance properties here
         UNITY_INSTANCING_BUFFER_END(Props)
 
         void surf (Input IN, inout SurfaceOutputStandard o)
@@ -55,7 +63,7 @@ Shader "Custom/River"
 			o.Smoothness = _Glossiness;
 			o.Alpha = c.a;
         }
-        ENDCG
+        ENDHLSL
     }
     FallBack "Diffuse"
 }
