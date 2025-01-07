@@ -6,8 +6,11 @@ Shader "Custom/Road" {
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 	}
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags {  "RenderType"="Opaque"
+				"Queue" = "Geometry+1"
+			 }
 		LOD 200
+		Offset -1, -1
 		
 		HLSLPROGRAM
 		#pragma surface surf Standard fullforwardshadows
