@@ -5,7 +5,7 @@ public class HexGridChunk : MonoBehaviour
 {
    HexCell[] cells;
 
-	public HexMesh terrain, rivers;
+	public HexMesh terrain, rivers, roads;
 	Canvas gridCanvas;
 
 	void Awake () {
@@ -45,12 +45,14 @@ public class HexGridChunk : MonoBehaviour
     {
         terrain.Clear();
         rivers.Clear();
+        roads.Clear();
         for (int i = 0; i < cells.Length; i++)
         {
             Triangulate(cells[i]);
         }
         terrain.Apply();
         rivers.Apply();
+        roads.Apply();
     }
 	
 	 void Triangulate(HexCell cell)
