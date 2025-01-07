@@ -103,7 +103,7 @@ public class HexGridChunk : MonoBehaviour
             }
             else //else keep using a traingle fan
             {
-                TriangulateEdgeFan(center, e, cell.color);
+                TriangulateWithoutRiver(direction, cell, center, e);
             }
 
             if (direction <= HexDirection.SE)
@@ -112,6 +112,21 @@ public class HexGridChunk : MonoBehaviour
             }
         }
     }
+
+    void TriangulateWithoutRiver (
+		HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+	) {
+		TriangulateEdgeFan(center, e, cell.Color);
+		
+		if (cell.HasRoadThroughEdge(direction)) {
+			TriangulateRoad(
+				center,
+				Vector3.Lerp(center, e.v1, 0.5f),
+				Vector3.Lerp(center, e.v5, 0.5f),
+				e
+			);
+		}
+	}
 
 	//terminate the channel at the center
     void TriangulateWithRiverBeginOrEnd(
@@ -657,5 +672,28 @@ public class HexGridChunk : MonoBehaviour
 		roads.AddQuad(v2, v3, v5, v6);
         roads.AddQuadUV(0f, 1f, 0f, 0f);
 		roads.AddQuadUV(1f, 0f, 0f, 0f);
+	}
+
+    //know the cell's center, the left and right middle vertices, and the edge vertices of the road
+    void TriangulateRoad (
+		Vector3 center, Vector3 mL, Vector3 mR, EdgeVertices e
+	) {
+        // need one additional vertex to construct the road segment. 
+        //It sits between the left and right middle vertices.
+        Vector3 mC = Vector3.Lerp(mL, mR, 0.5f);
+		TriangulateRoadSegment(mL, mC, mR, e.v2, e.v3, e.v4);
+
+        //add remaining two triangles
+        roads.AddTriangle(center, mL, mC);
+		roads.AddTriangle(center, mC, mR);
+
+        //we have to add the UV coordinates of the triangles as well. 
+        //Two of their vertices sit in the middle of the road, the other at its edge.
+        roads.AddTriangleUV(
+			new Vector2(1f, 0f), new Vector2(0f, 0f), new Vector2(1f, 0f)
+		);
+		roads.AddTriangleUV(
+			new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(0f, 0f)
+		);
 	}
 }
