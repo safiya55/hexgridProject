@@ -129,10 +129,12 @@ public class HexGridChunk : MonoBehaviour
         //The left and right middle vertices can be found by interpolating between the center and the two corner vertices.
         if (cell.HasRoads)
         {
+            //determine which interpolators to use. This will smooth out the roads.
+            Vector2 interpolators = GetRoadInterpolators(direction, cell);
             TriangulateRoad(
                 center,
-                Vector3.Lerp(center, e.v1, 0.5f),
-                Vector3.Lerp(center, e.v5, 0.5f),
+                Vector3.Lerp(center, e.v1, interpolators.x),
+                Vector3.Lerp(center, e.v5, interpolators.y),
                 e, cell.HasRoadThroughEdge(direction)
             );
         }
@@ -736,4 +738,20 @@ public class HexGridChunk : MonoBehaviour
             new Vector2(1f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f)
         );
     }
+
+    Vector2 GetRoadInterpolators (HexDirection direction, HexCell cell) {
+		Vector2 interpolators;
+        //If there's a road going in the current direction, put the points halfway.
+        if (cell.HasRoadThroughEdge(direction)) {
+			interpolators.x = interpolators.y = 0.5f;
+		}
+        else { //Otherwise, it depends. For the left point, we can use ½ when there's a road going through the previous direction. 
+        //If not, we should use ¼. The same goes for the right point, but with the next direction.
+			interpolators.x =
+				cell.HasRoadThroughEdge(direction.Previous()) ? 0.5f : 0.25f;
+			interpolators.y =
+				cell.HasRoadThroughEdge(direction.Next()) ? 0.5f : 0.25f;
+		}
+		return interpolators;
+	}
 }
