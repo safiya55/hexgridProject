@@ -302,9 +302,9 @@ public class HexGridChunk : MonoBehaviour
         else
         {
             //take care of the flats and cliffs.
-            TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color);
-            // TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color,
-            // 	cell.HasRoadThroughEdge(direction));
+            //TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color);
+             TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color,
+             	cell.HasRoadThroughEdge(direction));
         }
 
         HexCell nextNeighbor = cell.GetNeighbor(direction.Next());

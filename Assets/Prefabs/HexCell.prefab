@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ed5f9dc575180542a8d8b00f467ace8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roads: 00
+  roads: 000000000000
   coordinates:
     x: 0
     z: 0
