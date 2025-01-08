@@ -3,45 +3,50 @@ using UnityEngine.UI;
 
 public class HexGridChunk : MonoBehaviour
 {
-   HexCell[] cells;
+    HexCell[] cells;
 
-	public HexMesh terrain, rivers, roads;
-	Canvas gridCanvas;
+    public HexMesh terrain, rivers, roads;
+    Canvas gridCanvas;
 
-	void Awake () {
-		gridCanvas = GetComponentInChildren<Canvas>();
+    void Awake()
+    {
+        gridCanvas = GetComponentInChildren<Canvas>();
 
-		cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
+        cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
 
-		//changed to initially set to true cause otherwise grid just wont show
-		ShowUI(true);
-	}
+        //changed to initially set to true cause otherwise grid just wont show
+        ShowUI(true);
+    }
 
-    public void Refresh () {
-		enabled = true;
-	}
+    public void Refresh()
+    {
+        enabled = true;
+    }
 
     //diff between update and late update
     //Each frame, the Update methods of enabled components are invoked at some point, 
     //in arbitrary order. After that's finished, the same happens with LateUpdate methods. 
     //So there are two update steps, an early and a late one.
-    void LateUpdate () {
-		Triangulate();
-		enabled = false;
-	}
+    void LateUpdate()
+    {
+        Triangulate();
+        enabled = false;
+    }
 
-    public void AddCell (int index, HexCell cell) {
-		cells[index] = cell;
+    public void AddCell(int index, HexCell cell)
+    {
+        cells[index] = cell;
         cell.chunk = this;
-		cell.transform.SetParent(transform, false);
-		cell.uiRect.SetParent(gridCanvas.transform, false);
-	}
+        cell.transform.SetParent(transform, false);
+        cell.uiRect.SetParent(gridCanvas.transform, false);
+    }
 
-	public void ShowUI (bool visible) {
-		gridCanvas.gameObject.SetActive(visible);
-	}
+    public void ShowUI(bool visible)
+    {
+        gridCanvas.gameObject.SetActive(visible);
+    }
 
-	public void Triangulate()
+    public void Triangulate()
     {
         terrain.Clear();
         rivers.Clear();
@@ -54,8 +59,8 @@ public class HexGridChunk : MonoBehaviour
         rivers.Apply();
         roads.Apply();
     }
-	
-	 void Triangulate(HexCell cell)
+
+    void Triangulate(HexCell cell)
     {
         for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
         {
@@ -63,7 +68,7 @@ public class HexGridChunk : MonoBehaviour
         }
     }
 
-	   //using direction to identify the parts
+    //using direction to identify the parts
     void Triangulate(HexDirection direction, HexCell cell)
     {
         //null error fix
@@ -113,25 +118,27 @@ public class HexGridChunk : MonoBehaviour
         }
     }
 
-    void TriangulateWithoutRiver (
-		HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
-	) {
+    void TriangulateWithoutRiver(
+        HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+    )
+    {
         //created an edge fan
-		TriangulateEdgeFan(center, e, cell.Color);
-		
+        TriangulateEdgeFan(center, e, cell.Color);
+
         //add an invocation of TriangulateRoad, when there's actually a road. 
         //The left and right middle vertices can be found by interpolating between the center and the two corner vertices.
-		if (cell.HasRoadThroughEdge(direction)) {
-			TriangulateRoad(
-				center,
-				Vector3.Lerp(center, e.v1, 0.5f),
-				Vector3.Lerp(center, e.v5, 0.5f),
-				e
-			);
-		}
-	}
+        if (cell.HasRoads)
+        {
+            TriangulateRoad(
+                center,
+                Vector3.Lerp(center, e.v1, 0.5f),
+                Vector3.Lerp(center, e.v5, 0.5f),
+                e, cell.HasRoadThroughEdge(direction)
+            );
+        }
+    }
 
-	//terminate the channel at the center
+    //terminate the channel at the center
     void TriangulateWithRiverBeginOrEnd(
         HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
     )
@@ -151,30 +158,32 @@ public class HexGridChunk : MonoBehaviour
         // check whether we have an incoming river, to determine the flow direction. 
         //Then we can insert another river quad between the middle and edge.
         bool reversed = cell.HasIncomingRiver;
-		TriangulateRiverQuad(
-			m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed
-		);
+        TriangulateRiverQuad(
+            m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed
+        );
 
         //The part between the center and middle is a triangle, so we cannot use TriangulateRiverQuad. 
         //The only significant difference is that the center vertex sits in the middle of the river. 
         //So its U coordinate is always ½.
         center.y = m.v2.y = m.v4.y = cell.RiverSurfaceY;
-		rivers.AddTriangle(center, m.v2, m.v4);
-		if (reversed) {
-			rivers.AddTriangleUV(
-				new Vector2(0.5f, 0.4f),
-				new Vector2(1f, 0.2f), new Vector2(0f, 0.2f)
-			);
-		}
-		else {
-			rivers.AddTriangleUV(
-				new Vector2(0.5f, 0.4f),
-				new Vector2(0f, 0.6f), new Vector2(1f, 0.6f)
-			);
-		}
+        rivers.AddTriangle(center, m.v2, m.v4);
+        if (reversed)
+        {
+            rivers.AddTriangleUV(
+                new Vector2(0.5f, 0.4f),
+                new Vector2(1f, 0.2f), new Vector2(0f, 0.2f)
+            );
+        }
+        else
+        {
+            rivers.AddTriangleUV(
+                new Vector2(0.5f, 0.4f),
+                new Vector2(0f, 0.6f), new Vector2(1f, 0.6f)
+            );
+        }
     }
 
-	    //to create a channel straight across the cell part
+    //to create a channel straight across the cell part
     void TriangulateWithRiver(
             HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
         )
@@ -250,15 +259,15 @@ public class HexGridChunk : MonoBehaviour
         //reverse direction when dealing with incoming river
         bool reversed = cell.IncomingRiver == direction;
         TriangulateRiverQuad(centerL, centerR, m.v2, m.v4, cell.RiverSurfaceY, 0.4f, reversed);
-		TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed);
+        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed);
 
     }
 
-	    void TriangulateConnection
-        (
-            HexDirection direction, HexCell cell, EdgeVertices e1
-        )
-    { 
+    void TriangulateConnection
+    (
+        HexDirection direction, HexCell cell, EdgeVertices e1
+    )
+    {
 
 
         HexCell neighbor = cell.GetNeighbor(direction);
@@ -279,10 +288,10 @@ public class HexGridChunk : MonoBehaviour
         {
             e2.v3.y = neighbor.StreamBedY;
             TriangulateRiverQuad(
-				e1.v2, e1.v4, e2.v2, e2.v4,
-				cell.RiverSurfaceY, neighbor.RiverSurfaceY, 0.8f,
-				cell.HasIncomingRiver && cell.IncomingRiver == direction
-			);
+                e1.v2, e1.v4, e2.v2, e2.v4,
+                cell.RiverSurfaceY, neighbor.RiverSurfaceY, 0.8f,
+                cell.HasIncomingRiver && cell.IncomingRiver == direction
+            );
         }
 
         //decide whether to insert terraces or not.
@@ -295,7 +304,7 @@ public class HexGridChunk : MonoBehaviour
             //take care of the flats and cliffs.
             TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color);
             // TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color,
-			// 	cell.HasRoadThroughEdge(direction));
+            // 	cell.HasRoadThroughEdge(direction));
         }
 
         HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
@@ -342,10 +351,10 @@ public class HexGridChunk : MonoBehaviour
         }
     }
 
-	void TriangulateEdgeTerraces(
+    void TriangulateEdgeTerraces(
         EdgeVertices begin, HexCell beginCell,
         EdgeVertices end, HexCell endCell,
-		bool hasRoad
+        bool hasRoad
     )
     {
         EdgeVertices e2 = EdgeVertices.TerraceLerp(begin, end, 1);
@@ -365,9 +374,9 @@ public class HexGridChunk : MonoBehaviour
         TriangulateEdgeStrip(e2, c2, end, endCell.Color, hasRoad);
     }
 
-	 void TriangulateAdjacentToRiver(
-        HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
-    )
+    void TriangulateAdjacentToRiver(
+       HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+   )
     {
         if (cell.HasRiverThroughEdge(direction.Next()))
         {
@@ -384,11 +393,12 @@ public class HexGridChunk : MonoBehaviour
             }
         }
         else if (
-			cell.HasRiverThroughEdge(direction.Previous()) &&
-			cell.HasRiverThroughEdge(direction.Next2())
-		) {
-			center += HexMetrics.GetSecondSolidCorner(direction) * 0.25f;
-		}
+            cell.HasRiverThroughEdge(direction.Previous()) &&
+            cell.HasRiverThroughEdge(direction.Next2())
+        )
+        {
+            center += HexMetrics.GetSecondSolidCorner(direction) * 0.25f;
+        }
 
 
         EdgeVertices m = new EdgeVertices(
@@ -400,7 +410,7 @@ public class HexGridChunk : MonoBehaviour
         TriangulateEdgeFan(center, m, cell.Color);
     }
 
-	void TriangulateCorner(
+    void TriangulateCorner(
         Vector3 bottom, HexCell bottomCell,
         Vector3 left, HexCell leftCell,
         Vector3 right, HexCell rightCell
@@ -474,11 +484,11 @@ public class HexGridChunk : MonoBehaviour
         }
     }
 
-	 void TriangulateCornerTerraces(
-        Vector3 begin, HexCell beginCell,
-        Vector3 left, HexCell leftCell,
-        Vector3 right, HexCell rightCell
-    )
+    void TriangulateCornerTerraces(
+       Vector3 begin, HexCell beginCell,
+       Vector3 left, HexCell leftCell,
+       Vector3 right, HexCell rightCell
+   )
     {
         Vector3 v4 = HexMetrics.TerraceLerp(begin, left, 1);
         Vector3 v5 = HexMetrics.TerraceLerp(begin, right, 1);
@@ -509,7 +519,7 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddQuadColor(c3, c4, leftCell.Color, rightCell.Color);
     }
 
-	//take care of both slope-cliff cases at once.
+    //take care of both slope-cliff cases at once.
     //Merging Slopes and Cliffs
     void TriangulateCornerTerracesCliff(
             Vector3 begin, HexCell beginCell,
@@ -550,11 +560,11 @@ public class HexGridChunk : MonoBehaviour
         }
     }
 
-	    void TriangulateCornerCliffTerraces(
-            Vector3 begin, HexCell beginCell,
-            Vector3 left, HexCell leftCell,
-            Vector3 right, HexCell rightCell
-        )
+    void TriangulateCornerCliffTerraces(
+        Vector3 begin, HexCell beginCell,
+        Vector3 left, HexCell leftCell,
+        Vector3 right, HexCell rightCell
+    )
     {
         //make connection on side of triangle from 2 bottom to side on the right
         float b = 1f / (leftCell.Elevation - beginCell.Elevation);
@@ -589,11 +599,11 @@ public class HexGridChunk : MonoBehaviour
         }
     }
 
-	 void TriangulateBoundaryTriangle(
-        Vector3 begin, HexCell beginCell,
-        Vector3 left, HexCell leftCell,
-        Vector3 boundary, Color boundaryColor
-    )
+    void TriangulateBoundaryTriangle(
+       Vector3 begin, HexCell beginCell,
+       Vector3 left, HexCell leftCell,
+       Vector3 boundary, Color boundaryColor
+   )
     {
         //triangulating the terraces.
         Vector3 v2 = HexMetrics.Perturb(HexMetrics.TerraceLerp(begin, left, 1));
@@ -616,7 +626,7 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddTriangleColor(c2, leftCell.Color, boundaryColor);
     }
 
-	void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color Color)
+    void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color Color)
     {
         terrain.AddTriangle(center, edge.v1, edge.v2);
         terrain.AddTriangleColor(Color, Color, Color);
@@ -628,10 +638,10 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddTriangleColor(Color, Color, Color);
     }
 
-	void TriangulateEdgeStrip(
+    void TriangulateEdgeStrip(
         EdgeVertices e1, Color c1,
         EdgeVertices e2, Color c2,
-		bool hasRoad = false
+        bool hasRoad = false
     )
     {
         terrain.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
@@ -643,64 +653,87 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
         terrain.AddQuadColor(c1, c2);
 
-        if (hasRoad) {
-			TriangulateRoadSegment(e1.v2, e1.v3, e1.v4, e2.v2, e2.v3, e2.v4);
-		}
+        if (hasRoad)
+        {
+            TriangulateRoadSegment(e1.v2, e1.v3, e1.v4, e2.v2, e2.v3, e2.v4);
+        }
     }
 
-    void TriangulateRiverQuad (
-		Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4,
-		float y, float v, bool reversed
-	) {
-		TriangulateRiverQuad(v1, v2, v3, v4, y, y, v, reversed);
-	}
-    
-    void TriangulateRiverQuad (
-		Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4,
-		float y1, float y2, float v, bool reversed
-	) {
-		v1.y = v2.y = y1;
-		v3.y = v4.y = y2;
-		rivers.AddQuad(v1, v2, v3, v4);
-        if (reversed) {
-			rivers.AddQuadUV(1f, 0f, 0.8f - v, 0.6f - v);
-		}
-		else {
-			rivers.AddQuadUV(0f, 1f, v, v + 0.2f);
-		}
-	}
+    void TriangulateRiverQuad(
+        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4,
+        float y, float v, bool reversed
+    )
+    {
+        TriangulateRiverQuad(v1, v2, v3, v4, y, y, v, reversed);
+    }
 
-    void TriangulateRoadSegment (
-		Vector3 v1, Vector3 v2, Vector3 v3,
-		Vector3 v4, Vector3 v5, Vector3 v6
-	) {
-		roads.AddQuad(v1, v2, v4, v5);
-		roads.AddQuad(v2, v3, v5, v6);
+    void TriangulateRiverQuad(
+        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4,
+        float y1, float y2, float v, bool reversed
+    )
+    {
+        v1.y = v2.y = y1;
+        v3.y = v4.y = y2;
+        rivers.AddQuad(v1, v2, v3, v4);
+        if (reversed)
+        {
+            rivers.AddQuadUV(1f, 0f, 0.8f - v, 0.6f - v);
+        }
+        else
+        {
+            rivers.AddQuadUV(0f, 1f, v, v + 0.2f);
+        }
+    }
+
+    void TriangulateRoadSegment(
+        Vector3 v1, Vector3 v2, Vector3 v3,
+        Vector3 v4, Vector3 v5, Vector3 v6
+    )
+    {
+        roads.AddQuad(v1, v2, v4, v5);
+        roads.AddQuad(v2, v3, v5, v6);
         roads.AddQuadUV(0f, 1f, 0f, 0f);
-		roads.AddQuadUV(1f, 0f, 0f, 0f);
-	}
-    
+        roads.AddQuadUV(1f, 0f, 0f, 0f);
+    }
+
     //need to know the cell's center, the left and right middle vertices, and the edge vertices
-        void TriangulateRoad (
-		Vector3 center, Vector3 mL, Vector3 mR, EdgeVertices e
-	) {
-        //need one additional vertex to construct the road segment. 
-        //It sits between the left and right middle vertices.
-        Vector3 mC = Vector3.Lerp(mL, mR, 0.5f);
-		TriangulateRoadSegment(mL, mC, mR, e.v2, e.v3, e.v4);
+    void TriangulateRoad(
+    Vector3 center, Vector3 mL, Vector3 mR,
+    EdgeVertices e, bool hasRoadThroughCellEdge
+)
+    {
+        if (hasRoadThroughCellEdge)
+        {
+            //need one additional vertex to construct the road segment. 
+            //It sits between the left and right middle vertices.
+            Vector3 mC = Vector3.Lerp(mL, mR, 0.5f);
+            TriangulateRoadSegment(mL, mC, mR, e.v2, e.v3, e.v4);
 
-        //add the remaining two triangles.
-        roads.AddTriangle(center, mL, mC);
-		roads.AddTriangle(center, mC, mR);
+            //add the remaining two triangles.
+            roads.AddTriangle(center, mL, mC);
+            roads.AddTriangle(center, mC, mR);
 
-        //add the UV coordinates of the triangles
-        //Two of their vertices sit in the middle of the road, 
+            //add the UV coordinates of the triangles
+            //Two of their vertices sit in the middle of the road, 
+            roads.AddTriangleUV(
+                new Vector2(1f, 0f), new Vector2(0f, 0f), new Vector2(1f, 0f)
+            );
+            //the other at its edge.
+            roads.AddTriangleUV(
+                new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(0f, 0f)
+            );
+        }
+        else
+        {
+            TriangulateRoadEdge(center, mL, mR);
+        }
+    }
+
+    void TriangulateRoadEdge(Vector3 center, Vector3 mL, Vector3 mR)
+    {
+        roads.AddTriangle(center, mL, mR);
         roads.AddTriangleUV(
-			new Vector2(1f, 0f), new Vector2(0f, 0f), new Vector2(1f, 0f)
-		);
-        //the other at its edge.
-		roads.AddTriangleUV(
-			new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(0f, 0f)
-		);
-	}
+            new Vector2(1f, 0f), new Vector2(0f, 0f), new Vector2(0f, 0f)
+        );
+    }
 }
