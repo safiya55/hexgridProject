@@ -354,4 +354,12 @@ public class HexCell : MonoBehaviour
 		int difference = elevation - GetNeighbor(direction).elevation;
 		return difference >= 0 ? difference : -difference;
 	}
+
+	// To make sure that roads don't overlap with the water, 
+	//we'll have to push the road center away from the river. To get the direction of the incoming or outgoing river,
+	public HexDirection RiverBeginOrEndDirection {
+		get {
+			return hasIncomingRiver ? incomingRiver : outgoingRiver;
+		}
+	}
 }
