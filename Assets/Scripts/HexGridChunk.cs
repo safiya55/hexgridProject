@@ -116,8 +116,11 @@ public class HexGridChunk : MonoBehaviour
     void TriangulateWithoutRiver (
 		HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
 	) {
+        //created an edge fan
 		TriangulateEdgeFan(center, e, cell.Color);
 		
+        //add an invocation of TriangulateRoad, when there's actually a road. 
+        //The left and right middle vertices can be found by interpolating between the center and the two corner vertices.
 		if (cell.HasRoadThroughEdge(direction)) {
 			TriangulateRoad(
 				center,
