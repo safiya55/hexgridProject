@@ -468,6 +468,19 @@ public class HexGridChunk : MonoBehaviour
 		else if (cell.IncomingRiver == cell.OutgoingRiver.Next()) {
             roadCenter -= HexMetrics.GetFirstCorner(cell.IncomingRiver) * 0.2f;
 		}
+        //When there's a river on both sides of the current direction, 
+        //then we're on the inside of a curve.
+        else if (previousHasRiver && nextHasRiver) {
+            if (!hasRoadThroughEdge) { //prune isolated road parts
+				return;
+			}
+            //have to pull the road center towards the current cell edge, shortening the road by a lot. 
+            //A factor of 0.7 is fine. The cell center has to move as well, with a factor of 0.5.
+            Vector3 offset = HexMetrics.GetSolidEdgeMiddle(direction) *
+				HexMetrics.innerToOuter;
+			roadCenter += offset * 0.7f;
+			center += offset * 0.5f;
+		}
         
 		Vector3 mL = Vector3.Lerp(roadCenter, e.v1, interpolators.x);
 		Vector3 mR = Vector3.Lerp(roadCenter, e.v5, interpolators.y);
