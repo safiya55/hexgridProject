@@ -21,6 +21,8 @@ public class HexCell : MonoBehaviour
 	[SerializeField]
 	HexCell[] neighbors;
 
+	int waterLevel;
+
 
 	void Refresh()
 	{
@@ -295,7 +297,15 @@ public class HexCell : MonoBehaviour
 		get
 		{
 			return// to retrieve the vertical position of its river's surface.
-				(elevation + HexMetrics.riverSurfaceElevationOffset) *
+				(elevation + HexMetrics.waterElevationOffset) *
+				HexMetrics.elevationStep;
+		}
+	}
+
+	public float WaterSurfaceY {
+		get {
+			return
+				(waterLevel + HexMetrics.waterElevationOffset) *
 				HexMetrics.elevationStep;
 		}
 	}
@@ -360,6 +370,25 @@ public class HexCell : MonoBehaviour
 	public HexDirection RiverBeginOrEndDirection {
 		get {
 			return hasIncomingRiver ? incomingRiver : outgoingRiver;
+		}
+	}
+
+		public int WaterLevel {
+		get {
+			return waterLevel;
+		}
+		set {
+			if (waterLevel == value) {
+				return;
+			}
+			waterLevel = value;
+			Refresh();
+		}
+	}
+	
+	public bool IsUnderwater {//check if A cell is submerged if its water level is higher than its elevation
+		get {
+			return waterLevel > elevation;
 		}
 	}
 }
