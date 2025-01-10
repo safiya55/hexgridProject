@@ -119,7 +119,22 @@ public class HexGridChunk : MonoBehaviour
                 TriangulateConnection(direction, cell, e);
             }
         }
+
+        if (cell.IsUnderwater) {
+			TriangulateWater(direction, cell, center);
+		}
     }
+
+    void TriangulateWater (
+		HexDirection direction, HexCell cell, Vector3 center
+	) {//LIKe river, the height of the water surface doesn't vary between cells with the same water level
+    //don't need complex edges, just a simple triangle
+        center.y = cell.WaterSurfaceY;
+		Vector3 c1 = center + HexMetrics.GetFirstSolidCorner(direction);
+		Vector3 c2 = center + HexMetrics.GetSecondSolidCorner(direction);
+
+		water.AddTriangle(center, c1, c2);
+	}
 
     void TriangulateWithoutRiver(
         HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
