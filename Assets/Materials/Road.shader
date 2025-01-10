@@ -18,7 +18,7 @@ Shader "Custom/Road"
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf Standard fullforwardshadows
+        #pragma surface surf Standard fullforwardshadows decal:blend
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
@@ -44,12 +44,13 @@ Shader "Custom/Road"
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             // Albedo comes from a texture tinted by color
-            fixed4 c = fixed4(IN.uv_MainTex, 1, 1);
-            o.Albedo = c.rgb;
+            fixed4 c = _Color;
+            float blend = IN.uv_MainTex.x;
+            blend = smoothstep(0.4, 0.7, blend);
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
-            o.Alpha = c.a;
+            o.Alpha = blend;
         }
         ENDCG
     }
