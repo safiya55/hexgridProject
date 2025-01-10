@@ -481,6 +481,28 @@ public class HexGridChunk : MonoBehaviour
 			roadCenter += offset * 0.7f;
 			center += offset * 0.5f;
 		}
+        else { //checking scenario for outside of a curving river
+			HexDirection middle; //get middle direction
+			if (previousHasRiver) {
+				middle = direction.Next();
+			}
+			else if (nextHasRiver) {
+				middle = direction.Previous();
+			}
+			else {
+				middle = direction;
+			}
+            if (//prune roads on this side of the river as well. 
+            //check all three directions for a road, relative to the middle. If there is no road, abort.
+				!cell.HasRoadThroughEdge(middle) &&
+				!cell.HasRoadThroughEdge(middle.Previous()) &&
+				!cell.HasRoadThroughEdge(middle.Next())
+			) {
+				return;
+			}
+            //move the road center towards that edge by a factor of 0.25.
+			roadCenter += HexMetrics.GetSolidEdgeMiddle(middle) * 0.25f;
+		}
         
 		Vector3 mL = Vector3.Lerp(roadCenter, e.v1, interpolators.x);
 		Vector3 mR = Vector3.Lerp(roadCenter, e.v5, interpolators.y);
