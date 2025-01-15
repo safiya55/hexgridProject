@@ -95,8 +95,10 @@ public class HexCell : MonoBehaviour
 
 			// check for roads in all directions. 
 			//If an elevation difference has become too great, an existing road has to be removed.
-			for (int i = 0; i < roads.Length; i++) {
-				if (roads[i] && GetElevationDifference((HexDirection)i) > 1) {
+			for (int i = 0; i < roads.Length; i++)
+			{
+				if (roads[i] && GetElevationDifference((HexDirection)i) > 1)
+				{
 					SetRoad(i, false);
 				}
 			}
@@ -277,7 +279,7 @@ public class HexCell : MonoBehaviour
 		neighbor.RemoveIncomingRiver();
 		neighbor.hasIncomingRiver = true;
 		neighbor.incomingRiver = direction.Opposite();
-		
+
 		SetRoad((int)direction, false);
 	}
 
@@ -297,7 +299,16 @@ public class HexCell : MonoBehaviour
 		get
 		{
 			return// to retrieve the vertical position of its river's surface.
-				(elevation + HexMetrics.riverSurfaceElevationOffset) *
+				(elevation + HexMetrics.waterElevationOffset) *
+				HexMetrics.elevationStep;
+		}
+	}
+
+	//submerged cell property
+	public float WaterSurfaceY {
+		get {
+			return
+				(waterLevel + HexMetrics.waterElevationOffset) *
 				HexMetrics.elevationStep;
 		}
 	}
@@ -325,7 +336,7 @@ public class HexCell : MonoBehaviour
 
 	public void AddRoad(HexDirection direction)
 	{
-		if (!roads[(int)direction] && !HasRiverThroughEdge(direction)  &&
+		if (!roads[(int)direction] && !HasRiverThroughEdge(direction) &&
 			GetElevationDifference(direction) <= 1)
 		{
 			SetRoad((int)direction, true);
@@ -346,38 +357,52 @@ public class HexCell : MonoBehaviour
 	void SetRoad(int index, bool state)
 	{
 		roads[index] = state; //remove road
-						  //disable the corresponding roads of the cell's neighbors
+							  //disable the corresponding roads of the cell's neighbors
 		neighbors[index].roads[(int)((HexDirection)index).Opposite()] = state;
 		neighbors[index].RefreshSelfOnly(); //refresh cells neighbor
 		RefreshSelfOnly(); //cell refresh self
 	}
 
-	public int GetElevationDifference (HexDirection direction) {
+	public int GetElevationDifference(HexDirection direction)
+	{
 		int difference = elevation - GetNeighbor(direction).elevation;
 		return difference >= 0 ? difference : -difference;
 	}
 
 	// To make sure that roads don't overlap with the water, 
 	//we'll have to push the road center away from the river. To get the direction of the incoming or outgoing river,
-	public HexDirection RiverBeginOrEndDirection {
-		get {
+	public HexDirection RiverBeginOrEndDirection
+	{
+		get
+		{
 			return hasIncomingRiver ? incomingRiver : outgoingRiver;
 		}
 	}
 
 	//	set up waterlevel
-	public int WaterLevel {
-		get {
+	public int WaterLevel
+	{
+		get
+		{
 			return waterLevel;
 		}
-		set {
-			if (waterLevel == value) {
+		set
+		{
+			if (waterLevel == value)
+			{
 				return;
 			}
 			waterLevel = value;
 			Refresh();
 		}
 	}
-	
-	
+
+	//check whether cell is underwater
+	public bool IsUnderwater
+	{
+		get
+		{
+			return waterLevel > elevation;
+		}
+	}
 }
