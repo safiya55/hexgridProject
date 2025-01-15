@@ -21,6 +21,8 @@ public class HexCell : MonoBehaviour
 	[SerializeField]
 	HexCell[] neighbors;
 
+	int waterLevel;
+
 
 	void Refresh()
 	{
@@ -362,4 +364,20 @@ public class HexCell : MonoBehaviour
 			return hasIncomingRiver ? incomingRiver : outgoingRiver;
 		}
 	}
+
+	//	set up waterlevel
+	public int WaterLevel {
+		get {
+			return waterLevel;
+		}
+		set {
+			if (waterLevel == value) {
+				return;
+			}
+			waterLevel = value;
+			Refresh();
+		}
+	}
+	
+	
 }
