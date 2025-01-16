@@ -200,17 +200,25 @@ public class HexGridChunk : MonoBehaviour
             center2 + HexMetrics.GetSecondSolidCorner(direction.Opposite()),
             center2 + HexMetrics.GetFirstSolidCorner(direction.Opposite())
         );
-        waterShore.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
-        waterShore.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
-        waterShore.AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
-        waterShore.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
 
-        //info about the shore in the V coordinate
-        //0 on the water side and to 1 on the land side
-        waterShore.AddQuadUV(0f, 0f, 0f, 1f);
-        waterShore.AddQuadUV(0f, 0f, 0f, 1f);
-        waterShore.AddQuadUV(0f, 0f, 0f, 1f);
-        waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+        if (cell.HasRiverThroughEdge(direction))
+        {
+            TriangulateEstuary(e1, e2);
+        }
+        else
+        {
+            waterShore.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
+            waterShore.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
+            waterShore.AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
+            waterShore.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
+
+            //info about the shore in the V coordinate
+            //0 on the water side and to 1 on the land side
+            waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+            waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+            waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+            waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+        }
 
         HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
         if (nextNeighbor != null)
@@ -226,6 +234,21 @@ public class HexGridChunk : MonoBehaviour
                 new Vector2(0f, nextNeighbor.IsUnderwater ? 0f : 1f)
             );
         }
+    }
+
+    void TriangulateEstuary(EdgeVertices e1, EdgeVertices e2)
+    {
+        //Make trapezoid shape to blend regions
+        waterShore.AddTriangle(e2.v1, e1.v2, e1.v1);
+		waterShore.AddTriangle(e2.v5, e1.v5, e1.v4);
+
+        //use two water shore triangles at the sides.
+		waterShore.AddTriangleUV(
+			new Vector2(0f, 1f), new Vector2(0f, 0f), new Vector2(0f, 0f)
+		);
+		waterShore.AddTriangleUV(
+			new Vector2(0f, 1f), new Vector2(0f, 0f), new Vector2(0f, 0f)
+		);
     }
 
     void TriangulateWithoutRiver(
@@ -418,25 +441,27 @@ public class HexGridChunk : MonoBehaviour
                         cell.HasIncomingRiver && cell.IncomingRiver == direction
                     );
                 }//when the neighbor ends up underwater and we have a waterfall.
-				else if (cell.Elevation > neighbor.WaterLevel) {
-					TriangulateWaterfallInWater(
-						e1.v2, e1.v4, e2.v2, e2.v4,
-						cell.RiverSurfaceY, neighbor.RiverSurfaceY,
-						neighbor.WaterSurfaceY
-					);
-				}
-                
+                else if (cell.Elevation > neighbor.WaterLevel)
+                {
+                    TriangulateWaterfallInWater(
+                        e1.v2, e1.v4, e2.v2, e2.v4,
+                        cell.RiverSurfaceY, neighbor.RiverSurfaceY,
+                        neighbor.WaterSurfaceY
+                    );
+                }
+
             } //waterfalls in the opposite direction, when the current cell is underwater and the neighbor isn't.
             else if (
-				!neighbor.IsUnderwater &&
-				neighbor.Elevation > cell.WaterLevel
-			) {
-				TriangulateWaterfallInWater(
-					e2.v4, e2.v2, e1.v4, e1.v2,
-					neighbor.RiverSurfaceY, cell.RiverSurfaceY,
-					cell.WaterSurfaceY
-				);
-			}
+                !neighbor.IsUnderwater &&
+                neighbor.Elevation > cell.WaterLevel
+            )
+            {
+                TriangulateWaterfallInWater(
+                    e2.v4, e2.v2, e1.v4, e1.v2,
+                    neighbor.RiverSurfaceY, cell.RiverSurfaceY,
+                    cell.WaterSurfaceY
+                );
+            }
         }
 
         //decide whether to insert terraces or not.
@@ -1034,14 +1059,14 @@ public class HexGridChunk : MonoBehaviour
         v3.y = v4.y = y2;
         //PREVENT end result still not match the original waterfall.
         v1 = HexMetrics.Perturb(v1);
-		v2 = HexMetrics.Perturb(v2);
-		v3 = HexMetrics.Perturb(v3);
-		v4 = HexMetrics.Perturb(v4);
+        v2 = HexMetrics.Perturb(v2);
+        v3 = HexMetrics.Perturb(v3);
+        v4 = HexMetrics.Perturb(v4);
         //o move the bottom vertices upward, divide their distance below the water surface by the height 
         //of the waterfall. That gives us the interpolator value.
         float t = (waterY - y2) / (y1 - y2);
-		v3 = Vector3.Lerp(v3, v1, t);
-		v4 = Vector3.Lerp(v4, v2, t);
+        v3 = Vector3.Lerp(v3, v1, t);
+        v4 = Vector3.Lerp(v4, v2, t);
         rivers.AddQuadUnperturbed(v1, v2, v3, v4);
         rivers.AddQuadUV(0f, 1f, 0.8f, 1f);
     }
