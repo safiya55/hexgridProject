@@ -24,7 +24,12 @@ Shader "Custom/Water" {
 		fixed4 _Color;
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-			fixed4 c = _Color;
+			float2 uv = IN.worldPos.xz;
+			uv.y += _Time.y;
+			float4 noise = tex2D(_MainTex, uv * 0.025);
+			float waves = noise.z;
+
+			fixed4 c = saturate(_Color + waves);
 			o.Albedo = c.rgb;
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
