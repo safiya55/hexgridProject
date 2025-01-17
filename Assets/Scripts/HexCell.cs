@@ -76,22 +76,8 @@ public class HexCell : MonoBehaviour
 			uiPosition.z = -position.y;
 			uiRect.localPosition = uiPosition;
 
-
 			//Preventing Uphill Rivers and remove them
-			if (
-				hasOutgoingRiver &&
-				elevation < GetNeighbor(outgoingRiver).elevation
-			)
-			{
-				RemoveOutgoingRiver();
-			}
-			if (
-				hasIncomingRiver &&
-				elevation > GetNeighbor(incomingRiver).elevation
-			)
-			{
-				RemoveIncomingRiver();
-			}
+			ValidateRivers();
 
 			// check for roads in all directions. 
 			//If an elevation difference has become too great, an existing road has to be removed.
@@ -257,7 +243,7 @@ public class HexCell : MonoBehaviour
 		//Also, rivers cannot flow uphill. 
 		//So we'll have to abort if the neighbor has a higher elevation.
 		HexCell neighbor = GetNeighbor(direction);
-		if (!neighbor || elevation < neighbor.elevation)
+		if (!IsValidRiverDestination(neighbor)) {
 		{
 			return;
 		}
@@ -393,6 +379,7 @@ public class HexCell : MonoBehaviour
 				return;
 			}
 			waterLevel = value;
+			ValidateRivers();
 			Refresh();
 		}
 	}
@@ -403,6 +390,27 @@ public class HexCell : MonoBehaviour
 		get
 		{
 			return waterLevel > elevation;
+		}
+	}
+
+	bool IsValidRiverDestination (HexCell neighbor) {
+		return neighbor && (
+			elevation >= neighbor.elevation || waterLevel == neighbor.elevation
+		);
+	}
+
+	void ValidateRivers () {
+		if (
+			hasOutgoingRiver &&
+			!IsValidRiverDestination(GetNeighbor(outgoingRiver))
+		) {
+			RemoveOutgoingRiver();
+		}
+		if (
+			hasIncomingRiver &&
+			!GetNeighbor(incomingRiver).IsValidRiverDestination(this)
+		) {
+			RemoveIncomingRiver();
 		}
 	}
 }
