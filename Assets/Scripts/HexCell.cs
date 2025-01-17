@@ -243,7 +243,7 @@ public class HexCell : MonoBehaviour
 		//Also, rivers cannot flow uphill. 
 		//So we'll have to abort if the neighbor has a higher elevation.
 		HexCell neighbor = GetNeighbor(direction);
-		if (!IsValidRiverDestination(neighbor)) {
+		if (!IsValidRiverDestination(neighbor))
 		{
 			return;
 		}
