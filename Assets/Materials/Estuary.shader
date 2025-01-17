@@ -1,4 +1,4 @@
-Shader "Custom/WaterShore" {
+Shader "Custom/Estuary" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
@@ -19,6 +19,7 @@ Shader "Custom/WaterShore" {
 
 		struct Input {
 			float2 uv_MainTex;
+			float2 uv2_MainTex;
 			float3 worldPos;
 		};
 
@@ -32,8 +33,10 @@ Shader "Custom/WaterShore" {
 			float waves = Waves(IN.worldPos.xz, _MainTex);
 			waves *= 1 - shore;
 
+			float river = River(IN.uv2_MainTex, _MainTex);
 
-			fixed4 c = fixed4(IN.uv_MainTex, 1, 1);
+
+			fixed4 c = saturate(_Color + river);
 			o.Albedo = c.rgb;
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
