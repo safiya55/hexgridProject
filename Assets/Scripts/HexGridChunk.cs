@@ -5,7 +5,7 @@ public class HexGridChunk : MonoBehaviour
 {
     HexCell[] cells;
 
-    public HexMesh terrain, rivers, roads;
+    public HexMesh terrain, rivers, roads, water, waterShore, estuaries;
     Canvas gridCanvas;
 
     void Awake()
@@ -51,6 +51,9 @@ public class HexGridChunk : MonoBehaviour
         terrain.Clear();
         rivers.Clear();
         roads.Clear();
+        water.Clear();
+        waterShore.Clear();
+        estuaries.Clear();
         for (int i = 0; i < cells.Length; i++)
         {
             Triangulate(cells[i]);
@@ -58,6 +61,9 @@ public class HexGridChunk : MonoBehaviour
         terrain.Apply();
         rivers.Apply();
         roads.Apply();
+        water.Apply();
+        waterShore.Apply();
+        estuaries.Apply();
     }
 
     void Triangulate(HexCell cell)
@@ -115,6 +121,187 @@ public class HexGridChunk : MonoBehaviour
             {
                 TriangulateConnection(direction, cell, e);
             }
+
+            if (cell.IsUnderwater) //water forms a second layer,
+            {
+                TriangulateWater(direction, cell, center);
+            }
+        }
+    }
+
+    void TriangulateWater(
+        HexDirection direction, HexCell cell, Vector3 center
+    )
+    {
+
+        center.y = cell.WaterSurfaceY;
+
+        HexCell neighbor = cell.GetNeighbor(direction);
+        if (neighbor != null && !neighbor.IsUnderwater)
+        {
+            TriangulateWaterShore(direction, cell, neighbor, center);
+        }
+        else
+        {
+            TriangulateOpenWater(direction, cell, neighbor, center);
+        }
+    }
+
+    void TriangulateOpenWater(
+        HexDirection direction, HexCell cell, HexCell neighbor, Vector3 center
+    )
+    {
+        Vector3 c1 = center + HexMetrics.GetFirstWaterCorner(direction);
+        Vector3 c2 = center + HexMetrics.GetSecondWaterCorner(direction);
+
+        water.AddTriangle(center, c1, c2);
+
+        //connect adjacent watercells with a single quad
+        if (direction <= HexDirection.SE && neighbor != null)
+        {
+
+            Vector3 bridge = HexMetrics.GetWaterBridge(direction);
+            Vector3 e1 = c1 + bridge;
+            Vector3 e2 = c2 + bridge;
+
+            water.AddQuad(c1, c2, e1, e2);
+
+            // fill the corners with a single triangle.
+            if (direction <= HexDirection.E)
+            {
+                HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
+                if (nextNeighbor == null || !nextNeighbor.IsUnderwater)
+                {
+                    return;
+                }
+                water.AddTriangle(
+                    c2, e2, c2 + HexMetrics.GetWaterBridge(direction.Next())
+                );
+            }
+        }
+    }
+
+    void TriangulateWaterShore(
+        HexDirection direction, HexCell cell, HexCell neighbor, Vector3 center
+    )
+    {
+        //perturb the water triangles along the shore as well. 
+        //So we need edge vertices and a triangle fan.
+        EdgeVertices e1 = new EdgeVertices(
+            center + HexMetrics.GetFirstWaterCorner(direction),
+            center + HexMetrics.GetSecondWaterCorner(direction)
+        );
+        water.AddTriangle(center, e1.v1, e1.v2);
+        water.AddTriangle(center, e1.v2, e1.v3);
+        water.AddTriangle(center, e1.v3, e1.v4);
+        water.AddTriangle(center, e1.v4, e1.v5);
+
+        Vector3 center2 = neighbor.Position;
+        center2.y = center.y;
+        EdgeVertices e2 = new EdgeVertices(
+            center2 + HexMetrics.GetSecondSolidCorner(direction.Opposite()),
+            center2 + HexMetrics.GetFirstSolidCorner(direction.Opposite())
+        );
+
+        if (cell.HasRiverThroughEdge(direction))
+        {
+            TriangulateEstuary(e1, e2, cell.IncomingRiver == direction);
+        }
+        else
+        {
+            waterShore.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
+            waterShore.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
+            waterShore.AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
+            waterShore.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
+
+            //info about the shore in the V coordinate
+            //0 on the water side and to 1 on the land side
+            waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+            waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+            waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+            waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+        }
+
+        HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
+        if (nextNeighbor != null)
+        {
+            Vector3 v3 = nextNeighbor.Position + (nextNeighbor.IsUnderwater ?
+                HexMetrics.GetFirstWaterCorner(direction.Previous()) :
+                HexMetrics.GetFirstSolidCorner(direction.Previous()));
+            v3.y = center.y;
+            waterShore.AddTriangle(e1.v5, e2.v5, v3);
+            waterShore.AddTriangleUV(
+                new Vector2(0f, 0f),
+                new Vector2(0f, 1f),
+                new Vector2(0f, nextNeighbor.IsUnderwater ? 0f : 1f)
+            );
+        }
+    }
+
+    void TriangulateEstuary(EdgeVertices e1, EdgeVertices e2, bool incomingRiver)
+    {
+        //Make trapezoid shape to blend regions
+        waterShore.AddTriangle(e2.v1, e1.v2, e1.v1);
+        waterShore.AddTriangle(e2.v5, e1.v5, e1.v4);
+
+        //use two water shore triangles at the sides.
+        waterShore.AddTriangleUV(
+            new Vector2(0f, 1f), new Vector2(0f, 0f), new Vector2(0f, 0f)
+        );
+        waterShore.AddTriangleUV(
+            new Vector2(0f, 1f), new Vector2(0f, 0f), new Vector2(0f, 0f)
+        );
+
+        estuaries.AddQuad(e2.v1, e1.v2, e2.v2, e1.v3);
+        estuaries.AddTriangle(e1.v3, e2.v2, e2.v4);
+        estuaries.AddQuad(e1.v3, e1.v4, e2.v4, e2.v5);
+
+        estuaries.AddQuadUV(
+            new Vector2(0f, 1f), new Vector2(0f, 0f),
+            new Vector2(1f, 1f), new Vector2(0f, 0f)
+        );
+        estuaries.AddTriangleUV(
+            new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(1f, 1f)
+        );
+
+        estuaries.AddQuadUV(
+            new Vector2(0f, 0f), new Vector2(0f, 0f),
+            new Vector2(1f, 1f), new Vector2(0f, 1f)
+        );
+        
+        if (incomingRiver)
+        {
+            estuaries.AddQuadUV2(
+                new Vector2(1.5f, 1f), new Vector2(0.7f, 1.15f),
+                new Vector2(1f, 0.8f), new Vector2(0.5f, 1.1f)
+            );
+
+            estuaries.AddTriangleUV2(
+                new Vector2(0.5f, 1.1f),
+                new Vector2(1f, 0.8f),
+                new Vector2(0f, 0.8f)
+            );
+
+            estuaries.AddQuadUV2(
+                new Vector2(0.5f, 1.1f), new Vector2(0.3f, 1.15f),
+                new Vector2(0f, 0.8f), new Vector2(-0.5f, 1f)
+            );
+        }
+        else
+        {
+            estuaries.AddQuadUV2(
+                new Vector2(-0.5f, -0.2f), new Vector2(0.3f, -0.35f),
+                new Vector2(0f, 0f), new Vector2(0.5f, -0.3f)
+            );
+            estuaries.AddTriangleUV2(
+                new Vector2(0.5f, -0.3f),
+                new Vector2(0f, 0f),
+                new Vector2(1f, 0f)
+            );
+            estuaries.AddQuadUV2(
+                new Vector2(0.5f, -0.3f), new Vector2(0.7f, -0.35f),
+                new Vector2(1f, 0f), new Vector2(1.5f, -0.2f)
+            );
         }
     }
 
@@ -157,31 +344,35 @@ public class HexGridChunk : MonoBehaviour
         TriangulateEdgeStrip(m, cell.Color, e, cell.Color); // Riverbanks
         TriangulateEdgeFan(center, m, cell.Color);         // Terminating fan
 
-        // check whether we have an incoming river, to determine the flow direction. 
-        //Then we can insert another river quad between the middle and edge.
-        bool reversed = cell.HasIncomingRiver;
-        TriangulateRiverQuad(
-            m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed
-        );
+        // only add river segments when the current cell in not underwater.
+        if (!cell.IsUnderwater)
+        {
+            // check whether we have an incoming river, to determine the flow direction. 
+            //Then we can insert another river quad between the middle and edge.
+            bool reversed = cell.HasIncomingRiver;
+            TriangulateRiverQuad(
+                m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed
+            );
 
-        //The part between the center and middle is a triangle, so we cannot use TriangulateRiverQuad. 
-        //The only significant difference is that the center vertex sits in the middle of the river. 
-        //So its U coordinate is always ½.
-        center.y = m.v2.y = m.v4.y = cell.RiverSurfaceY;
-        rivers.AddTriangle(center, m.v2, m.v4);
-        if (reversed)
-        {
-            rivers.AddTriangleUV(
-                new Vector2(0.5f, 0.4f),
-                new Vector2(1f, 0.2f), new Vector2(0f, 0.2f)
-            );
-        }
-        else
-        {
-            rivers.AddTriangleUV(
-                new Vector2(0.5f, 0.4f),
-                new Vector2(0f, 0.6f), new Vector2(1f, 0.6f)
-            );
+            //The part between the center and middle is a triangle, so we cannot use TriangulateRiverQuad. 
+            //The only significant difference is that the center vertex sits in the middle of the river. 
+            //So its U coordinate is always ½.
+            center.y = m.v2.y = m.v4.y = cell.RiverSurfaceY;
+            rivers.AddTriangle(center, m.v2, m.v4);
+            if (reversed)
+            {
+                rivers.AddTriangleUV(
+                    new Vector2(0.5f, 0.4f),
+                    new Vector2(1f, 0.2f), new Vector2(0f, 0.2f)
+                );
+            }
+            else
+            {
+                rivers.AddTriangleUV(
+                    new Vector2(0.5f, 0.4f),
+                    new Vector2(0f, 0.6f), new Vector2(1f, 0.6f)
+                );
+            }
         }
     }
 
@@ -258,11 +449,14 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddTriangle(centerR, m.v4, m.v5);
         terrain.AddTriangleColor(cell.Color, cell.Color, cell.Color);
 
-        //reverse direction when dealing with incoming river
-        bool reversed = cell.IncomingRiver == direction;
-        TriangulateRiverQuad(centerL, centerR, m.v2, m.v4, cell.RiverSurfaceY, 0.4f, reversed);
-        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed);
-
+        //show river if not underwater
+        if (!cell.IsUnderwater)
+        {
+            //reverse direction when dealing with incoming river
+            bool reversed = cell.IncomingRiver == direction;
+            TriangulateRiverQuad(centerL, centerR, m.v2, m.v4, cell.RiverSurfaceY, 0.4f, reversed);
+            TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed);
+        }
     }
 
     void TriangulateConnection
@@ -289,11 +483,39 @@ public class HexGridChunk : MonoBehaviour
         if (cell.HasRiverThroughEdge(direction))
         {
             e2.v3.y = neighbor.StreamBedY;
-            TriangulateRiverQuad(
-                e1.v2, e1.v4, e2.v2, e2.v4,
-                cell.RiverSurfaceY, neighbor.RiverSurfaceY, 0.8f,
-                cell.HasIncomingRiver && cell.IncomingRiver == direction
-            );
+            //adding the river segment when neither the 
+            //current nor the neighbor cell is underwater.
+            if (!cell.IsUnderwater)
+            {
+                if (!neighbor.IsUnderwater)
+                {
+                    TriangulateRiverQuad(
+                        e1.v2, e1.v4, e2.v2, e2.v4,
+                        cell.RiverSurfaceY, neighbor.RiverSurfaceY, 0.8f,
+                        cell.HasIncomingRiver && cell.IncomingRiver == direction
+                    );
+                }//when the neighbor ends up underwater and we have a waterfall.
+                else if (cell.Elevation > neighbor.WaterLevel)
+                {
+                    TriangulateWaterfallInWater(
+                        e1.v2, e1.v4, e2.v2, e2.v4,
+                        cell.RiverSurfaceY, neighbor.RiverSurfaceY,
+                        neighbor.WaterSurfaceY
+                    );
+                }
+
+            } //waterfalls in the opposite direction, when the current cell is underwater and the neighbor isn't.
+            else if (
+                !neighbor.IsUnderwater &&
+                neighbor.Elevation > cell.WaterLevel
+            )
+            {
+                TriangulateWaterfallInWater(
+                    e2.v4, e2.v2, e1.v4, e1.v2,
+                    neighbor.RiverSurfaceY, cell.RiverSurfaceY,
+                    cell.WaterSurfaceY
+                );
+            }
         }
 
         //decide whether to insert terraces or not.
@@ -305,8 +527,8 @@ public class HexGridChunk : MonoBehaviour
         {
             //take care of the flats and cliffs.
             //TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color);
-             TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color,
-             	cell.HasRoadThroughEdge(direction));
+            TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color,
+                cell.HasRoadThroughEdge(direction));
         }
 
         HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
@@ -381,9 +603,10 @@ public class HexGridChunk : MonoBehaviour
    )
     {
         //to take care of roads so that road and rivers can coexiswt
-        if (cell.HasRoads) {
-			TriangulateRoadAdjacentToRiver(direction, cell, center, e);
-		}
+        if (cell.HasRoads)
+        {
+            TriangulateRoadAdjacentToRiver(direction, cell, center, e);
+        }
 
         if (cell.HasRiverThroughEdge(direction.Next()))
         {
@@ -417,105 +640,123 @@ public class HexGridChunk : MonoBehaviour
         TriangulateEdgeFan(center, m, cell.Color);
     }
 
-    void TriangulateRoadAdjacentToRiver (
-		HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
-	) {
+    void TriangulateRoadAdjacentToRiver(
+        HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
+    )
+    {
         //Check whether a road goes through the current edge, 
         //get the interpolators, create the middle vertices, and invoke TriangulateRoad. 
         bool hasRoadThroughEdge = cell.HasRoadThroughEdge(direction);
         bool previousHasRiver = cell.HasRiverThroughEdge(direction.Previous());
-		bool nextHasRiver = cell.HasRiverThroughEdge(direction.Next());
-		Vector2 interpolators = GetRoadInterpolators(direction, cell);
-		Vector3 roadCenter = center;
+        bool nextHasRiver = cell.HasRiverThroughEdge(direction.Next());
+        Vector2 interpolators = GetRoadInterpolators(direction, cell);
+        Vector3 roadCenter = center;
 
         //to push the road center in the opposite direction. 
         //Moving a third of the way towards the middle edge in that direction does the trick.
-        if (cell.HasRiverBeginOrEnd) {
-			roadCenter += HexMetrics.GetSolidEdgeMiddle(
-				cell.RiverBeginOrEndDirection.Opposite()
-			) * (1f / 3f);
-		} //If the cell doesn't have the beginning or end of a river, 
+        if (cell.HasRiverBeginOrEnd)
+        {
+            roadCenter += HexMetrics.GetSolidEdgeMiddle(
+                cell.RiverBeginOrEndDirection.Opposite()
+            ) * (1f / 3f);
+        } //If the cell doesn't have the beginning or end of a river, 
         //we can check whether the incoming and outgoing rivers go in opposite directions. 
-        else if (cell.IncomingRiver == cell.OutgoingRiver.Opposite()) {
+        else if (cell.IncomingRiver == cell.OutgoingRiver.Opposite())
+        {
             Vector3 corner;
             //If so, we have a straight river.
-            if (previousHasRiver) {
+            if (previousHasRiver)
+            {
                 if (
-					!hasRoadThroughEdge &&
-					!cell.HasRoadThroughEdge(direction.Next())
-				) {
-					return;
-				}
+                    !hasRoadThroughEdge &&
+                    !cell.HasRoadThroughEdge(direction.Next())
+                )
+                {
+                    return;
+                }
                 if (
-					!hasRoadThroughEdge &&
-					!cell.HasRoadThroughEdge(direction.Previous())
-				) {
-					return;
-				}
+                    !hasRoadThroughEdge &&
+                    !cell.HasRoadThroughEdge(direction.Previous())
+                )
+                {
+                    return;
+                }
                 corner = HexMetrics.GetSecondSolidCorner(direction);
-			}
-			else {
+            }
+            else
+            {
                 corner = HexMetrics.GetFirstSolidCorner(direction);
-			}
+            }
 
             roadCenter += corner * 0.5f;
-			center += corner * 0.25f;
-		} // check for zigzag
+            center += corner * 0.25f;
+        } // check for zigzag
         //compare the directions of the incoming and outgoing rivers. If they're adjacent, then we have a zigzag
-        else if (cell.IncomingRiver == cell.OutgoingRiver.Previous()) { //based on flow direction
+        else if (cell.IncomingRiver == cell.OutgoingRiver.Previous())
+        { //based on flow direction
             roadCenter -= HexMetrics.GetSecondCorner(cell.IncomingRiver) * 0.2f;
-		}
-		else if (cell.IncomingRiver == cell.OutgoingRiver.Next()) {
+        }
+        else if (cell.IncomingRiver == cell.OutgoingRiver.Next())
+        {
             roadCenter -= HexMetrics.GetFirstCorner(cell.IncomingRiver) * 0.2f;
-		}
+        }
         //When there's a river on both sides of the current direction, 
         //then we're on the inside of a curve.
-        else if (previousHasRiver && nextHasRiver) {
-            if (!hasRoadThroughEdge) { //prune isolated road parts
-				return;
-			}
+        else if (previousHasRiver && nextHasRiver)
+        {
+            if (!hasRoadThroughEdge)
+            { //prune isolated road parts
+                return;
+            }
             //have to pull the road center towards the current cell edge, shortening the road by a lot. 
             //A factor of 0.7 is fine. The cell center has to move as well, with a factor of 0.5.
             Vector3 offset = HexMetrics.GetSolidEdgeMiddle(direction) *
-				HexMetrics.innerToOuter;
-			roadCenter += offset * 0.7f;
-			center += offset * 0.5f;
-		}
-        else { //checking scenario for outside of a curving river
-			HexDirection middle; //get middle direction
-			if (previousHasRiver) {
-				middle = direction.Next();
-			}
-			else if (nextHasRiver) {
-				middle = direction.Previous();
-			}
-			else {
-				middle = direction;
-			}
+                HexMetrics.innerToOuter;
+            roadCenter += offset * 0.7f;
+            center += offset * 0.5f;
+        }
+        else
+        { //checking scenario for outside of a curving river
+            HexDirection middle; //get middle direction
+            if (previousHasRiver)
+            {
+                middle = direction.Next();
+            }
+            else if (nextHasRiver)
+            {
+                middle = direction.Previous();
+            }
+            else
+            {
+                middle = direction;
+            }
             if (//prune roads on this side of the river as well. 
-            //check all three directions for a road, relative to the middle. If there is no road, abort.
-				!cell.HasRoadThroughEdge(middle) &&
-				!cell.HasRoadThroughEdge(middle.Previous()) &&
-				!cell.HasRoadThroughEdge(middle.Next())
-			) {
-				return;
-			}
+                //check all three directions for a road, relative to the middle. If there is no road, abort.
+                !cell.HasRoadThroughEdge(middle) &&
+                !cell.HasRoadThroughEdge(middle.Previous()) &&
+                !cell.HasRoadThroughEdge(middle.Next())
+            )
+            {
+                return;
+            }
             //move the road center towards that edge by a factor of 0.25.
-			roadCenter += HexMetrics.GetSolidEdgeMiddle(middle) * 0.25f;
-		}
-        
-		Vector3 mL = Vector3.Lerp(roadCenter, e.v1, interpolators.x);
-		Vector3 mR = Vector3.Lerp(roadCenter, e.v5, interpolators.y);
-		TriangulateRoad(roadCenter, mL, mR, e, hasRoadThroughEdge);
+            roadCenter += HexMetrics.GetSolidEdgeMiddle(middle) * 0.25f;
+        }
 
-        
-        if (cell.HasRiverThroughEdge(direction.Previous())) {
-			TriangulateRoadEdge(roadCenter, center, mL);
-		}
-		if (nextHasRiver) {
-			TriangulateRoadEdge(roadCenter, mR, center);
-		}
-	}
+        Vector3 mL = Vector3.Lerp(roadCenter, e.v1, interpolators.x);
+        Vector3 mR = Vector3.Lerp(roadCenter, e.v5, interpolators.y);
+        TriangulateRoad(roadCenter, mL, mR, e, hasRoadThroughEdge);
+
+
+        if (cell.HasRiverThroughEdge(direction.Previous()))
+        {
+            TriangulateRoadEdge(roadCenter, center, mL);
+        }
+        if (nextHasRiver)
+        {
+            TriangulateRoadEdge(roadCenter, mR, center);
+        }
+    }
 
     void TriangulateCorner(
         Vector3 bottom, HexCell bottomCell,
@@ -844,19 +1085,43 @@ public class HexGridChunk : MonoBehaviour
         );
     }
 
-    Vector2 GetRoadInterpolators (HexDirection direction, HexCell cell) {
-		Vector2 interpolators;
+    Vector2 GetRoadInterpolators(HexDirection direction, HexCell cell)
+    {
+        Vector2 interpolators;
         //If there's a road going in the current direction, put the points halfway.
-        if (cell.HasRoadThroughEdge(direction)) {
-			interpolators.x = interpolators.y = 0.5f;
-		}
-        else { //Otherwise, it depends. For the left point, we can use ½ when there's a road going through the previous direction. 
-        //If not, we should use ¼. The same goes for the right point, but with the next direction.
-			interpolators.x =
-				cell.HasRoadThroughEdge(direction.Previous()) ? 0.5f : 0.25f;
-			interpolators.y =
-				cell.HasRoadThroughEdge(direction.Next()) ? 0.5f : 0.25f;
-		}
-		return interpolators;
-	}
+        if (cell.HasRoadThroughEdge(direction))
+        {
+            interpolators.x = interpolators.y = 0.5f;
+        }
+        else
+        { //Otherwise, it depends. For the left point, we can use ½ when there's a road going through the previous direction. 
+          //If not, we should use ¼. The same goes for the right point, but with the next direction.
+            interpolators.x =
+                cell.HasRoadThroughEdge(direction.Previous()) ? 0.5f : 0.25f;
+            interpolators.y =
+                cell.HasRoadThroughEdge(direction.Next()) ? 0.5f : 0.25f;
+        }
+        return interpolators;
+    }
+
+    void TriangulateWaterfallInWater(
+        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4,
+        float y1, float y2, float waterY
+    )
+    {
+        v1.y = v2.y = y1;
+        v3.y = v4.y = y2;
+        //PREVENT end result still not match the original waterfall.
+        v1 = HexMetrics.Perturb(v1);
+        v2 = HexMetrics.Perturb(v2);
+        v3 = HexMetrics.Perturb(v3);
+        v4 = HexMetrics.Perturb(v4);
+        //o move the bottom vertices upward, divide their distance below the water surface by the height 
+        //of the waterfall. That gives us the interpolator value.
+        float t = (waterY - y2) / (y1 - y2);
+        v3 = Vector3.Lerp(v3, v1, t);
+        v4 = Vector3.Lerp(v4, v2, t);
+        rivers.AddQuadUnperturbed(v1, v2, v3, v4);
+        rivers.AddQuadUV(0f, 1f, 0.8f, 1f);
+    }
 }
