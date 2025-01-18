@@ -38,7 +38,7 @@ public static class HexMetrics
 
     public const int hashGridSize = 256;
 
-    static float[] hashGrid;
+    static HexHash[] hashGrid;
 
     public const float hashGridScale = 0.25f;
 
@@ -152,17 +152,17 @@ public static class HexMetrics
     //adding a hashgrid
     public static void InitializeHashGrid(int seed)
     {
-        hashGrid = new float[hashGridSize * hashGridSize];
+        hashGrid = new HexHash[hashGridSize * hashGridSize];
         Random.State currentState = Random.state;
         Random.InitState(seed);
         for (int i = 0; i < hashGrid.Length; i++)
         {
-            hashGrid[i] = Random.value;
+            hashGrid[i] = HexHash.Create();
         }
         Random.state = currentState;
     }
 
-    public static float SampleHashGrid(Vector3 position)
+    public static HexHash SampleHashGrid(Vector3 position)
     { //uses the XZ coordinates of a position to retrieve a value. The hash index is found by clamping 
     //the coordinates to integer values, then taking the remainder of the integer division by the grid size.
         int x = (int)(position.x * hashGridScale)% hashGridSize;
