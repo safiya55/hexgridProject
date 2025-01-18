@@ -8,6 +8,8 @@ public class HexGridChunk : MonoBehaviour
     public HexMesh terrain, rivers, roads, water, waterShore, estuaries;
     Canvas gridCanvas;
 
+    public HexFeatureManager features;
+
     void Awake()
     {
         gridCanvas = GetComponentInChildren<Canvas>();
@@ -54,16 +56,20 @@ public class HexGridChunk : MonoBehaviour
         water.Clear();
         waterShore.Clear();
         estuaries.Clear();
+        features.Clear();
+
         for (int i = 0; i < cells.Length; i++)
         {
             Triangulate(cells[i]);
         }
+
         terrain.Apply();
         rivers.Apply();
         roads.Apply();
         water.Apply();
         waterShore.Apply();
         estuaries.Apply();
+        features.Apply();
     }
 
     void Triangulate(HexCell cell)
@@ -72,6 +78,9 @@ public class HexGridChunk : MonoBehaviour
         {
             Triangulate(d, cell);
         }
+
+        //a single feature in the center of every cell.
+        features.AddFeature(cell.Position);
     }
 
     //using direction to identify the parts
