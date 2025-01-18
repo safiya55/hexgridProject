@@ -36,6 +36,10 @@ public static class HexMetrics
     //how deep the river is dug
     public const float streamBedElevationOffset = -1.75f;
 
+    public const int hashGridSize = 256;
+
+	static float[] hashGrid;
+
 
     static Vector3[] corners = {
         new Vector3(0f, 0f, outerRadius),
@@ -136,5 +140,16 @@ public static class HexMetrics
     public static Vector3 GetWaterBridge (HexDirection direction) {
 		return (corners[(int)direction] + corners[(int)direction + 1]) *
 			waterBlendFactor;
+	}
+
+    //adding a hashgrid
+    public static void InitializeHashGrid (int seed) {
+		hashGrid = new float[hashGridSize * hashGridSize];
+        Random.State currentState = Random.state;
+        Random.InitState(seed);
+		for (int i = 0; i < hashGrid.Length; i++) {
+			hashGrid[i] = Random.value;
+		}
+        Random.state = currentState;
 	}
 }

@@ -4971,6 +4971,7 @@ MonoBehaviour:
   cellLabelPrefab: {fileID: 4129510126518390619, guid: 713ae62de3175ea488f6da7bfbe7a262, type: 3}
   chunkPrefab: {fileID: 976913974}
   noiseSource: {fileID: 2800000, guid: 2982eacc7b3e7064580e8182b302cc81, type: 3}
+  seed: 1234
 --- !u!1 &1343797462
 GameObject:
   m_ObjectHideFlags: 0
@@ -5932,6 +5933,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4982b565dd024f3468fd6e1a4f3e774a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  featurePrefab: {fileID: 1721650360}
 --- !u!4 &1651019558
 Transform:
   m_ObjectHideFlags: 0
@@ -6195,6 +6197,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1713832732}
   m_CullTransparentMesh: 1
+--- !u!4 &1721650360 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2839577130786896341, guid: 05438689348178549be7cdb7a50f41b6, type: 3}
+  m_PrefabInstance: {fileID: 5306884545378328277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1721824114
 GameObject:
   m_ObjectHideFlags: 0
@@ -8301,7 +8308,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2839577130786896341, guid: 05438689348178549be7cdb7a50f41b6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -31
       objectReference: {fileID: 0}
     - target: {fileID: 2839577130786896341, guid: 05438689348178549be7cdb7a50f41b6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -8343,6 +8350,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Feature Cube
       objectReference: {fileID: 0}
+    - target: {fileID: 5865524571076637421, guid: 05438689348178549be7cdb7a50f41b6, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7756fee815d94a7468427ec7c5f28314, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

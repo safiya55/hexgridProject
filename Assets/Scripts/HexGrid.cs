@@ -20,9 +20,13 @@ public class HexGrid : MonoBehaviour
 
     HexCell[] cells;
 
+    //seed for features
+    public int seed;
+
     void Awake()
     {
         HexMetrics.noiseSource = noiseSource;
+        HexMetrics.InitializeHashGrid(seed);
      
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
 		cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
@@ -55,7 +59,11 @@ public class HexGrid : MonoBehaviour
     }
 
     void OnEnable () {
-		HexMetrics.noiseSource = noiseSource;
+        //Make sure that we're not generating it more often than necessary.
+		if (!HexMetrics.noiseSource) {
+			HexMetrics.noiseSource = noiseSource;
+			HexMetrics.InitializeHashGrid(seed);
+		}
 	}
 
 
