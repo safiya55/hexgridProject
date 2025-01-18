@@ -79,8 +79,12 @@ public class HexGridChunk : MonoBehaviour
             Triangulate(d, cell);
         }
 
-        //a single feature in the center of every cell.
-        features.AddFeature(cell.Position);
+         //make sure that a cell is clear before we add a feature to it
+        if (!cell.IsUnderwater && !cell.HasRiver && !cell.HasRoads)
+        {
+            //a single feature in the center of every cell.
+            features.AddFeature(cell.Position);
+        }
     }
 
     //using direction to identify the parts
@@ -277,7 +281,7 @@ public class HexGridChunk : MonoBehaviour
             new Vector2(0f, 0f), new Vector2(0f, 0f),
             new Vector2(1f, 1f), new Vector2(0f, 1f)
         );
-        
+
         if (incomingRiver)
         {
             estuaries.AddQuadUV2(
