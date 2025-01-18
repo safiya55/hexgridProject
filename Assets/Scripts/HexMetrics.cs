@@ -12,7 +12,7 @@ public static class HexMetrics
     public static Texture2D noiseSource;
 
     public const float outerToInner = 0.866025404f;
-	public const float innerToOuter = 1f / outerToInner;
+    public const float innerToOuter = 1f / outerToInner;
 
     public const float outerRadius = 10f;
 
@@ -38,7 +38,9 @@ public static class HexMetrics
 
     public const int hashGridSize = 256;
 
-	static float[] hashGrid;
+    static float[] hashGrid;
+
+    public const float hashGridScale = 0.25f;
 
 
     static Vector3[] corners = {
@@ -108,18 +110,20 @@ public static class HexMetrics
         return HexEdgeType.Cliff;
     }
 
-    public static Vector4 SampleNoise (Vector3 position) {
+    public static Vector4 SampleNoise(Vector3 position)
+    {
         return noiseSource.GetPixelBilinear(
-			position.x * noiseScale,
-			position.z * noiseScale
-		);
-	}
+            position.x * noiseScale,
+            position.z * noiseScale
+        );
+    }
 
-    public static Vector3 GetSolidEdgeMiddle (HexDirection direction) {
-		return
-			(corners[(int)direction] + corners[(int)direction + 1]) *
-			(0.5f * solidFactor);
-	}
+    public static Vector3 GetSolidEdgeMiddle(HexDirection direction)
+    {
+        return
+            (corners[(int)direction] + corners[(int)direction + 1]) *
+            (0.5f * solidFactor);
+    }
 
     public static Vector3 Perturb(Vector3 position)
     {
@@ -129,27 +133,48 @@ public static class HexMetrics
         return position;
     }
 
-    public static Vector3 GetFirstWaterCorner (HexDirection direction) {
-		return corners[(int)direction] * waterFactor;
-	}
+    public static Vector3 GetFirstWaterCorner(HexDirection direction)
+    {
+        return corners[(int)direction] * waterFactor;
+    }
 
-	public static Vector3 GetSecondWaterCorner (HexDirection direction) {
-		return corners[(int)direction + 1] * waterFactor;
-	}
+    public static Vector3 GetSecondWaterCorner(HexDirection direction)
+    {
+        return corners[(int)direction + 1] * waterFactor;
+    }
 
-    public static Vector3 GetWaterBridge (HexDirection direction) {
-		return (corners[(int)direction] + corners[(int)direction + 1]) *
-			waterBlendFactor;
-	}
+    public static Vector3 GetWaterBridge(HexDirection direction)
+    {
+        return (corners[(int)direction] + corners[(int)direction + 1]) *
+            waterBlendFactor;
+    }
 
     //adding a hashgrid
-    public static void InitializeHashGrid (int seed) {
-		hashGrid = new float[hashGridSize * hashGridSize];
+    public static void InitializeHashGrid(int seed)
+    {
+        hashGrid = new float[hashGridSize * hashGridSize];
         Random.State currentState = Random.state;
         Random.InitState(seed);
-		for (int i = 0; i < hashGrid.Length; i++) {
-			hashGrid[i] = Random.value;
-		}
+        for (int i = 0; i < hashGrid.Length; i++)
+        {
+            hashGrid[i] = Random.value;
+        }
         Random.state = currentState;
-	}
+    }
+
+    public static float SampleHashGrid(Vector3 position)
+    { //uses the XZ coordinates of a position to retrieve a value. The hash index is found by clamping 
+    //the coordinates to integer values, then taking the remainder of the integer division by the grid size.
+        int x = (int)(position.x * hashGridScale)% hashGridSize;
+        //make it work for neg coordinates
+        if (x < 0) {
+			x += hashGridSize;
+		}
+        int z = (int)(position.z * hashGridScale) % hashGridSize;
+        //make it work for neg coordinates
+        if (z < 0) {
+			z += hashGridSize;
+		}
+        return hashGrid[x + z * hashGridSize];
+    }
 }
