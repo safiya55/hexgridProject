@@ -23,6 +23,7 @@ public class HexCell : MonoBehaviour
 
 	int waterLevel;
 
+	int urbanLevel;
 
 	void Refresh()
 	{
@@ -413,4 +414,17 @@ public class HexCell : MonoBehaviour
 			RemoveIncomingRiver();
 		}
 	}
+
+	public int UrbanLevel {
+		get {
+			return urbanLevel;
+		}
+		set {
+			if (urbanLevel != value) {
+				urbanLevel = value;
+				RefreshSelfOnly();
+			}
+		}
+	}
+
 }
