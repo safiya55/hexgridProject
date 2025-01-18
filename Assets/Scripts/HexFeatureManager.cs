@@ -29,7 +29,7 @@ public class HexFeatureManager : MonoBehaviour
         instance.localPosition = HexMetrics.Perturb(position);
 
         //add random rotation to object
-        instance.localRotation = Quaternion.Euler(0f, 360f * Random.value, 0f);
+        instance.localRotation = Quaternion.Euler(0f, 360f * hash, 0f);
         instance.SetParent(container, false);
     }
 }
