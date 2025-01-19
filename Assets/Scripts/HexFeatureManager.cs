@@ -4,7 +4,7 @@ public class HexFeatureManager : MonoBehaviour
 {
     Transform container;
 
-    public Transform featurePrefab;
+    public Transform[] urbanPrefabs;
 
     public void Clear()
     {
@@ -30,7 +30,7 @@ public class HexFeatureManager : MonoBehaviour
 			return;
 		}
 
-        Transform instance = Instantiate(featurePrefab);
+        Transform instance = Instantiate(urbanPrefabs[cell.UrbanLevel - 1]);
         position.y += instance.localScale.y * 0.5f;
         instance.localPosition = HexMetrics.Perturb(position);
         
