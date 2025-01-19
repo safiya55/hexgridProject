@@ -21,8 +21,11 @@ public class HexMapEditor : MonoBehaviour
 	//keep track of the active water level, and whether it should be applied to cells.
 	int activeWaterLevel;
 
+	int activeUrbanLevel;
+
     bool applyElevation = true;
 	bool applyWaterLevel = true;
+	bool applyUrbanLevel;
 
     bool applyColor;
 
@@ -134,6 +137,10 @@ public class HexMapEditor : MonoBehaviour
 				cell.WaterLevel = activeWaterLevel;
 			}
 
+			if (applyUrbanLevel) {
+				cell.UrbanLevel = activeUrbanLevel;
+			}
+
             //code to remove rivers
             if (riverMode == OptionalToggle.No) {
 				cell.RemoveRiver();
@@ -191,5 +198,13 @@ public class HexMapEditor : MonoBehaviour
 
 	public void SetWaterLevel (float level) {
 		activeWaterLevel = (int)level;
+	}
+
+	public void SetApplyUrbanLevel (bool toggle) {
+		applyUrbanLevel = toggle;
+	}
+	
+	public void SetUrbanLevel (float level) {
+		activeUrbanLevel = (int)level;
 	}
 }
