@@ -85,7 +85,7 @@ public class HexGridChunk : MonoBehaviour
             if (!cell.IsUnderwater && !cell.HasRiver && !cell.HasRoads)
             {
                 //a single feature in the center of every cell.
-                features.AddFeature(cell.Position);
+                features.AddFeature(cell, cell.Position);
             }
         }
     }
@@ -136,7 +136,7 @@ public class HexGridChunk : MonoBehaviour
                 //triangles. 
                 if (!cell.IsUnderwater && !cell.HasRoadThroughEdge(direction))
                 {
-                    features.AddFeature((center + e.v1 + e.v5) * (1f / 3f));
+                    features.AddFeature(cell, (center + e.v1 + e.v5) * (1f / 3f));
                 }
             }
 
@@ -665,7 +665,7 @@ public class HexGridChunk : MonoBehaviour
         //produce features when not in water or road
         if (!cell.IsUnderwater && !cell.HasRoadThroughEdge(direction))
         {
-            features.AddFeature((center + e.v1 + e.v5) * (1f / 3f));
+            features.AddFeature(cell, (center + e.v1 + e.v5) * (1f / 3f));
         }
     }
 

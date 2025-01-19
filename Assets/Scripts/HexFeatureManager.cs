@@ -19,14 +19,14 @@ public class HexFeatureManager : MonoBehaviour
 
     public void Apply() { }
 
-    public void AddFeature(Vector3 position)
+    public void AddFeature(HexCell cell, Vector3 position)
     {
         // hash grid to obtain a value. Once we use that to set the rotation, 
         //our features will remain motionless when we edit the terrain.
         HexHash hash = HexMetrics.SampleHashGrid(position);
         
         //minimize population of features by certain percent
-        if (hash.a >= 0.5f) {
+        if (hash.a >= cell.UrbanLevel * 0.25f) {
 			return;
 		}
 
