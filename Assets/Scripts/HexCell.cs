@@ -23,6 +23,8 @@ public class HexCell : MonoBehaviour
 
 	int waterLevel;
 
+	int urbanLevel;
+
 
 	void Refresh()
 	{
@@ -411,6 +413,19 @@ public class HexCell : MonoBehaviour
 			!GetNeighbor(incomingRiver).IsValidRiverDestination(this)
 		) {
 			RemoveIncomingRiver();
+		}
+	}
+
+	//adding features to be editable on the map
+	public int UrbanLevel {
+		get {
+			return urbanLevel;
+		}
+		set {
+			if (urbanLevel != value) {
+				urbanLevel = value;
+				RefreshSelfOnly();
+			}
 		}
 	}
 }

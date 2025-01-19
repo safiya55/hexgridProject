@@ -25,11 +25,11 @@ public class HexFeatureManager : MonoBehaviour
         //our features will remain motionless when we edit the terrain.
         HexHash hash = HexMetrics.SampleHashGrid(position);
         
-        //minimize existance of population by certain percent
+        //minimize population of features by certain percent
         if (hash.a >= 0.5f) {
 			return;
 		}
-        
+
         Transform instance = Instantiate(featurePrefab);
         position.y += instance.localScale.y * 0.5f;
         instance.localPosition = HexMetrics.Perturb(position);
