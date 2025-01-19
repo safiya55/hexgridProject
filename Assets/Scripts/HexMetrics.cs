@@ -165,7 +165,7 @@ public static class HexMetrics
     public static HexHash SampleHashGrid(Vector3 position)
     { //uses the XZ coordinates of a position to retrieve a value. The hash index is found by clamping 
     //the coordinates to integer values, then taking the remainder of the integer division by the grid size.
-        int x = (int)(position.x * hashGridScale)% hashGridSize;
+        int x = (int)(position.x * hashGridScale) % hashGridSize;
         //make it work for neg coordinates
         if (x < 0) {
 			x += hashGridSize;
