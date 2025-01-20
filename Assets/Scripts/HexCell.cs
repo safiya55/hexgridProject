@@ -456,6 +456,7 @@ public class HexCell : MonoBehaviour
 		}
 	}
 
+	//Setup Wall property
 	public bool Walled {
 		get {
 			return walled;

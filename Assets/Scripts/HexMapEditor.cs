@@ -8,7 +8,7 @@ public class HexMapEditor : MonoBehaviour
 		Ignore, Yes, No
 	}
 	
-	OptionalToggle riverMode, roadMode;
+	OptionalToggle riverMode, roadMode, walledMode;
 
     public Color[] colors;
 
@@ -154,8 +154,13 @@ public class HexMapEditor : MonoBehaviour
             if (riverMode == OptionalToggle.No) {
 				cell.RemoveRiver();
 			}
+
             if (roadMode == OptionalToggle.No) {
 				cell.RemoveRoads();
+			}
+			//When the wall toggle is active, just set the the current cell's walled state based on the toggle.
+			if (walledMode != OptionalToggle.Ignore) {
+				cell.Walled = walledMode == OptionalToggle.Yes;
 			}
 			if (isDrag) {
 				HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
@@ -231,5 +236,9 @@ public class HexMapEditor : MonoBehaviour
 
 	public void SetPlantLevel (float level) {
 		activePlantLevel = (int)level;
+	}
+	//support for a toggle to adjust walled state of cells
+	public void SetWalledMode (int mode) {
+		walledMode = (OptionalToggle)mode;
 	}
 }
