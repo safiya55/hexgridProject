@@ -25,6 +25,9 @@ public class HexCell : MonoBehaviour
 
 	int urbanLevel, farmLevel, plantLevel;
 
+		
+	bool walled;
+
 
 	void Refresh()
 	{
@@ -449,6 +452,18 @@ public class HexCell : MonoBehaviour
 			if (plantLevel != value) {
 				plantLevel = value;
 				RefreshSelfOnly();
+			}
+		}
+	}
+
+	public bool Walled {
+		get {
+			return walled;
+		}
+		set {
+			if (walled != value) {
+				walled = value;
+				Refresh();
 			}
 		}
 	}
