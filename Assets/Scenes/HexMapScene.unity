@@ -6412,10 +6412,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4982b565dd024f3468fd6e1a4f3e774a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  urbanPrefabs:
-  - {fileID: 5285336683481012974, guid: 2a7dc5e03fd9beb4bb090de0a5e03c1d, type: 3}
-  - {fileID: 5285336683481012974, guid: 5d5a3f071070b084f97375c953a5e79b, type: 3}
-  - {fileID: 5285336683481012974, guid: 4248ffe239e2c8a4aaed4bf605545bca, type: 3}
+  urbanCollections:
+  - prefabs:
+    - {fileID: 5285336683481012974, guid: 2a7dc5e03fd9beb4bb090de0a5e03c1d, type: 3}
+    - {fileID: 5285336683481012974, guid: f70324a2febf36d42afe254f7104c6b2, type: 3}
+  - prefabs:
+    - {fileID: 5285336683481012974, guid: 5d5a3f071070b084f97375c953a5e79b, type: 3}
+    - {fileID: 5285336683481012974, guid: 84a1b0782ade000468090b30536b8859, type: 3}
+  - prefabs:
+    - {fileID: 5285336683481012974, guid: 4248ffe239e2c8a4aaed4bf605545bca, type: 3}
+    - {fileID: 5285336683481012974, guid: eacfb3b679361104088526ee3ee6f268, type: 3}
 --- !u!4 &1651019558
 Transform:
   m_ObjectHideFlags: 0
