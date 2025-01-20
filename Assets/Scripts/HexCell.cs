@@ -23,7 +23,7 @@ public class HexCell : MonoBehaviour
 
 	int waterLevel;
 
-	int urbanLevel;
+	int urbanLevel, farmLevel, plantLevel;
 
 
 	void Refresh()
@@ -424,6 +424,30 @@ public class HexCell : MonoBehaviour
 		set {
 			if (urbanLevel != value) {
 				urbanLevel = value;
+				RefreshSelfOnly();
+			}
+		}
+	}
+
+	public int FarmLevel {
+		get {
+			return farmLevel;
+		}
+		set {
+			if (farmLevel != value) {
+				farmLevel = value;
+				RefreshSelfOnly();
+			}
+		}
+	}
+
+	public int PlantLevel {
+		get {
+			return plantLevel;
+		}
+		set {
+			if (plantLevel != value) {
+				plantLevel = value;
 				RefreshSelfOnly();
 			}
 		}
