@@ -26,7 +26,7 @@ public class HexCell : MonoBehaviour
 	int urbanLevel, farmLevel, plantLevel;
 
 		
-	bool walled;
+	public bool walled;
 
 
 	void Refresh()

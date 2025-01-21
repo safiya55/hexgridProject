@@ -11865,11 +11865,11 @@ RectTransform:
   m_Children:
   - {fileID: 1053218178}
   - {fileID: 120669472}
-  - {fileID: 274020277}
   - {fileID: 598020872}
   - {fileID: 1675282497}
   - {fileID: 54424543}
   - {fileID: 1859585626}
+  - {fileID: 274020277}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
