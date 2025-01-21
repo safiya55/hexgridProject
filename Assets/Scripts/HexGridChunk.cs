@@ -810,9 +810,9 @@ public class HexGridChunk : MonoBehaviour
                 );
             }
 
-            //If the right edge is flat, then we have to begin terracing from the left instead of the bottom.
+            //If the right edge is flat, then we have to beginterracing from the left instead of the bottom.
             else if (rightEdgeType == HexEdgeType.Flat)
-            {
+            { 
                 TriangulateCornerTerraces(
                     left, leftCell, right, rightCell, bottom, bottomCell
                 );
@@ -862,6 +862,9 @@ public class HexGridChunk : MonoBehaviour
             terrain.AddTriangle(bottom, left, right);
             terrain.AddTriangleColor(bottomCell.Color, leftCell.Color, rightCell.Color);
         }
+
+        //add the corner segments
+        features.AddWall(bottom, bottomCell, left, leftCell, right, rightCell);
     }
 
     void TriangulateCornerTerraces(
