@@ -42,11 +42,13 @@ public static class HexMetrics
 
     public const float hashGridScale = 0.25f;
 
+    public const float wallHeight = 3f;
+
     static float[][] featureThresholds = {
-		new float[] {0.0f, 0.0f, 0.4f},
-		new float[] {0.0f, 0.4f, 0.6f},
-		new float[] {0.4f, 0.6f, 0.8f}
-	};
+        new float[] {0.0f, 0.0f, 0.4f},
+        new float[] {0.0f, 0.4f, 0.6f},
+        new float[] {0.4f, 0.6f, 0.8f}
+    };
 
 
     static Vector3[] corners = {
@@ -170,21 +172,24 @@ public static class HexMetrics
 
     public static HexHash SampleHashGrid(Vector3 position)
     { //uses the XZ coordinates of a position to retrieve a value. The hash index is found by clamping 
-    //the coordinates to integer values, then taking the remainder of the integer division by the grid size.
-        int x = (int)(position.x * hashGridScale)% hashGridSize;
+      //the coordinates to integer values, then taking the remainder of the integer division by the grid size.
+        int x = (int)(position.x * hashGridScale) % hashGridSize;
         //make it work for neg coordinates
-        if (x < 0) {
-			x += hashGridSize;
-		}
+        if (x < 0)
+        {
+            x += hashGridSize;
+        }
         int z = (int)(position.z * hashGridScale) % hashGridSize;
         //make it work for neg coordinates
-        if (z < 0) {
-			z += hashGridSize;
-		}
+        if (z < 0)
+        {
+            z += hashGridSize;
+        }
         return hashGrid[x + z * hashGridSize];
     }
 
-    public static float[] GetFeatureThresholds (int level) {
-		return featureThresholds[level];
-	}
+    public static float[] GetFeatureThresholds(int level)
+    {
+        return featureThresholds[level];
+    }
 }
