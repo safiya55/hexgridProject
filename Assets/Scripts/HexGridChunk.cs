@@ -553,6 +553,9 @@ public class HexGridChunk : MonoBehaviour
             TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color,
                 cell.HasRoadThroughEdge(direction));
         }
+        //after all other connection work is done, right before we move on to the corner triangle. 
+        //We'll leave it to the feature manager to decide whether a wall should actually be placed.
+        features.AddWall(e1, cell, e2, neighbor);
 
         HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
         if (direction <= HexDirection.E && nextNeighbor != null)

@@ -8519,6 +8519,7 @@ MonoBehaviour:
   - prefabs:
     - {fileID: 5285336683481012974, guid: d831659151da2d9439cbd12c83d9bd70, type: 3}
     - {fileID: 5285336683481012974, guid: 103089b6d6ce355499c624aa872cb799, type: 3}
+  walls: {fileID: 820506628}
 --- !u!4 &1651019558
 Transform:
   m_ObjectHideFlags: 0
