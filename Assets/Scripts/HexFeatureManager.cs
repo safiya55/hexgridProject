@@ -24,7 +24,7 @@ public class HexFeatureManager : MonoBehaviour
 
 	public void Apply()
 	{
-		walls.Clear();
+		walls.Apply();
 	}
 
 
@@ -131,12 +131,19 @@ public class HexFeatureManager : MonoBehaviour
 		Vector3 v1, v2, v3, v4;
 		v1 = v3 = left - leftThicknessOffset;
 		v2 = v4 = right - rightThicknessOffset;
+		Debug.Log("buiding wall");
 		v3.y = v4.y = left.y + HexMetrics.wallHeight;
 		walls.AddQuad(v1, v2, v3, v4);
+		
+		//makse the thickness of the walls visible from above
+		Vector3 t1 = v3, t2 = v4;
 
 		v1 = v3 = left + leftThicknessOffset;
 		v2 = v4 = right + rightThicknessOffset;
 		v3.y = v4.y = left.y + HexMetrics.wallHeight;
 		walls.AddQuad(v2, v1, v4, v3);
+
+		////makse the thickness of the walls visible from above
+		walls.AddQuad(t1, t2, v3, v4);
 	}
 }
