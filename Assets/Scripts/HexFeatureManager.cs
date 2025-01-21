@@ -127,12 +127,15 @@ public class HexFeatureManager : MonoBehaviour
 			HexMetrics.WallThicknessOffset(nearLeft, farLeft);
 		Vector3 rightThicknessOffset =
 			HexMetrics.WallThicknessOffset(nearRight, farRight);
+		//keeps the Y coordinates of the left and right top vertices separate. to close gap
+		float leftTop = left.y + HexMetrics.wallHeight;
+		float rightTop = right.y + HexMetrics.wallHeight;
 
 		Vector3 v1, v2, v3, v4;
 		v1 = v3 = left - leftThicknessOffset;
 		v2 = v4 = right - rightThicknessOffset;
-		Debug.Log("buiding wall");
-		v3.y = v4.y = left.y + HexMetrics.wallHeight;
+		v3.y = leftTop;
+		v4.y = rightTop;
 		walls.AddQuad(v1, v2, v3, v4);
 		
 		//makse the thickness of the walls visible from above
@@ -140,7 +143,8 @@ public class HexFeatureManager : MonoBehaviour
 
 		v1 = v3 = left + leftThicknessOffset;
 		v2 = v4 = right + rightThicknessOffset;
-		v3.y = v4.y = left.y + HexMetrics.wallHeight;
+		v3.y = leftTop;
+		v4.y = rightTop;
 		walls.AddQuad(v2, v1, v4, v3);
 
 		////makse the thickness of the walls visible from above
