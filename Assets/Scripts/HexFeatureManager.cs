@@ -317,11 +317,14 @@ public class HexFeatureManager : MonoBehaviour
 		walls.AddTriangleUnperturbed(pointTop, v3, v4);
 	}
 
+	//bridge should be placed between the road centers on either side of a river.
 	public void AddBridge (Vector3 roadCenter1, Vector3 roadCenter2) {
+		//pass along the unperturbed road centers, so we have to perturb them before placing the bridge.
 		roadCenter1 = HexMetrics.Perturb(roadCenter1);
 		roadCenter2 = HexMetrics.Perturb(roadCenter2);
 		Transform instance = Instantiate(bridge);
 		instance.localPosition = (roadCenter1 + roadCenter2) * 0.5f;
+		//properly align the bridge
 		instance.forward = roadCenter2 - roadCenter1;
 		instance.SetParent(container, false);
 	}

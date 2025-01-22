@@ -124,7 +124,7 @@ public class HexGridChunk : MonoBehaviour
                 }
                 else
                 { //when the cell has a river, but it doesn't flow through the current direction.
-                    TriangulateWithoutRiver(direction, cell, center, e);
+                    TriangulateAdjacentToRiver(direction, cell, center, e);
                 }
 
             }
@@ -503,7 +503,7 @@ public class HexGridChunk : MonoBehaviour
         );
 
         bool hasRiver = cell.HasRiverThroughEdge(direction);
-		bool hasRoad = cell.HasRoadThroughEdge(direction);
+        bool hasRoad = cell.HasRoadThroughEdge(direction);
         //close holes that develop in terrain when triangulating connection
         if (hasRiver)
         {
@@ -629,7 +629,8 @@ public class HexGridChunk : MonoBehaviour
        HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
    )
     {
-        //to take care of roads so that road and rivers can coexiswt
+        //to take care of roads so that road and rivers can co-exist
+        Debug.Log(cell.HasRoads);
         if (cell.HasRoads)
         {
             TriangulateRoadAdjacentToRiver(direction, cell, center, e);
@@ -718,17 +719,28 @@ public class HexGridChunk : MonoBehaviour
             }
             else
             {
+                if (
+                    !hasRoadThroughEdge &&
+                    !cell.HasRoadThroughEdge(direction.Previous())
+                )
+                {
+                    return;
+                }
                 corner = HexMetrics.GetFirstSolidCorner(direction);
             }
 
             roadCenter += corner * 0.5f;
             //ensure that only one bridge instance is generated per cell. 
+            Debug.Log("here");
             if (cell.IncomingRiver == direction.Next() && (
-				cell.HasRoadThroughEdge(direction.Next2()) ||
-				cell.HasRoadThroughEdge(direction.Opposite())
-			)) {
-				features.AddBridge(roadCenter, center - corner * 0.5f);
-			}
+                cell.HasRoadThroughEdge(direction.Next2()) ||
+                cell.HasRoadThroughEdge(direction.Opposite())
+            ))
+            {
+                //place bridge adjacent to rivers when making roads
+                features.AddBridge(roadCenter, center - corner * 0.5f);
+
+            }
             center += corner * 0.25f;
         } // check for zigzag
         //compare the directions of the incoming and outgoing rivers. If they're adjacent, then we have a zigzag
@@ -779,8 +791,19 @@ public class HexGridChunk : MonoBehaviour
             {
                 return;
             }
+            Vector3 offset = HexMetrics.GetSolidEdgeMiddle(middle);
             //move the road center towards that edge by a factor of 0.25.
-            roadCenter += HexMetrics.GetSolidEdgeMiddle(middle) * 0.25f;
+            roadCenter += offset * 0.25f;
+
+            //add bridge curving rivers
+            if (direction == middle &&
+                cell.HasRoadThroughEdge(direction.Opposite()))
+            {
+                features.AddBridge(
+                    roadCenter,
+                    center - offset * (HexMetrics.innerToOuter * 0.7f)
+                );
+            }
         }
 
         Vector3 mL = Vector3.Lerp(roadCenter, e.v1, interpolators.x);
@@ -820,7 +843,7 @@ public class HexGridChunk : MonoBehaviour
 
             //If the right edge is flat, then we have to beginterracing from the left instead of the bottom.
             else if (rightEdgeType == HexEdgeType.Flat)
-            { 
+            {
                 TriangulateCornerTerraces(
                     left, leftCell, right, rightCell, bottom, bottomCell
                 );
