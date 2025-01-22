@@ -87,6 +87,11 @@ public class HexGridChunk : MonoBehaviour
                 //a single feature in the center of every cell.
                 features.AddFeature(cell, cell.Position);
             }
+
+            if (cell.IsSpecial)
+            {
+                features.AddSpecialFeature(cell, cell.Position);
+            }
         }
     }
 
