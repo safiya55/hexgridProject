@@ -265,7 +265,7 @@ public class HexCell : MonoBehaviour
 		//setting the outgoing river.
 		hasOutgoingRiver = true;
 		outgoingRiver = direction;
-		specialIndex = 0; 
+		specialIndex = 0;
 
 		//set the incoming river of the other cell, 
 		//after removing its current incoming river, if any.
@@ -299,8 +299,10 @@ public class HexCell : MonoBehaviour
 	}
 
 	//submerged cell property
-	public float WaterSurfaceY {
-		get {
+	public float WaterSurfaceY
+	{
+		get
+		{
 			return
 				(waterLevel + HexMetrics.waterElevationOffset) *
 				HexMetrics.elevationStep;
@@ -330,8 +332,11 @@ public class HexCell : MonoBehaviour
 
 	public void AddRoad(HexDirection direction)
 	{
-		if (!roads[(int)direction] && !HasRiverThroughEdge(direction) &&
-			GetElevationDifference(direction) <= 1)
+		if (
+			!roads[(int)direction] && !HasRiverThroughEdge(direction) &&
+			!IsSpecial && !GetNeighbor(direction).IsSpecial &&
+			GetElevationDifference(direction) <= 1
+			)
 		{
 			SetRoad((int)direction, true);
 		}
@@ -401,58 +406,74 @@ public class HexCell : MonoBehaviour
 		}
 	}
 
-	bool IsValidRiverDestination (HexCell neighbor) {
+	bool IsValidRiverDestination(HexCell neighbor)
+	{
 		return neighbor && (
 			elevation >= neighbor.elevation || waterLevel == neighbor.elevation
 		);
 	}
 
-	void ValidateRivers () {
+	void ValidateRivers()
+	{
 		if (
 			hasOutgoingRiver &&
 			!IsValidRiverDestination(GetNeighbor(outgoingRiver))
-		) {
+		)
+		{
 			RemoveOutgoingRiver();
 		}
 		if (
 			hasIncomingRiver &&
 			!GetNeighbor(incomingRiver).IsValidRiverDestination(this)
-		) {
+		)
+		{
 			RemoveIncomingRiver();
 		}
 	}
 
 	//adding features to be editable on the map
-	public int UrbanLevel {
-		get {
+	public int UrbanLevel
+	{
+		get
+		{
 			return urbanLevel;
 		}
-		set {
-			if (urbanLevel != value) {
+		set
+		{
+			if (urbanLevel != value)
+			{
 				urbanLevel = value;
 				RefreshSelfOnly();
 			}
 		}
 	}
 
-	public int FarmLevel {
-		get {
+	public int FarmLevel
+	{
+		get
+		{
 			return farmLevel;
 		}
-		set {
-			if (farmLevel != value) {
+		set
+		{
+			if (farmLevel != value)
+			{
 				farmLevel = value;
 				RefreshSelfOnly();
 			}
 		}
 	}
 
-	public int PlantLevel {
-		get {
+	public int PlantLevel
+	{
+		get
+		{
 			return plantLevel;
 		}
-		set {
-			if (plantLevel != value) {
+		set
+		{
+			if (plantLevel != value)
+			{
 				plantLevel = value;
 				RefreshSelfOnly();
 			}
@@ -460,32 +481,43 @@ public class HexCell : MonoBehaviour
 	}
 
 	//Setup Wall property
-	public bool Walled {
-		get {
+	public bool Walled
+	{
+		get
+		{
 			return walled;
 		}
-		set {
-			if (walled != value) {
+		set
+		{
+			if (walled != value)
+			{
 				walled = value;
 				Refresh();
 			}
 		}
 	}
 
-	public int SpecialIndex {
-		get {
+	public int SpecialIndex
+	{
+		get
+		{
 			return specialIndex;
 		}
-		set {
-			if (specialIndex != value && !HasRiver) {
+		set
+		{
+			if (specialIndex != value && !HasRiver)
+			{
 				specialIndex = value;
+				RemoveRoads();
 				RefreshSelfOnly();
 			}
 		}
 	}
 
-		public bool IsSpecial {
-		get {
+	public bool IsSpecial
+	{
+		get
+		{
 			return specialIndex > 0;
 		}
 	}
