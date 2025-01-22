@@ -111,7 +111,10 @@ public class HexFeatureManager : MonoBehaviour
 		bool hasRiver, bool hasRoad
 	)
 	{
-		if (nearCell.Walled != farCell.Walled)
+		if (nearCell.Walled != farCell.Walled &&
+				!nearCell.IsUnderwater && !farCell.IsUnderwater &&
+				nearCell.GetEdgeType(farCell) != HexEdgeType.Cliff
+			)
 		{
 			AddWallSegment(near.v1, far.v1, near.v2, far.v2);
 			if (hasRiver || hasRoad)
@@ -220,7 +223,8 @@ public class HexFeatureManager : MonoBehaviour
 		}
 	}
 
-	void AddWallCap (Vector3 near, Vector3 far) {
+	void AddWallCap(Vector3 near, Vector3 far)
+	{
 		near = HexMetrics.Perturb(near);
 		far = HexMetrics.Perturb(far);
 
