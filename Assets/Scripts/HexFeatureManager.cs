@@ -123,8 +123,8 @@ public class HexFeatureManager : MonoBehaviour
 		Vector3 nearLeft, Vector3 farLeft, Vector3 nearRight, Vector3 farRight
 	)
 	{
-		Vector3 left = Vector3.Lerp(nearLeft, farLeft, 0.5f);
-		Vector3 right = Vector3.Lerp(nearRight, farRight, 0.5f);
+		Vector3 left = HexMetrics.WallLerp(nearLeft, farLeft);
+		Vector3 right = HexMetrics.WallLerp(nearRight, farRight);
 
 		Vector3 leftThicknessOffset =
 			HexMetrics.WallThicknessOffset(nearLeft, farLeft);
