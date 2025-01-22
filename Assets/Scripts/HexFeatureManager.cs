@@ -198,17 +198,21 @@ public class HexFeatureManager : MonoBehaviour
 
 		bool hasLeftWall = !leftCell.IsUnderwater &&
 			pivotCell.GetEdgeType(leftCell) != HexEdgeType.Cliff;
-		bool hasRighWall = !rightCell.IsUnderwater &&
+		bool hasRightWall = !rightCell.IsUnderwater &&
 			pivotCell.GetEdgeType(rightCell) != HexEdgeType.Cliff;
 
 		if (hasLeftWall)
 		{
-			if (hasRighWall)
+			if (hasRightWall)
 			{
-				HexHash hash = HexMetrics.SampleHashGrid(
-					(pivot + left + right) * (1f / 3f)
-				);
-				bool hasTower = hash.e < HexMetrics.wallTowerThreshold;
+				bool hasTower = false;
+				if (leftCell.Elevation == rightCell.Elevation)
+				{
+					HexHash hash = HexMetrics.SampleHashGrid(
+						(pivot + left + right) * (1f / 3f)
+					);
+					hasTower = hash.e < HexMetrics.wallTowerThreshold;
+				}
 				AddWallSegment(pivot, left, pivot, right, hasTower);
 			}
 			else if (leftCell.Elevation < rightCell.Elevation)
@@ -220,7 +224,7 @@ public class HexFeatureManager : MonoBehaviour
 				AddWallCap(pivot, left);
 			}
 		}
-		else if (hasRighWall)
+		else if (hasRightWall)
 		{
 			if (rightCell.Elevation < leftCell.Elevation)
 			{
