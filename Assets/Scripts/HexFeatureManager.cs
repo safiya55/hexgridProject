@@ -326,6 +326,13 @@ public class HexFeatureManager : MonoBehaviour
 		instance.localPosition = (roadCenter1 + roadCenter2) * 0.5f;
 		//properly align the bridge
 		instance.forward = roadCenter2 - roadCenter1;
+
+		//set the Z scale of the bridge instance, bridge will be stretched correctly.
+		float length = Vector3.Distance(roadCenter1, roadCenter2);
+		instance.localScale = new Vector3(
+			1f,	1f, length * (1f / HexMetrics.bridgeDesignLength)
+		);
+
 		instance.SetParent(container, false);
 	}
 }
