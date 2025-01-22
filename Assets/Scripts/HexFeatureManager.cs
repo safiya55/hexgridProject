@@ -178,7 +178,19 @@ public class HexFeatureManager : MonoBehaviour
 		Vector3 right, HexCell rightCell
 	)
 	{
-		AddWallSegment(pivot, left, pivot, right);
+		//Eliminating unwanted corner segments that is underwater
+		if (pivotCell.IsUnderwater) {
+			return;
+		}
+
+		bool hasLeftWall = !leftCell.IsUnderwater &&
+			pivotCell.GetEdgeType(leftCell) != HexEdgeType.Cliff;
+		bool hasRighWall = !rightCell.IsUnderwater &&
+			pivotCell.GetEdgeType(rightCell) != HexEdgeType.Cliff;
+
+		if (hasLeftWall && hasRighWall) {
+			AddWallSegment(pivot, left, pivot, right);
+		}
 	}
 
 	//to figure out which corner is the pivot,
