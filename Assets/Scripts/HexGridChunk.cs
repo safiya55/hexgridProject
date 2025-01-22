@@ -82,15 +82,18 @@ public class HexGridChunk : MonoBehaviour
             }
 
             //make sure that a cell is clear before we add a feature to it
-            if (!cell.IsUnderwater && !cell.HasRiver && !cell.HasRoads)
+            if (!cell.IsUnderwater)
             {
-                //a single feature in the center of every cell.
-                features.AddFeature(cell, cell.Position);
-            }
+                if (!cell.HasRiver && !cell.HasRoads)
+                {
+                    //a single feature in the center of every cell.
+                    features.AddFeature(cell, cell.Position);
+                }
 
-            if (cell.IsSpecial)
-            {
-                features.AddSpecialFeature(cell, cell.Position);
+                if (cell.IsSpecial)
+                {
+                    features.AddSpecialFeature(cell, cell.Position);
+                }
             }
         }
     }
