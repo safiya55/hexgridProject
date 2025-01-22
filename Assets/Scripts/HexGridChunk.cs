@@ -502,8 +502,10 @@ public class HexGridChunk : MonoBehaviour
             e1.v5 + bridge
         );
 
+        bool hasRiver = cell.HasRiverThroughEdge(direction);
+		bool hasRoad = cell.HasRoadThroughEdge(direction);
         //close holes that develop in terrain when triangulating connection
-        if (cell.HasRiverThroughEdge(direction))
+        if (hasRiver)
         {
             e2.v3.y = neighbor.StreamBedY;
             //adding the river segment when neither the 
@@ -544,18 +546,17 @@ public class HexGridChunk : MonoBehaviour
         //decide whether to insert terraces or not.
         if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
         {
-            TriangulateEdgeTerraces(e1, cell, e2, neighbor, cell.HasRoadThroughEdge(direction));
+            TriangulateEdgeTerraces(e1, cell, e2, neighbor, hasRoad);
         }
         else
         {
             //take care of the flats and cliffs.
             //TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color);
-            TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color,
-                cell.HasRoadThroughEdge(direction));
+            TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color, hasRoad);
         }
         //after all other connection work is done, right before we move on to the corner triangle. 
         //We'll leave it to the feature manager to decide whether a wall should actually be placed.
-        features.AddWall(e1, cell, e2, neighbor);
+        features.AddWall(e1, cell, e2, neighbor, hasRiver, hasRoad);
 
         HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
         if (direction <= HexDirection.E && nextNeighbor != null)

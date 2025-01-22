@@ -107,14 +107,22 @@ public class HexFeatureManager : MonoBehaviour
 
 	public void AddWall(
 		EdgeVertices near, HexCell nearCell,
-		EdgeVertices far, HexCell farCell
+		EdgeVertices far, HexCell farCell,
+		bool hasRiver, bool hasRoad
 	)
 	{
 		if (nearCell.Walled != farCell.Walled)
 		{
 			AddWallSegment(near.v1, far.v1, near.v2, far.v2);
-			AddWallSegment(near.v2, far.v2, near.v3, far.v3);
-			AddWallSegment(near.v3, far.v3, near.v4, far.v4);
+			if (hasRiver || hasRoad)
+			{
+				// Leave a gap.
+			}
+			else
+			{
+				AddWallSegment(near.v2, far.v2, near.v3, far.v3);
+				AddWallSegment(near.v3, far.v3, near.v4, far.v4);
+			}
 			AddWallSegment(near.v4, far.v4, near.v5, far.v5);
 		}
 	}
@@ -145,7 +153,7 @@ public class HexFeatureManager : MonoBehaviour
 		v3.y = leftTop;
 		v4.y = rightTop;
 		walls.AddQuadUnperturbed(v1, v2, v3, v4);
-		
+
 		//makse the thickness of the walls visible from above
 		Vector3 t1 = v3, t2 = v4;
 
@@ -159,42 +167,53 @@ public class HexFeatureManager : MonoBehaviour
 		walls.AddQuadUnperturbed(t1, t2, v3, v4);
 	}
 
-	void AddWallSegment (
+	void AddWallSegment(
 		Vector3 pivot, HexCell pivotCell,
 		Vector3 left, HexCell leftCell,
 		Vector3 right, HexCell rightCell
-	) {
+	)
+	{
 		AddWallSegment(pivot, left, pivot, right);
 	}
-	
+
 	//to figure out which corner is the pivot,
-	public void AddWall (
+	public void AddWall(
 		Vector3 c1, HexCell cell1,
 		Vector3 c2, HexCell cell2,
 		Vector3 c3, HexCell cell3
-	) {
-		if (cell1.Walled) {
-			if (cell2.Walled) {
-				if (!cell3.Walled) {
+	)
+	{
+		if (cell1.Walled)
+		{
+			if (cell2.Walled)
+			{
+				if (!cell3.Walled)
+				{
 					AddWallSegment(c3, cell3, c1, cell1, c2, cell2);
 				}
 			}
-			else if (cell3.Walled) {
+			else if (cell3.Walled)
+			{
 				AddWallSegment(c2, cell2, c3, cell3, c1, cell1);
 			}
-			else {
+			else
+			{
 				AddWallSegment(c1, cell1, c2, cell2, c3, cell3);
 			}
 		}
-		else if (cell2.Walled) {
-			if (cell3.Walled) {
+		else if (cell2.Walled)
+		{
+			if (cell3.Walled)
+			{
 				AddWallSegment(c1, cell1, c2, cell2, c3, cell3);
 			}
-			else {
+			else
+			{
 				AddWallSegment(c2, cell2, c3, cell3, c1, cell1);
 			}
 		}
-		else if (cell3.Walled) {
+		else if (cell3.Walled)
+		{
 			AddWallSegment(c3, cell3, c1, cell1, c2, cell2);
 		}
 	}
