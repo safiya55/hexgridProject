@@ -722,7 +722,13 @@ public class HexGridChunk : MonoBehaviour
             }
 
             roadCenter += corner * 0.5f;
-            features.AddBridge(roadCenter, center - corner * 0.5f);
+            //ensure that only one bridge instance is generated per cell. 
+            if (cell.IncomingRiver == direction.Next() && (
+				cell.HasRoadThroughEdge(direction.Next2()) ||
+				cell.HasRoadThroughEdge(direction.Opposite())
+			)) {
+				features.AddBridge(roadCenter, center - corner * 0.5f);
+			}
             center += corner * 0.25f;
         } // check for zigzag
         //compare the directions of the incoming and outgoing rivers. If they're adjacent, then we have a zigzag

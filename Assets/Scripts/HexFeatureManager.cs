@@ -4,12 +4,12 @@ public class HexFeatureManager : MonoBehaviour
 {
 	Transform container;
 
-	public Transform wallTower, bridge;
 
 	public HexFeatureCollection[]
 		urbanCollections, farmCollections, plantCollections;
 
 	public HexMesh walls;
+	public Transform wallTower, bridge;
 
 	public void Clear()
 	{
