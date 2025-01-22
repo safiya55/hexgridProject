@@ -55,6 +55,9 @@ public class HexFeatureManager : MonoBehaviour
 
 	public void AddFeature(HexCell cell, Vector3 position)
 	{
+		if (cell.IsSpecial) {
+			return;
+		}
 		// hash grid to obtain a value. Once we use that to set the rotation, 
 		//our features will remain motionless when we edit the terrain.
 		HexHash hash = HexMetrics.SampleHashGrid(position);
