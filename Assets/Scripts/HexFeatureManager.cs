@@ -11,6 +11,9 @@ public class HexFeatureManager : MonoBehaviour
 	public HexMesh walls;
 	public Transform wallTower, bridge;
 
+	public Transform[] special;
+
+
 	public void Clear()
 	{
 		//prevent duplicates when chunk refresh. get rid of old feature when chunk is cleared
@@ -328,10 +331,11 @@ public class HexFeatureManager : MonoBehaviour
 		instance.forward = roadCenter2 - roadCenter1;
 
 		//set the Z scale of the bridge instance, bridge will be stretched correctly.
-		float length = Vector3.Distance(roadCenter1, roadCenter2);
-		instance.localScale = new Vector3(
-			1f,	1f, length * (1f / HexMetrics.bridgeDesignLength)
-		);
+		// float length = Vector3.Distance(roadCenter1, roadCenter2);
+		// instance.localScale = new Vector3(
+		// 	1f,	1f, length * (1f / HexMetrics.bridgeDesignLength)
+		// );
+		//actual river gap may not be made correcty
 
 		instance.SetParent(container, false);
 	}

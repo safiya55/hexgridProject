@@ -51,7 +51,7 @@ public static class HexMetrics
 
     public const float wallElevationOffset = verticalTerraceStepSize;
 
-    public const float bridgeDesignLength = 7f;
+    public const float bridgeDesignLength = 18f;
 
     static float[][] featureThresholds = {
         new float[] {0.0f, 0.0f, 0.4f},
