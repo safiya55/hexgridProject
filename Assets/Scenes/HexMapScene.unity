@@ -1709,7 +1709,7 @@ GameObject:
   m_Component:
   - component: {fileID: 279753055}
   m_Layer: 0
-  m_Name: TowerRoot
+  m_Name: TowerWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1724,7 +1724,7 @@ Transform:
   m_GameObject: {fileID: 279753054}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -11.42, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8630,6 +8630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4982b565dd024f3468fd6e1a4f3e774a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallTower: {fileID: 279753055}
   urbanCollections:
   - prefabs:
     - {fileID: 5285336683481012974, guid: 2a7dc5e03fd9beb4bb090de0a5e03c1d, type: 3}

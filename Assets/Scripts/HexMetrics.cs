@@ -42,7 +42,7 @@ public static class HexMetrics
 
     public const float hashGridScale = 0.25f;
 
-    public const float wallHeight = 7f;
+    public const float wallHeight = 3f;
 
     public const float wallThickness = 0.75f;
 

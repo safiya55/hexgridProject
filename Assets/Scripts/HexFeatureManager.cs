@@ -171,6 +171,13 @@ public class HexFeatureManager : MonoBehaviour
 
 		////makse the thickness of the walls visible from above
 		walls.AddQuadUnperturbed(t1, t2, v3, v4);
+
+		Transform towerInstance = Instantiate(wallTower);
+		towerInstance.transform.localPosition = (left + right) * 0.5f;
+		Vector3 rightDirection = right - left;
+		rightDirection.y = 0f;
+		towerInstance.transform.right = rightDirection;
+		towerInstance.SetParent(container, false);
 	}
 
 	void AddWallSegment(
