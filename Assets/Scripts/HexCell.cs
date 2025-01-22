@@ -265,12 +265,14 @@ public class HexCell : MonoBehaviour
 		//setting the outgoing river.
 		hasOutgoingRiver = true;
 		outgoingRiver = direction;
+		specialIndex = 0; 
 
 		//set the incoming river of the other cell, 
 		//after removing its current incoming river, if any.
 		neighbor.RemoveIncomingRiver();
 		neighbor.hasIncomingRiver = true;
 		neighbor.incomingRiver = direction.Opposite();
+		neighbor.specialIndex = 0;
 
 		SetRoad((int)direction, false);
 	}
@@ -475,7 +477,7 @@ public class HexCell : MonoBehaviour
 			return specialIndex;
 		}
 		set {
-			if (specialIndex != value) {
+			if (specialIndex != value && !HasRiver) {
 				specialIndex = value;
 				RefreshSelfOnly();
 			}
