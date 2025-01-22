@@ -123,6 +123,11 @@ public class HexFeatureManager : MonoBehaviour
 		Vector3 nearLeft, Vector3 farLeft, Vector3 nearRight, Vector3 farRight
 	)
 	{
+		nearLeft = HexMetrics.Perturb(nearLeft);
+		farLeft = HexMetrics.Perturb(farLeft);
+		nearRight = HexMetrics.Perturb(nearRight);
+		farRight = HexMetrics.Perturb(farRight);
+
 		Vector3 left = HexMetrics.WallLerp(nearLeft, farLeft);
 		Vector3 right = HexMetrics.WallLerp(nearRight, farRight);
 
@@ -139,7 +144,7 @@ public class HexFeatureManager : MonoBehaviour
 		v2 = v4 = right - rightThicknessOffset;
 		v3.y = leftTop;
 		v4.y = rightTop;
-		walls.AddQuad(v1, v2, v3, v4);
+		walls.AddQuadUnperturbed(v1, v2, v3, v4);
 		
 		//makse the thickness of the walls visible from above
 		Vector3 t1 = v3, t2 = v4;
@@ -148,10 +153,10 @@ public class HexFeatureManager : MonoBehaviour
 		v2 = v4 = right + rightThicknessOffset;
 		v3.y = leftTop;
 		v4.y = rightTop;
-		walls.AddQuad(v2, v1, v4, v3);
+		walls.AddQuadUnperturbed(v2, v1, v4, v3);
 
 		////makse the thickness of the walls visible from above
-		walls.AddQuad(t1, t2, v3, v4);
+		walls.AddQuadUnperturbed(t1, t2, v3, v4);
 	}
 
 	void AddWallSegment (
