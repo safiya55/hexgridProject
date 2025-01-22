@@ -23,11 +23,11 @@ public class HexMapEditor : MonoBehaviour
 
 	//keep track of the active urban cells with features, 
 	//and whether it should be applied to cells.
-	int activeUrbanLevel, activeFarmLevel, activePlantLevel;
+	int activeUrbanLevel, activeFarmLevel, activePlantLevel, activeSpecialIndex;
 
     bool applyElevation = true;
 	bool applyWaterLevel = true;
-	bool applyUrbanLevel, applyFarmLevel, applyPlantLevel;
+	bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
 
     bool applyColor;
 
@@ -139,6 +139,10 @@ public class HexMapEditor : MonoBehaviour
 				cell.WaterLevel = activeWaterLevel;
 			}
 
+			if (applySpecialIndex) {
+				cell.SpecialIndex = activeSpecialIndex;
+			}
+
 			if (applyUrbanLevel) {
 				cell.UrbanLevel = activeUrbanLevel;
 			}
@@ -146,6 +150,7 @@ public class HexMapEditor : MonoBehaviour
 			if (applyFarmLevel) {
 				cell.FarmLevel = activeFarmLevel;
 			}
+
 			if (applyPlantLevel) {
 				cell.PlantLevel = activePlantLevel;
 			}
@@ -162,6 +167,7 @@ public class HexMapEditor : MonoBehaviour
 			if (walledMode != OptionalToggle.Ignore) {
 				cell.Walled = walledMode == OptionalToggle.Yes;
 			}
+			
 			if (isDrag) {
 				HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
 				if (otherCell) {
@@ -240,5 +246,13 @@ public class HexMapEditor : MonoBehaviour
 	//support for a toggle to adjust walled state of cells
 	public void SetWalledMode (int mode) {
 		walledMode = (OptionalToggle)mode;
+	}
+
+	public void SetApplySpecialIndex (bool toggle) {
+		applySpecialIndex = toggle;
+	}
+
+	public void SetSpecialIndex (float index) {
+		activeSpecialIndex = (int)index;
 	}
 }
