@@ -42,9 +42,11 @@ public static class HexMetrics
 
     public const float hashGridScale = 0.25f;
 
-    public const float wallHeight = 3f;
+    public const float wallHeight = 2f;
 
     public const float wallThickness = 0.75f;
+
+    public const float wallTowerThreshold = 0.5f;
 
     public const float wallElevationOffset = verticalTerraceStepSize;
 
