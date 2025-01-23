@@ -303,8 +303,11 @@ public class HexMapEditor : MonoBehaviour
 		//Debug.Log(Application.persistentDataPath);
 		//create save file path
 		string path = Path.Combine(Application.persistentDataPath, "test.map");
-		Stream fileStream = File.Open(path, FileMode.Create);
-		fileStream.Close();
+		//write to file
+		BinaryWriter writer =
+			new BinaryWriter(File.Open(path, FileMode.Create));
+		writer.Write(123);
+		writer.Close();
 	}
 
 	public void Load()
