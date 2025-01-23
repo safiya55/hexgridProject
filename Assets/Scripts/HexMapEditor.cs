@@ -304,10 +304,12 @@ public class HexMapEditor : MonoBehaviour
 		//create save file path
 		string path = Path.Combine(Application.persistentDataPath, "test.map");
 		//write to file
-		BinaryWriter writer =
-			new BinaryWriter(File.Open(path, FileMode.Create));
-		writer.Write(123);
-		writer.Close();
+		using (
+			BinaryWriter writer =
+				new BinaryWriter(File.Open(path, FileMode.Create))
+		) {
+			writer.Write(123);
+		}
 	}
 
 	public void Load()
