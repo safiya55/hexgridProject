@@ -2,11 +2,12 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;  // Add this for UI components
+using System.IO;
 
 public class HexGrid : MonoBehaviour
 {
     //public Color defaultColor = Color.white;
-	//public Color touchedColor = Color.green;
+    //public Color touchedColor = Color.green;
     public int chunkCountX = 4, chunkCountZ = 3;
     int cellCountX, cellCountZ;
     public HexCell cellPrefab;       // HexCell prefab
@@ -30,26 +31,30 @@ public class HexGrid : MonoBehaviour
         HexMetrics.noiseSource = noiseSource;
         HexMetrics.InitializeHashGrid(seed);
         HexMetrics.colors = colors;
-     
+
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
-		cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
+        cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
 
         CreateChunks();
-		CreateCells();
-	}
+        CreateCells();
+    }
 
-    void CreateChunks () {
-		chunks = new HexGridChunk[chunkCountX * chunkCountZ];
+    void CreateChunks()
+    {
+        chunks = new HexGridChunk[chunkCountX * chunkCountZ];
 
-		for (int z = 0, i = 0; z < chunkCountZ; z++) {
-			for (int x = 0; x < chunkCountX; x++) {
-				HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
-				chunk.transform.SetParent(transform);
-			}
-		}
-	}
+        for (int z = 0, i = 0; z < chunkCountZ; z++)
+        {
+            for (int x = 0; x < chunkCountX; x++)
+            {
+                HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
+                chunk.transform.SetParent(transform);
+            }
+        }
+    }
 
-	void CreateCells () {
+    void CreateCells()
+    {
 
         cells = new HexCell[cellCountZ * cellCountX];
         for (int z = 0, i = 0; z < cellCountZ; z++)
@@ -61,14 +66,16 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    void OnEnable () {
+    void OnEnable()
+    {
         //Make sure that we're not generating it more often than necessary.
-		if (!HexMetrics.noiseSource) {
-			HexMetrics.noiseSource = noiseSource;
-			HexMetrics.InitializeHashGrid(seed);
+        if (!HexMetrics.noiseSource)
+        {
+            HexMetrics.noiseSource = noiseSource;
+            HexMetrics.InitializeHashGrid(seed);
             HexMetrics.colors = colors;
-		}
-	}
+        }
+    }
 
 
     public HexCell GetCell(Vector3 position)
@@ -86,7 +93,7 @@ public class HexGrid : MonoBehaviour
         position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
         position.y = 0f;
         position.z = z * (HexMetrics.outerRadius * 1.5f);
-        
+
 
 
         // Instantiate the HexCell
@@ -141,35 +148,62 @@ public class HexGrid : MonoBehaviour
         AddCellToChunk(x, z, cell);
     }
 
-    void AddCellToChunk (int x, int z, HexCell cell) 
+    void AddCellToChunk(int x, int z, HexCell cell)
     {
         int chunkX = x / HexMetrics.chunkSizeX;
-		int chunkZ = z / HexMetrics.chunkSizeZ;
-		HexGridChunk chunk = chunks[chunkX + chunkZ * chunkCountX];
+        int chunkZ = z / HexMetrics.chunkSizeZ;
+        HexGridChunk chunk = chunks[chunkX + chunkZ * chunkCountX];
 
         int localX = x - chunkX * HexMetrics.chunkSizeX;
-		int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
-		chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
-	}
+        int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
+        chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
+    }
 
-    public HexCell GetCell (HexCoordinates coordinates) {
-		int z = coordinates.Z;
+    public HexCell GetCell(HexCoordinates coordinates)
+    {
+        int z = coordinates.Z;
 
-		if (z < 0 || z >= cellCountZ) {
-			return null;
+        if (z < 0 || z >= cellCountZ)
+        {
+            return null;
+        }
+        int x = coordinates.X + z / 2;
+
+        if (x < 0 || x >= cellCountX)
+        {
+            return null;
+        }
+
+        return cells[x + z * cellCountX];
+    }
+
+    public void ShowUI(bool visible)
+    {
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            chunks[i].ShowUI(visible);
+        }
+    }
+
+    //iterate through cells to save info
+    public void Save(BinaryWriter writer)
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].Save(writer);
+        }
+    }
+
+    ////iterate through cells to load info
+    public void Load(BinaryReader reader)
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].Load(reader);
+        }
+        //refresh all chunks
+        for (int i = 0; i < chunks.Length; i++) {
+			chunks[i].Refresh();
 		}
-		int x = coordinates.X + z / 2;
-
-		if (x < 0 || x >= cellCountX) {
-			return null;
-		}
-        
-		return cells[x + z * cellCountX];
-	}
-
-    public void ShowUI (bool visible) {
-		for (int i = 0; i < chunks.Length; i++) {
-			chunks[i].ShowUI(visible);
-		}
-	}
+    }
 }

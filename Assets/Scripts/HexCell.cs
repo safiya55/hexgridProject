@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.IO;
 
 public class HexCell : MonoBehaviour
 {
@@ -524,15 +525,29 @@ public class HexCell : MonoBehaviour
 		}
 	}
 
-		public int TerrainTypeIndex {
-		get {
+	public int TerrainTypeIndex
+	{
+		get
+		{
 			return terrainTypeIndex;
 		}
-		set {
-			if (terrainTypeIndex != value) {
+		set
+		{
+			if (terrainTypeIndex != value)
+			{
 				terrainTypeIndex = value;
 				Refresh();
 			}
 		}
+	}
+
+	public void Save(BinaryWriter writer)
+	{
+		
+	}
+
+	public void Load(BinaryReader reader)
+	{
+		
 	}
 }
