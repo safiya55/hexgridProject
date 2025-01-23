@@ -76,6 +76,13 @@ public class HexMesh : MonoBehaviour
         colors.Add(c3);
     }
 
+     public void AddTriangleColor(Color color)
+    {
+        colors.Add(color);
+        colors.Add(color);
+        colors.Add(color);
+    }
+
     public void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v4)
     {
         int vertexIndex = vertices.Count;
