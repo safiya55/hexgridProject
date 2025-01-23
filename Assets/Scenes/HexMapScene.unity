@@ -522,7 +522,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2103055420}
         m_TargetAssemblyTypeName: HexMapEditor, Assembly-CSharp
-        m_MethodName: SelectColor
+        m_MethodName: SetTerrainTypeIndex
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3042,7 +3042,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2103055420}
         m_TargetAssemblyTypeName: HexMapEditor, Assembly-CSharp
-        m_MethodName: SelectColor
+        m_MethodName: SetTerrainTypeIndex
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7789,8 +7789,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4464bc88ea2839940b10ba816a78fd69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultColor: {r: 1, g: 1, b: 1, a: 1}
-  touchedColor: {r: 0, g: 1, b: 0.07483268, a: 1}
   chunkCountX: 4
   chunkCountZ: 3
   cellPrefab: {fileID: 4176136223760065374, guid: cc86ac8add6757a4e99e177e49559eec, type: 3}
@@ -7798,6 +7796,11 @@ MonoBehaviour:
   chunkPrefab: {fileID: 976913974}
   noiseSource: {fileID: 2800000, guid: 2982eacc7b3e7064580e8182b302cc81, type: 3}
   seed: 1234
+  colors:
+  - {r: 0.99514306, g: 1, b: 0, a: 0}
+  - {r: 0, g: 1, b: 0.1221683, a: 0}
+  - {r: 1, g: 0, b: 0.90488815, a: 0}
+  - {r: 1, g: 1, b: 1, a: 0}
 --- !u!1 &1343797462
 GameObject:
   m_ObjectHideFlags: 0
@@ -8632,7 +8635,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2103055420}
         m_TargetAssemblyTypeName: HexMapEditor, Assembly-CSharp
-        m_MethodName: SelectColor
+        m_MethodName: SetTerrainTypeIndex
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12059,7 +12062,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2103055420}
         m_TargetAssemblyTypeName: HexMapEditor, Assembly-CSharp
-        m_MethodName: SelectColor
+        m_MethodName: SetTerrainTypeIndex
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12607,12 +12610,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 439133108457c744ab8c6411b49cae16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colors:
-  - {r: 0.88144493, g: 0.8962264, b: 0.080322154, a: 1}
-  - {r: 0.07843137, g: 0.8980392, b: 0.17556018, a: 1}
-  - {r: 0.8980392, g: 0.07843137, b: 0.85768205, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
-  - {r: 0.9716981, g: 0.9716981, b: 0.9716981, a: 1}
   hexGrid: {fileID: 1340313918}
 --- !u!114 &2103055421
 MonoBehaviour:

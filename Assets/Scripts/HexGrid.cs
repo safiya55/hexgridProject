@@ -5,8 +5,8 @@ using UnityEngine.UI;  // Add this for UI components
 
 public class HexGrid : MonoBehaviour
 {
-    public Color defaultColor = Color.white;
-	public Color touchedColor = Color.green;
+    //public Color defaultColor = Color.white;
+	//public Color touchedColor = Color.green;
     public int chunkCountX = 4, chunkCountZ = 3;
     int cellCountX, cellCountZ;
     public HexCell cellPrefab;       // HexCell prefab
@@ -23,10 +23,13 @@ public class HexGrid : MonoBehaviour
     //seed for features
     public int seed;
 
+    public Color[] colors;
+
     void Awake()
     {
         HexMetrics.noiseSource = noiseSource;
         HexMetrics.InitializeHashGrid(seed);
+        HexMetrics.colors = colors;
      
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
 		cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
@@ -63,6 +66,7 @@ public class HexGrid : MonoBehaviour
 		if (!HexMetrics.noiseSource) {
 			HexMetrics.noiseSource = noiseSource;
 			HexMetrics.InitializeHashGrid(seed);
+            HexMetrics.colors = colors;
 		}
 	}
 
@@ -82,6 +86,7 @@ public class HexGrid : MonoBehaviour
         position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
         position.y = 0f;
         position.z = z * (HexMetrics.outerRadius * 1.5f);
+        
 
 
         // Instantiate the HexCell
@@ -92,7 +97,7 @@ public class HexGrid : MonoBehaviour
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
 
         // Set the color to the default color
-        cell.color = defaultColor;
+        //cell.color = defaultColor;
 
         //connect cells from east to west direction
         if (x > 0)

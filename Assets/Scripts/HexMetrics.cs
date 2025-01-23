@@ -53,6 +53,8 @@ public static class HexMetrics
 
     public const float bridgeDesignLength = 18f;
 
+    public static Color[] colors;
+
     static float[][] featureThresholds = {
         new float[] {0.0f, 0.0f, 0.4f},
         new float[] {0.0f, 0.4f, 0.6f},

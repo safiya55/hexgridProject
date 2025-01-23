@@ -10,7 +10,7 @@ public class HexCell : MonoBehaviour
 	public RectTransform uiRect;
 
 	public HexGridChunk chunk;
-	public Color color;
+	//public Color color;
 
 	//river info
 	bool hasIncomingRiver;
@@ -28,6 +28,8 @@ public class HexCell : MonoBehaviour
 	public bool walled = true;
 
 	int specialIndex;
+
+	public int terrainTypeIndex;
 
 
 	void Refresh()
@@ -103,17 +105,17 @@ public class HexCell : MonoBehaviour
 	{
 		get
 		{
-			return color;
+			return HexMetrics.colors[terrainTypeIndex];
 		}
-		set
-		{
-			if (color == value)
-			{
-				return;
-			}
-			color = value;
-			Refresh();
-		}
+		// set
+		// {
+		// 	if (color == value)
+		// 	{
+		// 		return;
+		// 	}
+		// 	color = value;
+		// 	Refresh();
+		// }
 	}
 
 	//to get a cell's edge type in a certain direction.
@@ -519,6 +521,18 @@ public class HexCell : MonoBehaviour
 		get
 		{
 			return specialIndex > 0;
+		}
+	}
+
+		public int TerrainTypeIndex {
+		get {
+			return terrainTypeIndex;
+		}
+		set {
+			if (terrainTypeIndex != value) {
+				terrainTypeIndex = value;
+				Refresh();
+			}
 		}
 	}
 }
