@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.IO;
 
 public class HexMapEditor : MonoBehaviour
 {
@@ -299,7 +300,11 @@ public class HexMapEditor : MonoBehaviour
 
 	public void Save()
 	{
-		Debug.Log(Application.persistentDataPath);
+		//Debug.Log(Application.persistentDataPath);
+		//create save file path
+		string path = Path.Combine(Application.persistentDataPath, "test.map");
+		Stream fileStream = File.Open(path, FileMode.Create);
+		fileStream.Close();
 	}
 
 	public void Load()

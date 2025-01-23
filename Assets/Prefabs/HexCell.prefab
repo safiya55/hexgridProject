@@ -50,7 +50,6 @@ MonoBehaviour:
     z: 0
   uiRect: {fileID: 0}
   chunk: {fileID: 0}
-  color: {r: 1, g: 1, b: 1, a: 0}
   neighbors:
   - {fileID: 0}
   - {fileID: 0}
@@ -59,3 +58,4 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   walled: 0
+  terrainTypeIndex: 0
