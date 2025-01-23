@@ -49,7 +49,7 @@ public class HexMapEditor : MonoBehaviour
 
 	void Awake()
 	{
-	    SetTerrainTypeIndex(0);
+		SetTerrainTypeIndex(0);
 	}
 
 	void Update()
@@ -295,5 +295,13 @@ public class HexMapEditor : MonoBehaviour
 	{
 		Debug.Log("here");
 		activeTerrainTypeIndex = index;
+	}
+
+	public void Save()
+	{
+	}
+
+	public void Load()
+	{
 	}
 }
