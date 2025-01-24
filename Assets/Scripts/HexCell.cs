@@ -543,11 +543,19 @@ public class HexCell : MonoBehaviour
 		writer.Write((byte)specialIndex);
 		writer.Write(walled);
 
-		writer.Write(hasIncomingRiver);
-		writer.Write((byte)incomingRiver);
+		if (hasIncomingRiver) {
+			writer.Write((byte)(incomingRiver + 128));
+		}
+		else {
+			writer.Write((byte)0);
+		}
 
-		writer.Write(hasOutgoingRiver);
-		writer.Write((byte)outgoingRiver);
+		if (hasOutgoingRiver) {
+			writer.Write((byte)(outgoingRiver + 128));
+		}
+		else {
+			writer.Write((byte)0);
+		}
 
 		for (int i = 0; i < roads.Length; i++) {
 			writer.Write(roads[i]);
@@ -566,11 +574,23 @@ public class HexCell : MonoBehaviour
 		specialIndex = reader.ReadByte();
 		walled = reader.ReadBoolean();
 
-		hasIncomingRiver = reader.ReadBoolean();
-		incomingRiver = (HexDirection)reader.ReadByte();
+		byte riverData = reader.ReadByte();
+		if (riverData >= 128) {
+			hasIncomingRiver = true;
+			incomingRiver = (HexDirection)(riverData - 128);
+		}
+		else {
+			hasIncomingRiver = false;
+		}
 
-		hasOutgoingRiver = reader.ReadBoolean();
-		outgoingRiver = (HexDirection)reader.ReadByte();
+		riverData = reader.ReadByte();
+		if (riverData >= 128) {
+			hasOutgoingRiver = true;
+			outgoingRiver = (HexDirection)(riverData - 128);
+		}
+		else {
+			hasOutgoingRiver = false;
+		}
 
 		for (int i = 0; i < roads.Length; i++) {
 			roads[i] = reader.ReadBoolean();
