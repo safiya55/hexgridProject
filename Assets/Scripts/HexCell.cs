@@ -543,11 +543,11 @@ public class HexCell : MonoBehaviour
 
 	public void Save(BinaryWriter writer)
 	{
-		
+		writer.Write(terrainTypeIndex);
 	}
 
 	public void Load(BinaryReader reader)
 	{
-		
+		terrainTypeIndex = reader.ReadInt32();
 	}
 }
