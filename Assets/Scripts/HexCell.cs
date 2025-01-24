@@ -557,9 +557,13 @@ public class HexCell : MonoBehaviour
 			writer.Write((byte)0);
 		}
 
+		int roadFlags = 0;
 		for (int i = 0; i < roads.Length; i++) {
-			writer.Write(roads[i]);
+			if (roads[i]) {
+				roadFlags |= 1 << i;
+			}
 		}
+		writer.Write((byte)roadFlags);
 	}
 
 	public void Load(BinaryReader reader)
@@ -591,9 +595,11 @@ public class HexCell : MonoBehaviour
 		else {
 			hasOutgoingRiver = false;
 		}
-
+		
+		//read for road
+		int roadFlags = reader.ReadByte();
 		for (int i = 0; i < roads.Length; i++) {
-			roads[i] = reader.ReadBoolean();
+			roads[i] = (roadFlags & (1 << i)) != 0;
 		}
 	}
 
