@@ -74,16 +74,7 @@ public class HexCell : MonoBehaviour
 				return;
 			}
 			elevation = value;
-			Vector3 position = transform.localPosition;
-			position.y = value * HexMetrics.elevationStep;
-			position.y +=
-				(HexMetrics.SampleNoise(position).y * 2f - 1f) *
-				HexMetrics.elevationPerturbStrength;
-			transform.localPosition = position;
-
-			Vector3 uiPosition = uiRect.localPosition;
-			uiPosition.z = -position.y;
-			uiRect.localPosition = uiPosition;
+			RefreshPosition();
 
 			//Preventing Uphill Rivers and remove them
 			ValidateRivers();
@@ -544,10 +535,36 @@ public class HexCell : MonoBehaviour
 	public void Save(BinaryWriter writer)
 	{
 		writer.Write(terrainTypeIndex);
+		writer.Write(elevation);
+		writer.Write(waterLevel);
+		writer.Write(urbanLevel);
+		writer.Write(farmLevel);
+		writer.Write(plantLevel);
+		writer.Write(specialIndex);
 	}
 
 	public void Load(BinaryReader reader)
 	{
 		terrainTypeIndex = reader.ReadInt32();
+		elevation = reader.ReadInt32();
+		RefreshPosition();
+		waterLevel = reader.ReadInt32();
+		urbanLevel = reader.ReadInt32();
+		farmLevel = reader.ReadInt32();
+		plantLevel = reader.ReadInt32();
+		specialIndex = reader.ReadInt32();
+	}
+
+	void RefreshPosition () {
+		Vector3 position = transform.localPosition;
+		position.y = elevation * HexMetrics.elevationStep;
+		position.y +=
+			(HexMetrics.SampleNoise(position).y * 2f - 1f) *
+			HexMetrics.elevationPerturbStrength;
+		transform.localPosition = position;
+
+		Vector3 uiPosition = uiRect.localPosition;
+		uiPosition.z = -position.y;
+		uiRect.localPosition = uiPosition;
 	}
 }
