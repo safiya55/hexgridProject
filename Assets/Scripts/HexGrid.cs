@@ -31,20 +31,37 @@ public class HexGrid : MonoBehaviour
         HexMetrics.noiseSource = noiseSource;
         HexMetrics.InitializeHashGrid(seed);
         HexMetrics.colors = colors;
-        CreateMap();
-	}
+        CreateMap(cellCountX, cellCountZ);
+    }
 
-	public void CreateMap () {
+    public void CreateMap(int x, int z)
+    {
+
+        if (
+            x <= 0 || x % HexMetrics.chunkSizeX != 0 ||
+            z <= 0 || z % HexMetrics.chunkSizeZ != 0
+        )
+        {
+            Debug.LogError("Unsupported map size.");
+            return;
+        }
+
         //destroying all the current chunks at the start
         //remove old map
-        if (chunks != null) {
-			for (int i = 0; i < chunks.Length; i++) {
-				Destroy(chunks[i].gameObject);
-			}
-		}
+        if (chunks != null)
+        {
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                Destroy(chunks[i].gameObject);
+            }
+        }
+
+        //support for any size map
+        cellCountX = x;
+        cellCountZ = z;
 
         chunkCountX = cellCountX / HexMetrics.chunkSizeX;
-		chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
+        chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
 
         CreateChunks();
         CreateCells();
@@ -213,8 +230,9 @@ public class HexGrid : MonoBehaviour
             cells[i].Load(reader);
         }
         //refresh all chunks
-        for (int i = 0; i < chunks.Length; i++) {
-			chunks[i].Refresh();
-		}
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            chunks[i].Refresh();
+        }
     }
 }
