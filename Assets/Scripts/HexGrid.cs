@@ -35,6 +35,13 @@ public class HexGrid : MonoBehaviour
 	}
 
 	public void CreateMap () {
+        //destroying all the current chunks at the start
+        //remove old map
+        if (chunks != null) {
+			for (int i = 0; i < chunks.Length; i++) {
+				Destroy(chunks[i].gameObject);
+			}
+		}
 
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
