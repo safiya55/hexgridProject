@@ -8,8 +8,8 @@ public class HexGrid : MonoBehaviour
 {
     //public Color defaultColor = Color.white;
     //public Color touchedColor = Color.green;
-    public int chunkCountX = 4, chunkCountZ = 3;
-    int cellCountX, cellCountZ;
+    public int cellCountX = 20, cellCountZ = 15;
+    int chunkCountX, chunkCountZ;
     public HexCell cellPrefab;       // HexCell prefab
     public Text cellLabelPrefab;     // Text prefab for cell labels
 
@@ -43,8 +43,8 @@ public class HexGrid : MonoBehaviour
 			}
 		}
 
-        cellCountX = chunkCountX * HexMetrics.chunkSizeX;
-        cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
+        chunkCountX = cellCountX / HexMetrics.chunkSizeX;
+		chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
 
         CreateChunks();
         CreateCells();
