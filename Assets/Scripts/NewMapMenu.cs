@@ -20,6 +20,7 @@ public class NewMapMenu : MonoBehaviour
 	void CreateMap(int x, int z)
 	{
 		hexGrid.CreateMap(x, z);
+		HexMapCamera.ValidatePosition();
 		Close();
 	}
 
