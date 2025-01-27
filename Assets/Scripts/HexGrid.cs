@@ -34,7 +34,7 @@ public class HexGrid : MonoBehaviour
         CreateMap(cellCountX, cellCountZ);
     }
 
-    public void CreateMap(int x, int z)
+    public bool CreateMap(int x, int z)
     {
 
         if (
@@ -43,7 +43,7 @@ public class HexGrid : MonoBehaviour
         )
         {
             Debug.LogError("Unsupported map size.");
-            return;
+            return false;
         }
 
         //destroying all the current chunks at the start
@@ -65,6 +65,8 @@ public class HexGrid : MonoBehaviour
 
         CreateChunks();
         CreateCells();
+
+        return true;
     }
 
     void CreateChunks()
@@ -217,7 +219,7 @@ public class HexGrid : MonoBehaviour
     public void Save(BinaryWriter writer)
     {
         writer.Write(cellCountX);
-		writer.Write(cellCountZ);
+        writer.Write(cellCountZ);
 
         for (int i = 0; i < cells.Length; i++)
         {
@@ -229,10 +231,24 @@ public class HexGrid : MonoBehaviour
     public void Load(BinaryReader reader, int header)
     {
         int x = 20, z = 15;
-		if (header >= 1) {
-			x = reader.ReadInt32();
-			z = reader.ReadInt32();
-		}
+        if (header >= 1)
+        {
+            x = reader.ReadInt32();
+            z = reader.ReadInt32();
+        }
+
+        //Because loading overwrites all the data of the existing cells, 
+        //we actually don't have to create a new map if we end up loading one 
+        //with the same size. So it's possible to skip this step.
+        if (x != cellCountX || z != cellCountZ)
+        {
+            //abort map loading, when the map creation failed.
+            if (!CreateMap(x, z))
+            {
+                return;
+            }
+        }
+
 
         CreateMap(x, z);
 
