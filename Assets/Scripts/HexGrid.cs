@@ -226,9 +226,15 @@ public class HexGrid : MonoBehaviour
     }
 
     ////iterate through cells to load info
-    public void Load(BinaryReader reader)
+    public void Load(BinaryReader reader, int header)
     {
-        CreateMap(reader.ReadInt32(), reader.ReadInt32());
+        int x = 20, z = 15;
+		if (header >= 1) {
+			x = reader.ReadInt32();
+			z = reader.ReadInt32();
+		}
+
+        CreateMap(x, z);
 
         for (int i = 0; i < cells.Length; i++)
         {
