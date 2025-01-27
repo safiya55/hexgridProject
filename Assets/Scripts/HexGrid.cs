@@ -216,6 +216,9 @@ public class HexGrid : MonoBehaviour
     //iterate through cells to save info
     public void Save(BinaryWriter writer)
     {
+        writer.Write(cellCountX);
+		writer.Write(cellCountZ);
+
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Save(writer);
@@ -225,6 +228,8 @@ public class HexGrid : MonoBehaviour
     ////iterate through cells to load info
     public void Load(BinaryReader reader)
     {
+        CreateMap(20, 15);
+
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Load(reader);
