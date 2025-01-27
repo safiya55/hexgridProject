@@ -14,6 +14,8 @@ public class HexMapCamera : MonoBehaviour {
 
     public HexGrid grid;
 
+	static HexMapCamera instance;
+
 	void Awake () {
 		swivel = transform.GetChild(0);
 		stick = swivel.GetChild(0);
@@ -88,5 +90,17 @@ public class HexMapCamera : MonoBehaviour {
 
         float angle = Mathf.Lerp(swivelMinZoom, swivelMaxZoom, zoom);
 		swivel.localRotation = Quaternion.Euler(angle, 0f, 0f);
+	}
+
+	void OnEnable () {
+		instance = this;
+	}
+
+	//disable the HexMapCamera instance when it gets locked, 
+	//and enables it when it gets unlocked.
+	public static bool Locked {
+		set {
+			instance.enabled = !value;
+		}
 	}
 }
