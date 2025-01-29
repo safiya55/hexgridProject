@@ -6,6 +6,22 @@ public class SaveLoadMenu : MonoBehaviour {
     public HexGrid hexGrid;
     public Text menuLabel, actionButtonLabel;
     public InputField nameInput;
+    public SaveLoadMenu menu;
+
+    public string MapName{
+        get{
+            return mapName;
+        }
+        set{
+            mapName = value;
+            transform.GetChild(0).GetComponent<Text>().text = value;
+        }
+    }
+
+    string mapName;
+    public void Select(){
+        menu.SelectItem(mapName);
+    }
 
     public void Open(){
         gameObject.SetActive(true);
@@ -57,6 +73,10 @@ public class SaveLoadMenu : MonoBehaviour {
             Load(path);
         }
         Close();
+    }
+
+    public void SelectItem(string name) {
+        nameInput.text = name;
     }
 }
 
