@@ -11,6 +11,7 @@ public class HexMapCamera : MonoBehaviour {
     public float moveSpeedMinZoom, moveSpeedMaxZoom;
 	public float rotationSpeed;
 	float rotationAngle;
+	public static bool Locked { get; set; }
 
     public HexGrid grid;
 
