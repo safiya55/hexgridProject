@@ -10,22 +10,6 @@ public class SaveLoadMenu : MonoBehaviour {
     public InputField nameInput;
     public RectTransform listContent;
     public SaveLoadItem itemPrefab;
-    public SaveLoadMenu menu;
-
-    public string MapName{
-        get{
-            return mapName;
-        }
-        set{
-            mapName = value;
-            transform.GetChild(0).GetComponent<Text>().text = value;
-        }
-    }
-
-    string mapName;
-    public void Select(){
-        menu.SelectItem(mapName);
-    }
 
     public void Open(){
         gameObject.SetActive(true);
@@ -85,7 +69,7 @@ public class SaveLoadMenu : MonoBehaviour {
     }
 
     void FillList(){
-        for(int i = 0; i < list.Count.childCount; i++){
+        for(int i = 0; i < listContent.childCount; i++){
             Destroy(listContent.GetChild(i).gameObject);
         }
         string[] paths = 
