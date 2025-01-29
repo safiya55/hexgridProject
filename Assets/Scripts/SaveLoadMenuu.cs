@@ -1,11 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.IO;
+
 public class SaveLoadMenu : MonoBehaviour {
 
     public HexGrid hexGrid;
     public Text menuLabel, actionButtonLabel;
     public InputField nameInput;
+    public RectTransform listContent;
+    public SaveLoadItem itemPrefab;
     public SaveLoadMenu menu;
 
     public string MapName{
@@ -45,6 +49,7 @@ public class SaveLoadMenu : MonoBehaviour {
             menuLabel.text = "Load Map";
             actionButtonLabel.text ="Load";
         }
+        FillList();
         gameObject.SetActive(true);
         HexMapCamera.Locked = true ;
     }
@@ -78,6 +83,22 @@ public class SaveLoadMenu : MonoBehaviour {
     public void SelectItem(string name) {
         nameInput.text = name;
     }
+
+    void FillList(){
+        for(int i = 0; i i < list.Count.childCount; i++){
+            Destroy(listContent.GetChild(i).gameObject);
+        }
+        string[] paths = 
+        Directory.GetFiles(Application.persistentDataPathdataPath, "*.map");
+        Array.Sort(paths);
+        for(int i = 0; i < paths.Length; i++){
+            SaveLoadItem item = Instantiate(itemPrefab);
+            item.menu = this;
+            item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
+            item.transform.SetParent(listContent,false);
+        }
+    }
+
 }
 
 
