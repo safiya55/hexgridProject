@@ -302,11 +302,9 @@ public class HexMapEditor : MonoBehaviour
 	{
 		//Debug.Log(Application.persistentDataPath);
 		//create save file path
-			//string path = Path.Combine(Application.persistentDataPath, "test.map");
+		string path = Path.Combine(Application.persistentDataPath, "test.map"); //this is supposed to be deleted but it doesn't work w/o it
 		//write to file
-		using (
-			BinaryWriter writer =
-				new BinaryWriter(File.Open(path, FileMode.Create))
+		using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create))
 		)
 		{
 			writer.Write(1);
@@ -316,7 +314,7 @@ public class HexMapEditor : MonoBehaviour
 
 	public void Load()
 	{
-			//string path = Path.Combine(Application.persistentDataPath, "test.map");
+		string path = Path.Combine(Application.persistentDataPath, "test.map"); //this is supposed to be deleted but it doesn't work w/o it
 		using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
 		{
 			int header = reader.ReadInt32();

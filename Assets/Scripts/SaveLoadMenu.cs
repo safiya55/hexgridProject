@@ -83,7 +83,7 @@ public class SaveLoadMenu : MonoBehaviour
         for(int i = 0; i < paths.Length; i++){
             SaveLoadItem item = Instantiate(itemPrefab);
             item.menu = this;
-            item.MapName = Paths.GetFileNameWithoutExtention(paths[i]);
+            item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
             item.transform.SetParent(listContent, false);
         }
     }
