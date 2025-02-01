@@ -304,11 +304,11 @@ public class HexMapEditor : MonoBehaviour
 		//create save file path
 		string path = Path.Combine(Application.persistentDataPath, "test.map"); //this is supposed to be deleted but it doesn't work w/o it
 		//write to file
-		using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create))
+		using (BinaryWriter saveWriter = new BinaryWriter(File.Open(path, FileMode.Create))
 		)
 		{
-			writer.Write(1);
-			hexGrid.Save(writer);
+			saveWriter.Write(1);
+			hexGrid.Save(saveWriter);
 		}
 	}
 

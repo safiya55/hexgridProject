@@ -62,7 +62,9 @@ public class SaveLoadMenu : MonoBehaviour
             return;
         }
         if(saveMode){
-            Save(path);
+           using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create))) {
+            hexGrid.Save(writer); 
+        }
         }
         else{
             Load(path);
@@ -86,5 +88,17 @@ public class SaveLoadMenu : MonoBehaviour
             item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
             item.transform.SetParent(listContent, false);
         }
+    }
+
+    public void Delete(){
+        string path = GetSelectedPath();
+        if(path == null) {
+            return;
+        }
+        if(File.Exists(path)){
+        File.Delete(path);
+        }
+        nameInput.text = "";
+        FillList();
     }
 }
