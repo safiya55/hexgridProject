@@ -37,11 +37,11 @@ public class SaveLoadMenu : MonoBehaviour
     }
 
     string GetSelectedPath(){
-        string mapeName = nameInput.text;
-        if(mapeName.Length == 0){
+        string mapName = nameInput.text;
+        if(mapName.Length == 0){
             return null;
         }
-        return Path.Combine(Application.persistentDataPath, mapeName + ".map");
+        return Path.Combine(Application.persistentDataPath, mapName + ".map");
     }
 
     void Load(string path){
@@ -63,5 +63,9 @@ public class SaveLoadMenu : MonoBehaviour
             Load(path);
         }
         Close();
+    }
+
+    public void SelectItem(string name){
+        nameInput.text = name;
     }
 }
