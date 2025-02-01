@@ -43,4 +43,25 @@ public class SaveLoadMenu : MonoBehaviour
         }
         return Path.Combine(Application.persistentDataPath, mapeName + ".map");
     }
+
+    void Load(string path){
+        if (!File.Exists(path)) {
+            Debug.Log("File does not exist" + path);
+            return;
+        }
+    }
+
+    public void Action(){
+        string path = GetSelectedPath();
+        if (path == null) {
+            return;
+        }
+        if(saveMode){
+            Save(path);
+        }
+        else{
+            Load(path);
+        }
+        Close();
+    }
 }
