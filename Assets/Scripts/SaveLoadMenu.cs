@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.IO;
 
 public class SaveLoadMenu : MonoBehaviour
@@ -13,6 +14,11 @@ public class SaveLoadMenu : MonoBehaviour
     bool saveMode;
 
     public HexGrid hexGrid;
+    
+    //tp fill list
+    public RectTransform listContent;
+	
+	public SaveLoadItem itemPrefab;
 
     public void Open(bool saveMode)
     {
@@ -27,6 +33,8 @@ public class SaveLoadMenu : MonoBehaviour
 			actionButtonLabel.text = "Load";
 		}
 
+        //fill the list of map
+        FillList();
         gameObject.SetActive(true);
         HexMapCamera.Locked = true;
     }
@@ -97,5 +105,29 @@ public class SaveLoadMenu : MonoBehaviour
 
     public void SelectItem (string name) {
 		nameInput.text = name;
+	}
+
+    void FillList () {
+        
+        //make sure to remove all old items before adding new ones.
+        for (int i = 0; i < listContent.childCount; i++) {
+			Destroy(listContent.GetChild(i).gameObject);
+		}
+
+		string[] paths =
+			Directory.GetFiles(Application.persistentDataPath, "*.map");
+        Array.Sort(paths);
+
+        //create prefab instance of each item in the array
+        for (int i = 0; i < paths.Length; i++) {
+			SaveLoadItem item = Instantiate(itemPrefab);
+            
+            //link item to the menu
+			item.menu = this;
+			//set map name
+            item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
+            //make it a child of the list content
+			item.transform.SetParent(listContent, false);
+		}
 	}
 }
