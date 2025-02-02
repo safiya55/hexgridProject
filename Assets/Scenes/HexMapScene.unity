@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 44995402}
   - component: {fileID: 44995401}
   m_Layer: 5
-  m_Name: MapNameInput
+  m_Name: NameInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1175,8 +1175,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 950778897}
   m_HandleRect: {fileID: 950778896}
   m_Direction: 2
-  m_Value: 1.0000046
-  m_Size: 0.39
+  m_Value: 1.0000045
+  m_Size: 0.38999996
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7657,6 +7657,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menuLabel: {fileID: 1781983725}
   actionButtonLabel: {fileID: 942453377}
+  nameInput: {fileID: 44995401}
   hexGrid: {fileID: 1340313918}
 --- !u!1 &881012919
 GameObject:

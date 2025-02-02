@@ -1,10 +1,14 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class SaveLoadMenu : MonoBehaviour
 {
     public Text menuLabel, actionButtonLabel;
+
+    public TMP_InputField nameInput;
+
 
     bool saveMode;
 
@@ -32,4 +36,12 @@ public class SaveLoadMenu : MonoBehaviour
         gameObject.SetActive(false);
         HexMapCamera.Locked = false;
     }
+
+    string GetSelectedPath () {
+		string mapName = nameInput.text;
+		if (mapName.Length == 0) {
+			return null;
+		}
+		return Path.Combine(Application.persistentDataPath, mapName + ".map");
+	}
 }
