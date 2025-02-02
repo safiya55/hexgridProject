@@ -10,7 +10,8 @@ public class SaveLoadMenu : MonoBehaviour
 
     bool saveMode;
 
-    public InputField nameInput;
+    //use TMP to use modern version of text and inputfield
+    public TMP_InputField nameInput;
 
     public RectTransform listContent;
 
@@ -22,14 +23,16 @@ public class SaveLoadMenu : MonoBehaviour
     {
         this.saveMode = saveMode;
 
-        if (saveMode) {
-			menuLabel.text = "Save Map";
-			actionButtonLabel.text = "Save";
-		}
-		else {
-			menuLabel.text = "Load Map";
-			actionButtonLabel.text = "Load";
-		}
+        if (saveMode)
+        {
+            menuLabel.text = "Save Map";
+            actionButtonLabel.text = "Save";
+        }
+        else
+        {
+            menuLabel.text = "Load Map";
+            actionButtonLabel.text = "Load";
+        }
         FillList();
         gameObject.SetActive(true);
         HexMapCamera.Locked = true;
@@ -41,48 +44,62 @@ public class SaveLoadMenu : MonoBehaviour
         HexMapCamera.Locked = false;
     }
 
-    string GetSelectedPath(){
+    string GetSelectedPath()
+    {
         string mapName = nameInput.text;
-        if(mapName.Length == 0){
+        if (mapName.Length == 0)
+        {
             return null;
         }
         return Path.Combine(Application.persistentDataPath, mapName + ".map");
     }
 
-    void Load(string path){
-        if (!File.Exists(path)) {
-            Debug.Log("File does not exist" + path);
-            return;
-        }
-    }
-
-    public void Action(){
+    public void Action()
+    {
+        //retrieve the path that's selected by the user. 
         string path = GetSelectedPath();
-        if (path == null) {
+        if (path == null)
+        {
             return;
         }
-        if(saveMode){
-           using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create))) {
-            hexGrid.Save(writer); 
+        //if path
+        //save it
+        if (saveMode)
+        {
+            using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create)))
+            {
+                hexGrid.Save(writer);
+            }
         }
-        }
-        else{
+        else
+        {
+            //load path
             Load(path);
         }
         Close();
     }
 
-    public void SelectItem(string name){
+    public void SelectItem(string name)
+    {
         nameInput.text = name;
     }
 
-    void FillList(){
-        for(int i = 0; i < listContent.childCount; i++){
+    void FillList()
+    {
+        //filling the list multiple times,
+        // ensure to remove all old items before adding new ones.
+        for (int i = 0; i < listContent.childCount; i++)
+        {
             Destroy(listContent.GetChild(i).gameObject);
         }
+
         string[] paths = Directory.GetFiles(Application.persistentDataPath, "*.map");
         Array.Sort(paths);
-        for(int i = 0; i < paths.Length; i++){
+        //create prefab instances for each item in the array. 
+        //Link the item to the menu,
+        // set its map name, and make it a child of the list content.
+        for (int i = 0; i < paths.Length; i++)
+        {
             SaveLoadItem item = Instantiate(itemPrefab);
             item.menu = this;
             item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
@@ -90,13 +107,56 @@ public class SaveLoadMenu : MonoBehaviour
         }
     }
 
-    public void Delete(){
+    void Save(string path)
+    {
+        //where files are saved location
+        //Debug.Log(Application.persistentDataPath); 
+        //create save file path
+        //write to file
+        using (
+            BinaryWriter writer =
+            new BinaryWriter(File.Open(path, FileMode.Create))
+        )
+        {
+            writer.Write(1);
+            hexGrid.Save(writer);
+        }
+    }
+
+    void Load(string path)
+    {
+        {
+            //make sure file exist
+            if (!File.Exists(path))
+            {
+                Debug.LogError("File does not exist " + path);
+                return;
+            }
+            using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
+            {
+                int header = reader.ReadInt32();
+                if (header <= 1)
+                {
+                    hexGrid.Load(reader, header);
+                    HexMapCamera.ValidatePosition();
+                }
+                else
+                {
+                    Debug.LogWarning("Unknown map format " + header);
+                }
+            }
+        }
+    }
+    public void Delete()
+    {
         string path = GetSelectedPath();
-        if(path == null) {
+        if (path == null)
+        {
             return;
         }
-        if(File.Exists(path)){
-        File.Delete(path);
+        if (File.Exists(path))
+        {
+            File.Delete(path);
         }
         nameInput.text = "";
         FillList();
