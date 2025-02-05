@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class SaveLoadItem : MonoBehaviour {
 
 	public SaveLoadMenu menu;
+	string mapName;
 	
 	public string MapName {
 		get {
@@ -15,7 +16,6 @@ public class SaveLoadItem : MonoBehaviour {
 		}
 	}
 	
-	string mapName;
 	
 	public void Select () {
 		menu.SelectItem(mapName);

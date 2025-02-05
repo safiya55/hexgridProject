@@ -6,56 +6,60 @@ using System.IO;
 
 public class SaveLoadMenu : MonoBehaviour
 {
-    public Text menuLabel, actionButtonLabel;
+	public Text menuLabel, actionButtonLabel;
 
-    public TMP_InputField nameInput;
+	public TMP_InputField nameInput;
 
 
-    bool saveMode;
+	bool saveMode;
 
-    public HexGrid hexGrid;
-    
-    //tp fill list
-    public RectTransform listContent;
-	
+	public HexGrid hexGrid;
+
+	//tp fill list
+	public RectTransform listContent;
+
 	public SaveLoadItem itemPrefab;
 
-    public void Open(bool saveMode)
-    {
-        this.saveMode = saveMode;
+	public void Open(bool saveMode)
+	{
+		this.saveMode = saveMode;
 
-        if (saveMode) {
+		if (saveMode)
+		{
 			menuLabel.text = "Save Map";
 			actionButtonLabel.text = "Save";
 		}
-		else {
+		else
+		{
 			menuLabel.text = "Load Map";
 			actionButtonLabel.text = "Load";
 		}
 
-        //fill the list of map
-        FillList();
-        gameObject.SetActive(true);
-        HexMapCamera.Locked = true;
-    }
+		//fill the list of map
+		FillList();
+		gameObject.SetActive(true);
+		HexMapCamera.Locked = true;
+	}
 
-    public void Close()
-    {
-        gameObject.SetActive(false);
-        HexMapCamera.Locked = false;
-    }
+	public void Close()
+	{
+		gameObject.SetActive(false);
+		HexMapCamera.Locked = false;
+	}
 
-    string GetSelectedPath () {
+	string GetSelectedPath()
+	{
 		string mapName = nameInput.text;
-		if (mapName.Length == 0) {
+		if (mapName.Length == 0)
+		{
 			return null;
 		}
 		return Path.Combine(Application.persistentDataPath, mapName + ".map");
 	}
 
-    public void Save(string path)
+	public void Save(string path)
 	{
-        //file path of saved maps
+		//file path of saved maps
 		//Debug.Log(Application.persistentDataPath);
 		//write to file
 		using (
@@ -70,8 +74,9 @@ public class SaveLoadMenu : MonoBehaviour
 
 	public void Load(string path)
 	{
-        //ensure that the file actually exists,
-        if (!File.Exists(path)) {
+		//ensure that the file actually exists,
+		if (!File.Exists(path))
+		{
 			Debug.LogError("File does not exist " + path);
 			return;
 		}
@@ -79,54 +84,69 @@ public class SaveLoadMenu : MonoBehaviour
 		using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
 		{
 			int header = reader.ReadInt32();
-			if (header <= 1) {
+			if (header <= 1)
+			{
 				hexGrid.Load(reader, header);
 				HexMapCamera.ValidatePosition();
 			}
-			else {
+			else
+			{
 				Debug.LogWarning("Unknown map format " + header);
 			}
 		}
 	}
 
-    public void Action () {
+	public void Action()
+	{
 		string path = GetSelectedPath();
-		if (path == null) {
+		if (path == null)
+		{
 			return;
 		}
-		if (saveMode) {
+		if (saveMode)
+		{
 			Save(path);
 		}
-		else {
+		else
+		{
 			Load(path);
 		}
 		Close();
 	}
 
-    public void SelectItem (string name) {
+	public void SelectItem(string name)
+	{
 		nameInput.text = name;
 	}
 
-    void FillList () {
-        
-        //make sure to remove all old items before adding new ones.
-        for (int i = 0; i < listContent.childCount; i++) {
+	void FillList()
+	{
+
+		//make sure to remove all old items before adding new ones.
+		for (int i = 0; i < listContent.childCount; i++)
+		{
 			Destroy(listContent.GetChild(i).gameObject);
 		}
 
 		string[] paths =
 			Directory.GetFiles(Application.persistentDataPath, "*.map");
-        Array.Sort(paths);
 
-        //create prefab instance of each item in the array
-        for (int i = 0; i < paths.Length; i++) {
+		//display array in the list in alphabetical order
+		Array.Sort(paths);
+
+
+		//create prefab instance of each item in the array
+		for (int i = 0; i < paths.Length; i++)
+		{
 			SaveLoadItem item = Instantiate(itemPrefab);
-            
-            //link item to the menu
+
+			//link item to the menu
 			item.menu = this;
+			Debug.Log(item);
 			//set map name
-            item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
-            //make it a child of the list content
+			item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
+
+			//make it a child of the list content
 			item.transform.SetParent(listContent, false);
 		}
 	}
