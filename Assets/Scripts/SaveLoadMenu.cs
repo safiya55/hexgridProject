@@ -142,12 +142,28 @@ public class SaveLoadMenu : MonoBehaviour
 
 			//link item to the menu
 			item.menu = this;
-			Debug.Log(item);
 			//set map name
 			item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
 
 			//make it a child of the list content
 			item.transform.SetParent(listContent, false);
 		}
+	}
+
+	//delete selected maps
+	public void Delete () {
+		string path = GetSelectedPath();
+		if (path == null) {
+			return;
+		}
+
+		if (File.Exists(path)) {
+			File.Delete(path);
+		}
+
+		// clear Name Input after deletion
+		nameInput.text = "";
+		//update menu list
+		FillList();
 	}
 }

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class SaveLoadItem : MonoBehaviour {
 
 	public SaveLoadMenu menu;
-	string mapName;
+	string mapName = "";
 	
 	public string MapName {
 		get {
