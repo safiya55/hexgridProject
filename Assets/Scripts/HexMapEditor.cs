@@ -297,35 +297,4 @@ public class HexMapEditor : MonoBehaviour
 		Debug.Log("here");
 		activeTerrainTypeIndex = index;
 	}
-
-	void Save()
-	{
-		//Debug.Log(Application.persistentDataPath);
-		//create save file path
-		string path = Path.Combine(Application.persistentDataPath, "test.map");
-		//write to file
-		using (
-			BinaryWriter writer =
-				new BinaryWriter(File.Open(path, FileMode.Create))
-		)
-		{
-			writer.Write(0);
-			hexGrid.Save(writer);
-		}
-	}
-
-	void Load()
-	{
-		string path = Path.Combine(Application.persistentDataPath, "test.map");
-		using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
-		{
-			int header = reader.ReadInt32();
-			if (header == 0) {
-				hexGrid.Load(reader);
-			}
-			else {
-				Debug.LogWarning("Unknown map format " + header);
-			}
-		}
-	}
 }

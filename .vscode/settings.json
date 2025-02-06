@@ -56,5 +56,18 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "hexgridProject.sln"
+    "dotnet.defaultSolution": "hexgridProject.sln",
+    "netbeans.jdkhome": "c:\\Program Files\\Microsoft\\jdk-17.0.13.11-hotspot",
+    "netbeans.project.jdkhome": "c:\\Program Files\\Microsoft\\jdk-17.0.13.11-hotspot",
+    "java.jdt.ls.java.home": "c:\\Program Files\\Microsoft\\jdk-17.0.13.11-hotspot",
+    "terminal.integrated.env.windows": {
+        "JAVA_HOME": "c:\\Program Files\\Microsoft\\jdk-17.0.13.11-hotspot",
+        "PATH": "c:\\Program Files\\Microsoft\\jdk-17.0.13.11-hotspot\\bin;${env:PATH}"
+    },
+    "maven.terminal.customEnv": [
+        {
+            "environmentVariable": "JAVA_HOME",
+            "value": "c:\\Program Files\\Microsoft\\jdk-17.0.13.11-hotspot"
+        }
+    ]
 }

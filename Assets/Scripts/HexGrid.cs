@@ -8,8 +8,8 @@ public class HexGrid : MonoBehaviour
 {
     //public Color defaultColor = Color.white;
     //public Color touchedColor = Color.green;
-    public int chunkCountX = 4, chunkCountZ = 3;
-    int cellCountX, cellCountZ;
+    public int cellCountX = 20, cellCountZ = 15;
+    int chunkCountX, chunkCountZ;
     public HexCell cellPrefab;       // HexCell prefab
     public Text cellLabelPrefab;     // Text prefab for cell labels
 
@@ -31,12 +31,42 @@ public class HexGrid : MonoBehaviour
         HexMetrics.noiseSource = noiseSource;
         HexMetrics.InitializeHashGrid(seed);
         HexMetrics.colors = colors;
+        CreateMap(cellCountX, cellCountZ);
+    }
 
-        cellCountX = chunkCountX * HexMetrics.chunkSizeX;
-        cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
+    public bool CreateMap(int x, int z)
+    {
+
+        if (
+            x <= 0 || x % HexMetrics.chunkSizeX != 0 ||
+            z <= 0 || z % HexMetrics.chunkSizeZ != 0
+        )
+        {
+            Debug.LogError("Unsupported map size.");
+            return false;
+        }
+
+        //destroying all the current chunks at the start
+        //remove old map
+        if (chunks != null)
+        {
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                Destroy(chunks[i].gameObject);
+            }
+        }
+
+        //support for any size map
+        cellCountX = x;
+        cellCountZ = z;
+
+        chunkCountX = cellCountX / HexMetrics.chunkSizeX;
+        chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
 
         CreateChunks();
         CreateCells();
+
+        return true;
     }
 
     void CreateChunks()
@@ -188,6 +218,9 @@ public class HexGrid : MonoBehaviour
     //iterate through cells to save info
     public void Save(BinaryWriter writer)
     {
+        writer.Write(cellCountX);
+        writer.Write(cellCountZ);
+
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Save(writer);
@@ -195,15 +228,38 @@ public class HexGrid : MonoBehaviour
     }
 
     ////iterate through cells to load info
-    public void Load(BinaryReader reader)
+    public void Load(BinaryReader reader, int header)
     {
+        int x = 20, z = 15;
+        if (header >= 1)
+        {
+            x = reader.ReadInt32();
+            z = reader.ReadInt32();
+        }
+
+        //Because loading overwrites all the data of the existing cells, 
+        //we actually don't have to create a new map if we end up loading one 
+        //with the same size. So it's possible to skip this step.
+        if (x != cellCountX || z != cellCountZ)
+        {
+            //abort map loading, when the map creation failed.
+            if (!CreateMap(x, z))
+            {
+                return;
+            }
+        }
+
+
+        CreateMap(x, z);
+
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Load(reader);
         }
         //refresh all chunks
-        for (int i = 0; i < chunks.Length; i++) {
-			chunks[i].Refresh();
-		}
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            chunks[i].Refresh();
+        }
     }
 }
