@@ -3,6 +3,10 @@ using UnityEngine.UI;
 
 public class HexGridChunk : MonoBehaviour
 {
+    static Color color1 = new Color(1f, 0f, 0f);
+	static Color color2 = new Color(0f, 1f, 0f);
+	static Color color3 = new Color(0f, 0f, 1f);
+
     public HexMesh terrain, rivers, roads, water, waterShore, estuaries;
 
     public HexFeatureManager features;
