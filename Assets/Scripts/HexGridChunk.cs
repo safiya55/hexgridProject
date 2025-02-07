@@ -891,7 +891,7 @@ public class HexGridChunk : MonoBehaviour
         else
         {
             terrain.AddTriangle(bottom, left, right);
-            terrain.AddTriangleColor(bottomCell.Color, leftCell.Color, rightCell.Color);
+            terrain.AddTriangleColor(color1, color2, color3);
         }
 
         //add the corner segments
@@ -906,8 +906,8 @@ public class HexGridChunk : MonoBehaviour
     {
        Vector3 v3 = HexMetrics.TerraceLerp(begin, left, 1);
 		Vector3 v4 = HexMetrics.TerraceLerp(begin, right, 1);
-		Color c3 = HexMetrics.TerraceLerp(beginCell.Color, leftCell.Color, 1);
-		Color c4 = HexMetrics.TerraceLerp(beginCell.Color, rightCell.Color, 1);
+		Color c3 = HexMetrics.TerraceLerp(color1, color2, 1);
+		Color c4 = HexMetrics.TerraceLerp(color1, color3, 1);
 
 		terrain.AddTriangle(begin, v3, v4);
 		terrain.AddTriangleColor(beginCell.Color, c3, c4);
@@ -919,14 +919,14 @@ public class HexGridChunk : MonoBehaviour
 			Color c2 = c4;
 			v3 = HexMetrics.TerraceLerp(begin, left, i);
 			v4 = HexMetrics.TerraceLerp(begin, right, i);
-			c3 = HexMetrics.TerraceLerp(beginCell.Color, leftCell.Color, i);
-			c4 = HexMetrics.TerraceLerp(beginCell.Color, rightCell.Color, i);
+			c3 = HexMetrics.TerraceLerp(color1, color2, i);
+			c4 = HexMetrics.TerraceLerp(color1, color3, i);
 			terrain.AddQuad(v1, v2, v3, v4);
 			terrain.AddQuadColor(c1, c2, c3, c4);
 		}
 
 		terrain.AddQuad(v3, v4, left, right);
-		terrain.AddQuadColor(c3, c4, leftCell.Color, rightCell.Color);
+		terrain.AddQuadColor(c3, c4, color2, color3);
     }
 
     //take care of both slope-cliff cases at once.
@@ -947,26 +947,28 @@ public class HexGridChunk : MonoBehaviour
         }
 
         Vector3 boundary = Vector3.Lerp(HexMetrics.Perturb(begin), HexMetrics.Perturb(right), b);
-        Color boundaryColor = Color.Lerp(beginCell.Color, rightCell.Color, b);
+        Color boundaryColor = Color.Lerp(color1, color3, b);
 
         //If the top edge is a slope, we again need to connect terraces and a cliff.
         //does the bottom part
         TriangulateBoundaryTriangle(
-            begin, beginCell, left, leftCell, boundary, boundaryColor
+            begin, color1, left, color2, boundary, boundaryColor
         );
 
         //completes the top part by terrain.Add a rotated boundary triangle if there is a slope.
         if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
         {
             TriangulateBoundaryTriangle(
-                left, leftCell, right, rightCell, boundary, boundaryColor
+                left, color2, right, color3, boundary, boundaryColor
             );
         }
         else
         {
             //Otherwise a simple triangle suffices.
-            terrain.AddTriangleUnperturbed(HexMetrics.Perturb(left), HexMetrics.Perturb(right), boundary);
-            terrain.AddTriangleColor(leftCell.Color, rightCell.Color, boundaryColor);
+            terrain.AddTriangleUnperturbed(
+				HexMetrics.Perturb(left), HexMetrics.Perturb(right), boundary
+			);
+            terrain.AddTriangleColor(color2, color3, boundaryColor);
         }
     }
 
@@ -986,54 +988,56 @@ public class HexGridChunk : MonoBehaviour
         }
 
         Vector3 boundary = Vector3.Lerp(HexMetrics.Perturb(begin), HexMetrics.Perturb(left), b);
-        Color boundaryColor = Color.Lerp(beginCell.Color, leftCell.Color, b);
+        Color boundaryColor = Color.Lerp(color1, color2, b);
 
         //If the top edge is a slope, we again need to connect terraces and a cliff.
         //does the bottom part
         TriangulateBoundaryTriangle(
-            right, rightCell, begin, beginCell, boundary, boundaryColor
-        );
+			right, color3, begin, color1, boundary, boundaryColor
+		);
 
         //completes the top part by terrain.Add a rotated boundary triangle if there is a slope.
         if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
         {
             TriangulateBoundaryTriangle(
-                left, leftCell, right, rightCell, boundary, boundaryColor
-            );
+				left, color2, right, color3, boundary, boundaryColor
+			);
         }
         else
         {
             //Otherwise a simple triangle suffices.
-            terrain.AddTriangleUnperturbed(HexMetrics.Perturb(left), HexMetrics.Perturb(right), boundary);
-            terrain.AddTriangleColor(leftCell.Color, rightCell.Color, boundaryColor);
+            terrain.AddTriangleUnperturbed(
+				HexMetrics.Perturb(left), HexMetrics.Perturb(right), boundary
+			);
+            terrain.AddTriangleColor(color2, color3, boundaryColor);
         }
     }
 
     void TriangulateBoundaryTriangle(
-       Vector3 begin, HexCell beginCell,
-       Vector3 left, HexCell leftCell,
+       Vector3 begin, Color beginColor,
+		Vector3 left, Color leftColor,
        Vector3 boundary, Color boundaryColor
    )
     {
         //triangulating the terraces.
         Vector3 v2 = HexMetrics.Perturb(HexMetrics.TerraceLerp(begin, left, 1));
-        Color c2 = HexMetrics.TerraceLerp(beginCell.Color, leftCell.Color, 1);
+        Color c2 = HexMetrics.TerraceLerp(beginColor, leftColor, 1);
 
         terrain.AddTriangleUnperturbed(HexMetrics.Perturb(begin), v2, boundary);
-        terrain.AddTriangleColor(beginCell.Color, c2, boundaryColor);
+        terrain.AddTriangleColor(beginColor, c2, boundaryColor);
 
         for (int i = 2; i < HexMetrics.terraceSteps; i++)
         {
             Vector3 v1 = v2;
             Color c1 = c2;
             v2 = HexMetrics.Perturb(HexMetrics.TerraceLerp(begin, left, i));
-            c2 = HexMetrics.TerraceLerp(beginCell.Color, leftCell.Color, i);
+            c2 = HexMetrics.TerraceLerp(beginColor, leftColor, i);
             terrain.AddTriangleUnperturbed(v1, v2, boundary);
             terrain.AddTriangleColor(c1, c2, boundaryColor);
         }
 
         terrain.AddTriangleUnperturbed(v2, HexMetrics.Perturb(left), boundary);
-        terrain.AddTriangleColor(c2, leftCell.Color, boundaryColor);
+        terrain.AddTriangleColor(c2, leftColor, boundaryColor);
     }
 
     void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color Color)
