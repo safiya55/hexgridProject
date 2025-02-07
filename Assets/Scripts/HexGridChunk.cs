@@ -478,8 +478,6 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddTriangle(centerL, m.v1, m.v2);
         terrain.AddQuad(centerL, center, m.v2, m.v3);
         terrain.AddQuad(center, centerR, m.v3, m.v4);
-        terrain.AddQuadColor(cell.Color);
-
         terrain.AddTriangle(centerR, m.v4, m.v5);
 
         terrain.AddTriangleColor(color1);
@@ -565,7 +563,7 @@ public class HexGridChunk : MonoBehaviour
         {
             //take care of the flats and cliffs.
             //TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color);
-            TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color, hasRoad);
+            TriangulateEdgeStrip(e1, color1, e2, color2, hasRoad);
         }
         //after all other connection work is done, right before we move on to the corner triangle. 
         //We'll leave it to the feature manager to decide whether a wall should actually be placed.
@@ -620,20 +618,20 @@ public class HexGridChunk : MonoBehaviour
     )
     {
         EdgeVertices e2 = EdgeVertices.TerraceLerp(begin, end, 1);
-        Color c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, 1);
+        Color c2 = HexMetrics.TerraceLerp(color1, color2, 1);
 
-        TriangulateEdgeStrip(begin, beginCell.Color, e2, c2, hasRoad);
+        TriangulateEdgeStrip(begin, color1, e2, c2, hasRoad);
 
         for (int i = 2; i < HexMetrics.terraceSteps; i++)
         {
             EdgeVertices e1 = e2;
             Color c1 = c2;
             e2 = EdgeVertices.TerraceLerp(begin, end, i);
-            c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, i);
+            c2 = HexMetrics.TerraceLerp(color1, color2, i);
             TriangulateEdgeStrip(e1, c1, e2, c2, hasRoad);
         }
 
-        TriangulateEdgeStrip(e2, c2, end, endCell.Color, hasRoad);
+        TriangulateEdgeStrip(e2, c2, end, color2, hasRoad);
     }
 
     void TriangulateAdjacentToRiver(
