@@ -376,8 +376,8 @@ public class HexGridChunk : MonoBehaviour
         // Adjust the middle vertex to match the streambed height
         m.v3.y = e.v3.y;
         // Triangulate geometry
-        TriangulateEdgeStrip(m, cell.Color, e, cell.Color); // Riverbanks
-        TriangulateEdgeFan(center, m, cell.Color);         // Terminating fan
+        TriangulateEdgeStrip(m, color1, e, color1); // Riverbanks
+        TriangulateEdgeFan(center, m, color1);         // Terminating fan
 
         // only add river segments when the current cell in not underwater.
         if (!cell.IsUnderwater)
@@ -473,17 +473,19 @@ public class HexGridChunk : MonoBehaviour
         m.v3.y = center.y = e.v3.y;
 
         //use TriangulateEdgeStrip to fill the space between the middle and edge lines.
-        TriangulateEdgeStrip(m, cell.Color, e, cell.Color);
+        TriangulateEdgeStrip(m, color1, e, color1);
 
         terrain.AddTriangle(centerL, m.v1, m.v2);
-        terrain.AddTriangleColor(cell.Color, cell.Color, cell.Color);
         terrain.AddQuad(centerL, center, m.v2, m.v3);
-        terrain.AddQuadColor(cell.Color);
         terrain.AddQuad(center, centerR, m.v3, m.v4);
         terrain.AddQuadColor(cell.Color);
 
         terrain.AddTriangle(centerR, m.v4, m.v5);
-        terrain.AddTriangleColor(cell.Color, cell.Color, cell.Color);
+
+        terrain.AddTriangleColor(color1);
+		terrain.AddQuadColor(color1);
+		terrain.AddQuadColor(color1);
+		terrain.AddTriangleColor(color1);
 
         //show river if not underwater
         if (!cell.IsUnderwater)
