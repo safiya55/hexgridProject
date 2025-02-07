@@ -344,8 +344,8 @@ public class HexGridChunk : MonoBehaviour
         HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e
     )
     {
-        //created an edge fan
-        TriangulateEdgeFan(center, e, cell.Color);
+        //created an edge fan and set color of non river cells
+        TriangulateEdgeFan(center, e, color1);
 
         //add an invocation of TriangulateRoad, when there's actually a road. 
         //The left and right middle vertices can be found by interpolating between the center and the two corner vertices.
@@ -672,8 +672,8 @@ public class HexGridChunk : MonoBehaviour
             Vector3.Lerp(center, e.v5, 0.5f)
         );
 
-        TriangulateEdgeStrip(m, cell.Color, e, cell.Color);
-        TriangulateEdgeFan(center, m, cell.Color);
+        TriangulateEdgeStrip(m, color1, e, color1);
+        TriangulateEdgeFan(center, m, color1);
 
         //produce features when not in water or road
         if (!cell.IsUnderwater && !cell.HasRoadThroughEdge(direction))
