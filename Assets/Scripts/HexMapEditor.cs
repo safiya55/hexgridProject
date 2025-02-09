@@ -44,6 +44,8 @@ public class HexMapEditor : MonoBehaviour
 
 	public Material terrainMaterial;
 
+	bool editMode;
+
 	public void SetBrushSize(float size)
 	{
 		brushSize = (int)size;
@@ -86,7 +88,11 @@ public class HexMapEditor : MonoBehaviour
 			{
 				isDrag = false;
 			}
-			EditCells(currentCell);
+
+			//to actual disable editing
+			if (editMode) {
+				EditCells(currentCell);
+			}
 			previousCell = currentCell;
 
 		}
@@ -307,5 +313,10 @@ public class HexMapEditor : MonoBehaviour
 		else {
 			terrainMaterial.DisableKeyword("GRID_ON");
 		}
+	}
+
+	public void SetEditMode (bool toggle) {
+		editMode = toggle;
+		hexGrid.ShowUI(!toggle);
 	}
 }

@@ -20,9 +20,6 @@ public class HexGridChunk : MonoBehaviour
         gridCanvas = GetComponentInChildren<Canvas>();
 
         cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
-
-        //changed to initially set to true cause otherwise grid just wont show
-        ShowUI(true);
     }
 
     public void AddCell(int index, HexCell cell)
