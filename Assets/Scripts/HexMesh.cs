@@ -7,11 +7,14 @@ using System;
 public class HexMesh : MonoBehaviour
 {
     Mesh hexMesh;
-    [NonSerialized] List<Vector3> vertices;
+
+    public bool useCollider, useColors, useUVCoordinates, useUV2Coordinates;
+    public bool useTerrainTypes;
+
+    [NonSerialized] List<Vector3> vertices, terrainTypes;
     [NonSerialized] List<Color> colors;
     [NonSerialized] List<int> triangles;
 
-    public bool useCollider, useColors, useUVCoordinates, useUV2Coordinates;
 
     [NonSerialized] List<Vector2> uvs, uv2s;
 
@@ -32,40 +35,57 @@ public class HexMesh : MonoBehaviour
     {
         hexMesh.Clear();
         vertices = ListPool<Vector3>.Get();
-		if (useColors) {
-			colors = ListPool<Color>.Get();
-		}
-        if (useUVCoordinates) {
-			uvs = ListPool<Vector2>.Get();
-		}
-        if (useUV2Coordinates) {
-			uv2s = ListPool<Vector2>.Get();
-		}
-		triangles = ListPool<int>.Get();
+        if (useColors)
+        {
+            colors = ListPool<Color>.Get();
+        }
+        if (useUVCoordinates)
+        {
+            uvs = ListPool<Vector2>.Get();
+        }
+        if (useUV2Coordinates)
+        {
+            uv2s = ListPool<Vector2>.Get();
+        }
+        if (useTerrainTypes)
+        {
+            terrainTypes = ListPool<Vector3>.Get();
+        }
+        triangles = ListPool<int>.Get();
     }
 
     public void Apply()
     {
         hexMesh.SetVertices(vertices);
-		ListPool<Vector3>.Add(vertices);
-		if (useColors) {
-			hexMesh.SetColors(colors);
-			ListPool<Color>.Add(colors);
-		}
-        if (useUVCoordinates) {
-			hexMesh.SetUVs(0, uvs);
-			ListPool<Vector2>.Add(uvs);
-		}
-        if (useUV2Coordinates) {
-			hexMesh.SetUVs(1, uv2s);
-			ListPool<Vector2>.Add(uv2s);
-		}
-		hexMesh.SetTriangles(triangles, 0);
-		ListPool<int>.Add(triangles);
-		hexMesh.RecalculateNormals();
-		if (useCollider) {
-			meshCollider.sharedMesh = hexMesh;
-		}
+        ListPool<Vector3>.Add(vertices);
+        if (useColors)
+        {
+            hexMesh.SetColors(colors);
+            ListPool<Color>.Add(colors);
+        }
+        if (useUVCoordinates)
+        {
+            hexMesh.SetUVs(0, uvs);
+            ListPool<Vector2>.Add(uvs);
+        }
+        if (useUV2Coordinates)
+        {
+            hexMesh.SetUVs(1, uv2s);
+            ListPool<Vector2>.Add(uv2s);
+        }
+        if (useTerrainTypes) //applying the mesh data, store the terrain 
+        // types in the third UV set. That way, it won't clash with the other two sets, if we were to ever use them together.
+        {
+            hexMesh.SetUVs(2, terrainTypes);
+            ListPool<Vector3>.Add(terrainTypes);
+        }
+        hexMesh.SetTriangles(triangles, 0);
+        ListPool<int>.Add(triangles);
+        hexMesh.RecalculateNormals();
+        if (useCollider)
+        {
+            meshCollider.sharedMesh = hexMesh;
+        }
     }
 
     //add color data for each triangle
@@ -76,7 +96,7 @@ public class HexMesh : MonoBehaviour
         colors.Add(c3);
     }
 
-     public void AddTriangleColor(Color color)
+    public void AddTriangleColor(Color color)
     {
         colors.Add(color);
         colors.Add(color);
@@ -109,22 +129,23 @@ public class HexMesh : MonoBehaviour
         triangles.Add(vertexIndex + 3);
     }
 
-    public void AddQuadUnperturbed (
-		Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4
-	) {
-		int vertexIndex = vertices.Count;
-		vertices.Add(v1);
-		vertices.Add(v2);
-		vertices.Add(v3);
-		vertices.Add(v4);
-		triangles.Add(vertexIndex);
-		triangles.Add(vertexIndex + 2);
-		triangles.Add(vertexIndex + 1);
-		triangles.Add(vertexIndex + 1);
-		triangles.Add(vertexIndex + 2);
-		triangles.Add(vertexIndex + 3);
-	}
-    
+    public void AddQuadUnperturbed(
+        Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4
+    )
+    {
+        int vertexIndex = vertices.Count;
+        vertices.Add(v1);
+        vertices.Add(v2);
+        vertices.Add(v3);
+        vertices.Add(v4);
+        triangles.Add(vertexIndex);
+        triangles.Add(vertexIndex + 2);
+        triangles.Add(vertexIndex + 1);
+        triangles.Add(vertexIndex + 1);
+        triangles.Add(vertexIndex + 2);
+        triangles.Add(vertexIndex + 3);
+    }
+
     public void AddQuadColor(Color color)
     {
         colors.Add(color);
@@ -178,43 +199,64 @@ public class HexMesh : MonoBehaviour
         }
     }
 
-    public void AddTriangleUV (Vector2 uv1, Vector2 uv2, Vector2 uv3) {
-		uvs.Add(uv1);
-		uvs.Add(uv2);
-		uvs.Add(uv3);
-	}
-	
-	public void AddQuadUV (Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4) {
-		uvs.Add(uv1);
-		uvs.Add(uv2);
-		uvs.Add(uv3);
-		uvs.Add(uv4);
+    public void AddTriangleUV(Vector2 uv1, Vector2 uv2, Vector2 uv3)
+    {
+        uvs.Add(uv1);
+        uvs.Add(uv2);
+        uvs.Add(uv3);
+    }
+
+    public void AddQuadUV(Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4)
+    {
+        uvs.Add(uv1);
+        uvs.Add(uv2);
+        uvs.Add(uv3);
+        uvs.Add(uv4);
+    }
+
+    public void AddQuadUV(float uMin, float uMax, float vMin, float vMax)
+    {
+        uvs.Add(new Vector2(uMin, vMin));
+        uvs.Add(new Vector2(uMax, vMin));
+        uvs.Add(new Vector2(uMin, vMax));
+        uvs.Add(new Vector2(uMax, vMax));
+    }
+
+    public void AddTriangleUV2(Vector2 uv1, Vector2 uv2, Vector3 uv3)
+    {
+        uv2s.Add(uv1);
+        uv2s.Add(uv2);
+        uv2s.Add(uv3);
+    }
+
+    public void AddQuadUV2(Vector2 uv1, Vector2 uv2, Vector3 uv3, Vector3 uv4)
+    {
+        uv2s.Add(uv1);
+        uv2s.Add(uv2);
+        uv2s.Add(uv3);
+        uv2s.Add(uv4);
+    }
+
+    public void AddQuadUV2(float uMin, float uMax, float vMin, float vMax)
+    {
+        uv2s.Add(new Vector2(uMin, vMin));
+        uv2s.Add(new Vector2(uMax, vMin));
+        uv2s.Add(new Vector2(uMin, vMax));
+        uv2s.Add(new Vector2(uMax, vMax));
+    }
+
+    //to set the terrain types of a triangle. As they're uniform across a triangle, simply add the same data three times.
+    public void AddTriangleTerrainTypes (Vector3 types) {
+		terrainTypes.Add(types);
+		terrainTypes.Add(types);
+		terrainTypes.Add(types);
 	}
 
-    public void AddQuadUV (float uMin, float uMax, float vMin, float vMax) {
-		uvs.Add(new Vector2(uMin, vMin));
-		uvs.Add(new Vector2(uMax, vMin));
-		uvs.Add(new Vector2(uMin, vMax));
-		uvs.Add(new Vector2(uMax, vMax));
-	}
-
-    public void AddTriangleUV2 (Vector2 uv1, Vector2 uv2, Vector3 uv3) {
-		uv2s.Add(uv1);
-		uv2s.Add(uv2);
-		uv2s.Add(uv3);
-	}
-	
-	public void AddQuadUV2 (Vector2 uv1, Vector2 uv2, Vector3 uv3, Vector3 uv4) {
-		uv2s.Add(uv1);
-		uv2s.Add(uv2);
-		uv2s.Add(uv3);
-		uv2s.Add(uv4);
-	}
-
-	public void AddQuadUV2 (float uMin, float uMax, float vMin, float vMax) {
-		uv2s.Add(new Vector2(uMin, vMin));
-		uv2s.Add(new Vector2(uMax, vMin));
-		uv2s.Add(new Vector2(uMin, vMax));
-		uv2s.Add(new Vector2(uMax, vMax));
+    //Blending across a quad works the same way. All four vertices have the same types.
+    public void AddQuadTerrainTypes (Vector3 types) {
+		terrainTypes.Add(types);
+		terrainTypes.Add(types);
+		terrainTypes.Add(types);
+		terrainTypes.Add(types);
 	}
 }
