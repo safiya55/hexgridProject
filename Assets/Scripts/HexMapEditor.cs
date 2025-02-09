@@ -42,6 +42,8 @@ public class HexMapEditor : MonoBehaviour
 	HexDirection dragDirection;
 	HexCell previousCell;
 
+	public Material terrainMaterial;
+
 	public void SetBrushSize(float size)
 	{
 		brushSize = (int)size;
@@ -296,5 +298,14 @@ public class HexMapEditor : MonoBehaviour
 	{
 		Debug.Log("here");
 		activeTerrainTypeIndex = index;
+	}
+
+	public void ShowGrid (bool visible) {
+		if (visible) {
+			terrainMaterial.EnableKeyword("GRID_ON");
+		}
+		else {
+			terrainMaterial.DisableKeyword("GRID_ON");
+		}
 	}
 }
