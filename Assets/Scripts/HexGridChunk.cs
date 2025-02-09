@@ -345,7 +345,7 @@ public class HexGridChunk : MonoBehaviour
     )
     {
         //created an edge fan and set color of non river cells
-        TriangulateEdgeFan(center, e, color1);
+        TriangulateEdgeFan(center, e, cell.TerrainTypeIndex);
 
         //add an invocation of TriangulateRoad, when there's actually a road. 
         //The left and right middle vertices can be found by interpolating between the center and the two corner vertices.
@@ -377,7 +377,7 @@ public class HexGridChunk : MonoBehaviour
         m.v3.y = e.v3.y;
         // Triangulate geometry
         TriangulateEdgeStrip(m, color1, e, color1); // Riverbanks
-        TriangulateEdgeFan(center, m, color1);         // Terminating fan
+        TriangulateEdgeFan(center, e, cell.TerrainTypeIndex);         // Terminating fan
 
         // only add river segments when the current cell in not underwater.
         if (!cell.IsUnderwater)
@@ -673,7 +673,7 @@ public class HexGridChunk : MonoBehaviour
         );
 
         TriangulateEdgeStrip(m, color1, e, color1);
-        TriangulateEdgeFan(center, m, color1);
+        TriangulateEdgeFan(center, e, cell.TerrainTypeIndex);
 
         //produce features when not in water or road
         if (!cell.IsUnderwater && !cell.HasRoadThroughEdge(direction))
@@ -1040,16 +1040,24 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddTriangleColor(c2, leftColor, boundaryColor);
     }
 
-    void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color Color)
+    void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, float type)
     {
         terrain.AddTriangle(center, edge.v1, edge.v2);
-        terrain.AddTriangleColor(Color, Color, Color);
         terrain.AddTriangle(center, edge.v2, edge.v4);
-        terrain.AddTriangleColor(Color, Color, Color);
         terrain.AddTriangle(center, edge.v3, edge.v4);
-        terrain.AddTriangleColor(Color, Color, Color);
         terrain.AddTriangle(center, edge.v4, edge.v5);
-        terrain.AddTriangleColor(Color, Color, Color);
+
+        terrain.AddTriangleColor(color1);
+		terrain.AddTriangleColor(color1);
+		terrain.AddTriangleColor(color1);
+		terrain.AddTriangleColor(color1);
+
+        Vector3 types;
+		types.x = types.y = types.z = type;
+		terrain.AddTriangleTerrainTypes(types);
+		terrain.AddTriangleTerrainTypes(types);
+		terrain.AddTriangleTerrainTypes(types);
+		terrain.AddTriangleTerrainTypes(types);
     }
 
     void TriangulateEdgeStrip(
