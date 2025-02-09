@@ -5,6 +5,9 @@
     "m_Properties": [
         {
             "m_Id": "bf296a5fe7bb4cf695346921b55b11cc"
+        },
+        {
+            "m_Id": "606f1d4eee684fc590ebe469263a6920"
         }
     ],
     "m_Keywords": [],
@@ -2294,6 +2297,33 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Texture2DArrayShaderProperty",
+    "m_ObjectId": "606f1d4eee684fc590ebe469263a6920",
+    "m_Guid": {
+        "m_GuidSerialized": "ee94a2e7-caba-4595-a1cf-6d5a6d78e639"
+    },
+    "m_Name": "Texture2D Array",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Texture2D Array",
+    "m_DefaultReferenceName": "_Texture2D_Array",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": {
+        "m_SerializedTexture": "{\"textureArray\":{\"instanceID\":0}}",
+        "m_Guid": ""
+    },
+    "m_Modifiable": true
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "618a51d3f97d487382d0534817ca9eb2",
     "m_Id": 0,
@@ -3614,7 +3644,7 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"textureArray\":{\"fileID\":18700000,\"guid\":\"b9e903d1c01f5a844a0cbff7715f31b2\",\"type\":2}}",
+        "m_SerializedTexture": "{\"textureArray\":{\"fileID\":18700000,\"guid\":\"31f82e0b0326ba84d877a18eff637235\",\"type\":2}}",
         "m_Guid": ""
     },
     "m_Modifiable": true
@@ -3772,6 +3802,9 @@
     "m_ChildObjectList": [
         {
             "m_Id": "bf296a5fe7bb4cf695346921b55b11cc"
+        },
+        {
+            "m_Id": "606f1d4eee684fc590ebe469263a6920"
         }
     ]
 }
