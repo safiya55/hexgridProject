@@ -93,23 +93,6 @@ public class HexCell : MonoBehaviour
 		}
 	}
 
-	public Color Color
-	{
-		get
-		{
-			return HexMetrics.colors[terrainTypeIndex];
-		}
-		// set
-		// {
-		// 	if (color == value)
-		// 	{
-		// 		return;
-		// 	}
-		// 	color = value;
-		// 	Refresh();
-		// }
-	}
-
 	//to get a cell's edge type in a certain direction.
 	public HexEdgeType GetEdgeType(HexDirection direction)
 	{

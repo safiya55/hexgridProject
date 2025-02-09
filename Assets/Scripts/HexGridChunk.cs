@@ -491,6 +491,13 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddQuadColor(color1);
         terrain.AddTriangleColor(color1);
 
+        Vector3 types;
+		types.x = types.y = types.z = cell.TerrainTypeIndex;
+		terrain.AddTriangleTerrainTypes(types);
+		terrain.AddQuadTerrainTypes(types);
+		terrain.AddQuadTerrainTypes(types);
+		terrain.AddTriangleTerrainTypes(types);
+
         //show river if not underwater
         if (!cell.IsUnderwater)
         {
@@ -936,7 +943,7 @@ public class HexGridChunk : MonoBehaviour
 		types.z = rightCell.TerrainTypeIndex;
 
         terrain.AddTriangle(begin, v3, v4);
-        terrain.AddTriangleColor(beginCell.Color, c3, c4);
+        terrain.AddTriangleColor(color1, c3, c4);
         terrain.AddTriangleTerrainTypes(types);
 
         for (int i = 2; i < HexMetrics.terraceSteps; i++)
