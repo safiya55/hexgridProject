@@ -53,6 +53,7 @@ public class HexMapEditor : MonoBehaviour
 	void Awake()
 	{
 		SetTerrainTypeIndex(0);
+		terrainMaterial.DisableKeyword("GRID_ON");
 	}
 
 	void Update()
