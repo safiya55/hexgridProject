@@ -6,19 +6,23 @@ using System.IO;
 
 public class SaveLoadMenu : MonoBehaviour
 {
+	const int mapFileVersion = 5;
+
+	[SerializeField]
 	public Text menuLabel, actionButtonLabel;
 
 	public TMP_InputField nameInput;
 
-
-	bool saveMode;
-
-	public HexGrid hexGrid;
-
 	//tp fill list
 	public RectTransform listContent;
 
+	[SerializeField]
 	public SaveLoadItem itemPrefab;
+
+	[SerializeField]
+	public HexGrid hexGrid;
+
+	bool saveMode;
 
 	public void Open(bool saveMode)
 	{
@@ -47,55 +51,6 @@ public class SaveLoadMenu : MonoBehaviour
 		HexMapCamera.Locked = false;
 	}
 
-	string GetSelectedPath()
-	{
-		string mapName = nameInput.text;
-		if (mapName.Length == 0)
-		{
-			return null;
-		}
-		return Path.Combine(Application.persistentDataPath, mapName + ".map");
-	}
-
-	public void Save(string path)
-	{
-		//file path of saved maps
-		//Debug.Log(Application.persistentDataPath);
-		//write to file
-		using (
-			BinaryWriter writer =
-				new BinaryWriter(File.Open(path, FileMode.Create))
-		)
-		{
-			writer.Write(1);
-			hexGrid.Save(writer);
-		}
-	}
-
-	public void Load(string path)
-	{
-		//ensure that the file actually exists,
-		if (!File.Exists(path))
-		{
-			Debug.LogError("File does not exist " + path);
-			return;
-		}
-
-		using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
-		{
-			int header = reader.ReadInt32();
-			if (header <= 1)
-			{
-				hexGrid.Load(reader, header);
-				HexMapCamera.ValidatePosition();
-			}
-			else
-			{
-				Debug.LogWarning("Unknown map format " + header);
-			}
-		}
-	}
-
 	public void Action()
 	{
 		string path = GetSelectedPath();
@@ -114,9 +69,23 @@ public class SaveLoadMenu : MonoBehaviour
 		Close();
 	}
 
-	public void SelectItem(string name)
-	{
-		nameInput.text = name;
+	public void SelectItem(string name) => nameInput.text = name;
+
+	//delete selected maps
+	public void Delete () {
+		string path = GetSelectedPath();
+		if (path == null) {
+			return;
+		}
+
+		if (File.Exists(path)) {
+			File.Delete(path);
+		}
+
+		// clear Name Input after deletion
+		nameInput.text = "";
+		//update menu list
+		FillList();
 	}
 
 	void FillList()
@@ -141,7 +110,7 @@ public class SaveLoadMenu : MonoBehaviour
 			SaveLoadItem item = Instantiate(itemPrefab);
 
 			//link item to the menu
-			item.menu = this;
+			item.Menu = this;
 			//set map name
 			item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
 
@@ -150,20 +119,47 @@ public class SaveLoadMenu : MonoBehaviour
 		}
 	}
 
-	//delete selected maps
-	public void Delete () {
-		string path = GetSelectedPath();
-		if (path == null) {
+	string GetSelectedPath()
+	{
+		string mapName = nameInput.text;
+		if (mapName.Length == 0)
+		{
+			return null;
+		}
+		return Path.Combine(Application.persistentDataPath, mapName + ".map");
+	}
+
+	public void Save(string path)
+	{
+		//file path of saved maps
+		//Debug.Log(Application.persistentDataPath);
+		//write to file
+		using var writer = new BinaryWriter(File.Open(path, FileMode.Create));
+		{
+			writer.Write(1);
+			hexGrid.Save(writer);
+		}
+	}
+
+	public void Load(string path)
+	{
+		//ensure that the file actually exists,
+		if (!File.Exists(path))
+		{
+			Debug.LogError("File does not exist " + path);
 			return;
 		}
 
-		if (File.Exists(path)) {
-			File.Delete(path);
+		using var reader = new BinaryReader(File.OpenRead(path));
+		int header = reader.ReadInt32();
+		if (header <= mapFileVersion)
+		{
+			hexGrid.Load(reader, header);
+			HexMapCamera.ValidatePosition();
 		}
-
-		// clear Name Input after deletion
-		nameInput.text = "";
-		//update menu list
-		FillList();
+		else
+		{
+			Debug.LogWarning("Unknown map format " + header);
+		}
 	}
 }
