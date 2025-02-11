@@ -6,7 +6,7 @@ using System.IO;
 
 public class SaveLoadMenu : MonoBehaviour
 {
-	const int mapFileVersion = 5;
+	//const int mapFileVersion = 5;
 
 	[SerializeField]
 	public Text menuLabel, actionButtonLabel;
@@ -134,7 +134,10 @@ public class SaveLoadMenu : MonoBehaviour
 		//file path of saved maps
 		//Debug.Log(Application.persistentDataPath);
 		//write to file
-		using var writer = new BinaryWriter(File.Open(path, FileMode.Create));
+		using (
+			BinaryWriter writer =
+				new BinaryWriter(File.Open(path, FileMode.Create))
+		)
 		{
 			writer.Write(1);
 			hexGrid.Save(writer);
@@ -150,16 +153,18 @@ public class SaveLoadMenu : MonoBehaviour
 			return;
 		}
 
-		using var reader = new BinaryReader(File.OpenRead(path));
-		int header = reader.ReadInt32();
-		if (header <= mapFileVersion)
+		using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
 		{
-			hexGrid.Load(reader, header);
-			HexMapCamera.ValidatePosition();
-		}
-		else
-		{
-			Debug.LogWarning("Unknown map format " + header);
+			int header = reader.ReadInt32();
+			if (header <= 1)
+			{
+				hexGrid.Load(reader, header);
+				HexMapCamera.ValidatePosition();
+			}
+			else
+			{
+				Debug.LogWarning("Unknown map format " + header);
+			}
 		}
 	}
 }
