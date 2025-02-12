@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.IO;
 
 public class HexCell : MonoBehaviour
@@ -31,6 +32,9 @@ public class HexCell : MonoBehaviour
 	int specialIndex;
 
 	public int terrainTypeIndex;
+
+	//cell's distance
+	int distance;
 
 
 	void Refresh()
@@ -526,23 +530,29 @@ public class HexCell : MonoBehaviour
 		writer.Write((byte)specialIndex);
 		writer.Write(walled);
 
-		if (hasIncomingRiver) {
+		if (hasIncomingRiver)
+		{
 			writer.Write((byte)(incomingRiver + 128));
 		}
-		else {
+		else
+		{
 			writer.Write((byte)0);
 		}
 
-		if (hasOutgoingRiver) {
+		if (hasOutgoingRiver)
+		{
 			writer.Write((byte)(outgoingRiver + 128));
 		}
-		else {
+		else
+		{
 			writer.Write((byte)0);
 		}
 
 		int roadFlags = 0;
-		for (int i = 0; i < roads.Length; i++) {
-			if (roads[i]) {
+		for (int i = 0; i < roads.Length; i++)
+		{
+			if (roads[i])
+			{
 				roadFlags |= 1 << i;
 			}
 		}
@@ -562,31 +572,37 @@ public class HexCell : MonoBehaviour
 		walled = reader.ReadBoolean();
 
 		byte riverData = reader.ReadByte();
-		if (riverData >= 128) {
+		if (riverData >= 128)
+		{
 			hasIncomingRiver = true;
 			incomingRiver = (HexDirection)(riverData - 128);
 		}
-		else {
+		else
+		{
 			hasIncomingRiver = false;
 		}
 
 		riverData = reader.ReadByte();
-		if (riverData >= 128) {
+		if (riverData >= 128)
+		{
 			hasOutgoingRiver = true;
 			outgoingRiver = (HexDirection)(riverData - 128);
 		}
-		else {
+		else
+		{
 			hasOutgoingRiver = false;
 		}
-		
+
 		//read for road
 		int roadFlags = reader.ReadByte();
-		for (int i = 0; i < roads.Length; i++) {
+		for (int i = 0; i < roads.Length; i++)
+		{
 			roads[i] = (roadFlags & (1 << i)) != 0;
 		}
 	}
 
-	void RefreshPosition () {
+	void RefreshPosition()
+	{
 		Vector3 position = transform.localPosition;
 		position.y = elevation * HexMetrics.elevationStep;
 		position.y +=
@@ -597,5 +613,25 @@ public class HexCell : MonoBehaviour
 		Vector3 uiPosition = uiRect.localPosition;
 		uiPosition.z = -position.y;
 		uiRect.localPosition = uiPosition;
+	}
+
+	void UpdateDistanceLabel()
+	{
+		Text label = uiRect.GetComponent<Text>();
+		label.text = distance.ToString();
+	}
+
+	//get and set cell distances
+	public int Distance
+	{
+		get
+		{
+			return distance;
+		}
+		set
+		{
+			distance = value;
+			UpdateDistanceLabel();
+		}
 	}
 }

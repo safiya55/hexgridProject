@@ -164,10 +164,10 @@ public class HexGrid : MonoBehaviour
         // Instantiate and position the label
         Text label = Instantiate<Text>(cellLabelPrefab);
         label.rectTransform.anchoredPosition =
-			new Vector2(position.x, position.z);
+            new Vector2(position.x, position.z);
 
-        
-        
+
+
 
         cell.uiRect = label.rectTransform;
         cell.Elevation = 0;
@@ -257,6 +257,15 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < chunks.Length; i++)
         {
             chunks[i].Refresh();
+        }
+    }
+
+    public void FindDistancesTo(HexCell cell)
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            //set the distance of every cell to zero.
+            cells[i].Distance = 0;
         }
     }
 }

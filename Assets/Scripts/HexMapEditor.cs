@@ -94,6 +94,10 @@ public class HexMapEditor : MonoBehaviour
 			{
 				EditCells(currentCell);
 			}
+			else //if not in edit mode find distance of cells
+			{
+				hexGrid.FindDistancesTo(currentCell);
+			}
 
 			previousCell = currentCell;
 
