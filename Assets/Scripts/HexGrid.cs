@@ -270,6 +270,7 @@ public class HexGrid : MonoBehaviour
         StartCoroutine(Search(cell));
     }
 
+    //uses breadth first search
     IEnumerator Search(HexCell cell)
     {
         for (int i = 0; i < cells.Length; i++)
@@ -291,14 +292,35 @@ public class HexGrid : MonoBehaviour
             yield return delay;
             HexCell current = frontier.Dequeue();
 
-            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
-				HexCell neighbor = current.GetNeighbor(d);
-            //should only add cells that we haven't given a distance yet
-				if (neighbor != null && neighbor.Distance == int.MaxValue) {
-					neighbor.Distance = current.Distance + 1;
-					frontier.Enqueue(neighbor);
-				}
-			}
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = current.GetNeighbor(d);
+
+                //skip if cell that dont exist and those we have already given distance to
+                if (neighbor == null || neighbor.Distance != int.MaxValue)
+                {
+                    continue;
+                }
+
+                //skip cells that are underwater
+                if (neighbor.IsUnderwater)
+                {
+                    continue;
+                }
+                //cells skip cliffs
+                if (current.GetEdgeType(neighbor) == HexEdgeType.Cliff)
+                {
+                    continue;
+                }
+                neighbor.Distance = current.Distance + 1;
+                frontier.Enqueue(neighbor);
+                //should only add cells that we haven't given a distance yet
+                if (neighbor != null && neighbor.Distance == int.MaxValue)
+                {
+                    neighbor.Distance = current.Distance + 1;
+                    frontier.Enqueue(neighbor);
+                }
+            }
         }
     }
 }
