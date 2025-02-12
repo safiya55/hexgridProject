@@ -265,7 +265,8 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < cells.Length; i++)
         {
             //set the distance of every cell to zero.
-            cells[i].Distance = 0;
+            cells[i].Distance =
+				cell.coordinates.DistanceTo(cells[i].coordinates);
         }
     }
 }
