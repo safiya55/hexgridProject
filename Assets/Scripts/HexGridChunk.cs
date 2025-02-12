@@ -22,7 +22,7 @@ public class HexGridChunk : MonoBehaviour
         cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
 
         //changed to initially set to true cause otherwise grid just wont show
-        ShowUI(true);
+        //ShowUI(false);
     }
 
     public void AddCell(int index, HexCell cell)
@@ -40,7 +40,8 @@ public class HexGridChunk : MonoBehaviour
 
     public void ShowUI(bool visible)
     {
-        gridCanvas.gameObject.SetActive(visible);
+        //inverted cause it was causing me confusion
+        gridCanvas.gameObject.SetActive(!visible);
     }
 
     //diff between update and late update

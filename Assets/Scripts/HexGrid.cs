@@ -163,10 +163,11 @@ public class HexGrid : MonoBehaviour
 
         // Instantiate and position the label
         Text label = Instantiate<Text>(cellLabelPrefab);
-        label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
+        label.rectTransform.anchoredPosition =
+			new Vector2(position.x, position.z);
 
-        // Set the label text to show the coordinates of the cell
-        label.text = cell.coordinates.ToStringOnSeparateLines();  // Displaying coordinates using HexCoordinates
+        
+        
 
         cell.uiRect = label.rectTransform;
         cell.Elevation = 0;

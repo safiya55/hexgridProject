@@ -90,10 +90,11 @@ public class HexMapEditor : MonoBehaviour
 				isDrag = false;
 			}
 
-			if (editMode) {
+			if (editMode)
+			{
 				EditCells(currentCell);
 			}
-			
+
 			previousCell = currentCell;
 
 		}
@@ -230,11 +231,6 @@ public class HexMapEditor : MonoBehaviour
 		applyElevation = toggle;
 	}
 
-	public void ShowUI(bool visible)
-	{
-		hexGrid.ShowUI(visible);
-	}
-
 	public void SetRiverMode(int mode)
 	{
 		riverMode = (OptionalToggle)mode;
@@ -307,16 +303,21 @@ public class HexMapEditor : MonoBehaviour
 		activeTerrainTypeIndex = index;
 	}
 
-	public void ShowGrid (bool visible) {
-		if (visible) {
+	public void ShowGrid(bool visible)
+	{
+		if (visible)
+		{
 			terrainMaterial.EnableKeyword("GRID_ON");
 		}
-		else {
+		else
+		{
 			terrainMaterial.DisableKeyword("GRID_ON");
 		}
 	}
 
-	public void SetEditMode (bool toggle) {
+	public void SetEditMode(bool toggle)
+	{
 		editMode = toggle;
+		hexGrid.ShowUI(!toggle);
 	}
 }
