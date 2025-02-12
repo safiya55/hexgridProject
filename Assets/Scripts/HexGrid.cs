@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;  // Add this for UI components
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 
 public class HexGrid : MonoBehaviour
 {
@@ -262,11 +264,41 @@ public class HexGrid : MonoBehaviour
 
     public void FindDistancesTo(HexCell cell)
     {
+        //ensure that only a single search is active at any time.
+        StopAllCoroutines();
+        //starting a new search
+        StartCoroutine(Search(cell));
+    }
+
+    IEnumerator Search(HexCell cell)
+    {
         for (int i = 0; i < cells.Length; i++)
         {
-            //set the distance of every cell to zero.
-            cells[i].Distance =
-				cell.coordinates.DistanceTo(cells[i].coordinates);
+            cells[i].Distance = int.MaxValue;
+        }
+
+        //update frequency of 60 iterations per second is 
+        // slow enough that we can see what's happening
+        WaitForSeconds delay = new WaitForSeconds(1 / 60f);
+        Queue<HexCell> frontier = new Queue<HexCell>();
+        cell.Distance = 0;
+        frontier.Enqueue(cell);
+
+        // algorithm loops as long as there is something in the queue. 
+        // //Each iteration, the front-most cell is taken out of the queue.
+        while (frontier.Count > 0)
+        {
+            yield return delay;
+            HexCell current = frontier.Dequeue();
+
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
+				HexCell neighbor = current.GetNeighbor(d);
+            //should only add cells that we haven't given a distance yet
+				if (neighbor != null && neighbor.Distance == int.MaxValue) {
+					neighbor.Distance = current.Distance + 1;
+					frontier.Enqueue(neighbor);
+				}
+			}
         }
     }
 }
