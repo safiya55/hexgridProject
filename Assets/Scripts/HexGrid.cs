@@ -309,7 +309,7 @@ public class HexGrid : MonoBehaviour
                 }
                 //cells skip cliffs
                 HexEdgeType edgeType = current.GetEdgeType(neighbor);
-				if (edgeType == HexEdgeType.Cliff)
+                if (edgeType == HexEdgeType.Cliff)
                 {
                     continue;
                 }
@@ -321,9 +321,17 @@ public class HexGrid : MonoBehaviour
                 {
                     distance += 1;
                 }
+                else if (current.Walled != neighbor.Walled)
+                {
+                    continue;
+                }
                 else
                 {
                     distance += edgeType == HexEdgeType.Flat ? 5 : 10;
+
+                    //cost for terrain features
+                    distance += neighbor.UrbanLevel + neighbor.FarmLevel +
+                        neighbor.PlantLevel;
                 }
 
                 if (neighbor.Distance == int.MaxValue)
@@ -332,21 +340,15 @@ public class HexGrid : MonoBehaviour
                     frontier.Add(neighbor);
                 }
 
-                else if (distance < neighbor.Distance) {
-					neighbor.Distance = distance;
-				}
-                
+                else if (distance < neighbor.Distance)
+                {
+                    neighbor.Distance = distance;
+                }
+
                 //sort the cells by their distance. To do so, we have to invoke the 
                 // //list's sort method with a reference to a method that performs 
                 // this comparison.
                 frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
-
-                //should only add cells that we haven't given a distance yet
-                if (neighbor != null && neighbor.Distance == int.MaxValue)
-                {
-                    neighbor.Distance = current.Distance + 1;
-                    frontier.Add(neighbor);
-                }
             }
         }
     }
