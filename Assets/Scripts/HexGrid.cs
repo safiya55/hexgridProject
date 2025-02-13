@@ -297,7 +297,7 @@ public class HexGrid : MonoBehaviour
                 HexCell neighbor = current.GetNeighbor(d);
 
                 //skip if cell that dont exist and those we have already given distance to
-                if (neighbor == null || neighbor.Distance != int.MaxValue)
+                if (neighbor == null)
                 {
                     continue;
                 }
@@ -312,29 +312,39 @@ public class HexGrid : MonoBehaviour
                 {
                     continue;
                 }
-                
+
                 //make it easy and fast to travel by road
                 //leave road at 1 ancrease cost of other edges to 10
                 int distance = current.Distance;
-				if (current.HasRoadThroughEdge(d)) {
-					distance += 1;
-				}
-				else {
-					distance += 10;
-				}
-                neighbor.Distance = distance;
+                if (current.HasRoadThroughEdge(d))
+                {
+                    distance += 1;
+                }
+                else
+                {
+                    distance += 10;
+                }
 
+                if (neighbor.Distance == int.MaxValue)
+                {
+                    neighbor.Distance = distance;
+                    frontier.Add(neighbor);
+                }
 
-                frontier.Add(neighbor);
+                else if (distance < neighbor.Distance) {
+					neighbor.Distance = distance;
+				}
+                
                 //sort the cells by their distance. To do so, we have to invoke the 
                 // //list's sort method with a reference to a method that performs 
                 // this comparison.
                 frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+                
                 //should only add cells that we haven't given a distance yet
                 if (neighbor != null && neighbor.Distance == int.MaxValue)
                 {
                     neighbor.Distance = current.Distance + 1;
-                    frontier.Enqueue(neighbor);
+                    frontier.Add(neighbor);
                 }
             }
         }
