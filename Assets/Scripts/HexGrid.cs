@@ -308,7 +308,8 @@ public class HexGrid : MonoBehaviour
                     continue;
                 }
                 //cells skip cliffs
-                if (current.GetEdgeType(neighbor) == HexEdgeType.Cliff)
+                HexEdgeType edgeType = current.GetEdgeType(neighbor);
+				if (edgeType == HexEdgeType.Cliff)
                 {
                     continue;
                 }
@@ -322,7 +323,7 @@ public class HexGrid : MonoBehaviour
                 }
                 else
                 {
-                    distance += 10;
+                    distance += edgeType == HexEdgeType.Flat ? 5 : 10;
                 }
 
                 if (neighbor.Distance == int.MaxValue)
@@ -339,7 +340,7 @@ public class HexGrid : MonoBehaviour
                 // //list's sort method with a reference to a method that performs 
                 // this comparison.
                 frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
-                
+
                 //should only add cells that we haven't given a distance yet
                 if (neighbor != null && neighbor.Distance == int.MaxValue)
                 {
