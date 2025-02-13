@@ -19,7 +19,7 @@ public struct HexCoordinates
     {
         get { return -X - Z; }
     }
-
+    
     public HexCoordinates(int x, int z)
     {
         this.x = x;
