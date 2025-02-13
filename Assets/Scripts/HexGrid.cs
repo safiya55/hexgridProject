@@ -270,7 +270,7 @@ public class HexGrid : MonoBehaviour
         StartCoroutine(Search(cell));
     }
 
-    //uses breadth first search
+    //uses priority queue
     IEnumerator Search(HexCell cell)
     {
         for (int i = 0; i < cells.Length; i++)
@@ -281,17 +281,17 @@ public class HexGrid : MonoBehaviour
         //update frequency of 60 iterations per second is 
         // slow enough that we can see what's happening
         WaitForSeconds delay = new WaitForSeconds(1 / 60f);
-        Queue<HexCell> frontier = new Queue<HexCell>();
+        List<HexCell> frontier = new List<HexCell>();
         cell.Distance = 0;
-        frontier.Enqueue(cell);
+        frontier.Add(cell);
 
         // algorithm loops as long as there is something in the queue. 
         // //Each iteration, the front-most cell is taken out of the queue.
         while (frontier.Count > 0)
         {
             yield return delay;
-            HexCell current = frontier.Dequeue();
-
+            HexCell current = frontier[0];
+            frontier.RemoveAt(0);
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
@@ -312,8 +312,24 @@ public class HexGrid : MonoBehaviour
                 {
                     continue;
                 }
-                neighbor.Distance = current.Distance + 1;
-                frontier.Enqueue(neighbor);
+                
+                //make it easy and fast to travel by road
+                //leave road at 1 ancrease cost of other edges to 10
+                int distance = current.Distance;
+				if (current.HasRoadThroughEdge(d)) {
+					distance += 1;
+				}
+				else {
+					distance += 10;
+				}
+                neighbor.Distance = distance;
+
+
+                frontier.Add(neighbor);
+                //sort the cells by their distance. To do so, we have to invoke the 
+                // //list's sort method with a reference to a method that performs 
+                // this comparison.
+                frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
                 //should only add cells that we haven't given a distance yet
                 if (neighbor != null && neighbor.Distance == int.MaxValue)
                 {
