@@ -281,7 +281,7 @@ public class HexGrid : MonoBehaviour
         }
 
         fromCell.EnableHighlight(Color.blue);
-		toCell.EnableHighlight(Color.red);
+        toCell.EnableHighlight(Color.red);
 
         //update frequency of 60 iterations per second is 
         // slow enough that we can see what's happening
@@ -297,6 +297,15 @@ public class HexGrid : MonoBehaviour
             yield return delay;
             HexCell current = frontier[0];
             frontier.RemoveAt(0);
+
+
+            if (current == toCell)
+            {
+                //stop search as soon as we've found the final distance 
+                //to the destination cell. 
+                break;
+            }
+
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
