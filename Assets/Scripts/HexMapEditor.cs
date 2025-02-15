@@ -104,9 +104,10 @@ public class HexMapEditor : MonoBehaviour
 				searchFromCell = currentCell;
 				searchFromCell.EnableHighlight(Color.blue);
 			}
-			else //if not in edit mode find distance of cells
+			////if not in edit mode find distance of cells
+			else if (searchFromCell && searchFromCell != currentCell)
 			{
-				hexGrid.FindDistancesTo(currentCell);
+				hexGrid.FindPath(searchFromCell,currentCell);
 			}
 
 			previousCell = currentCell;

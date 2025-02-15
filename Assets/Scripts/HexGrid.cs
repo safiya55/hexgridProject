@@ -262,28 +262,33 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    public void FindDistancesTo(HexCell cell)
+    public void FindPath(HexCell fromCell, HexCell toCell)
     {
         //ensure that only a single search is active at any time.
         StopAllCoroutines();
         //starting a new search
-        StartCoroutine(Search(cell));
+        StartCoroutine(Search(fromCell, toCell));
     }
 
     //uses priority queue
-    IEnumerator Search(HexCell cell)
+    IEnumerator Search(HexCell fromCell, HexCell toCell)
     {
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Distance = int.MaxValue;
+            //rid of all previous highlights. 
+            cells[i].DisableHighlight();
         }
+
+        fromCell.EnableHighlight(Color.blue);
+		toCell.EnableHighlight(Color.red);
 
         //update frequency of 60 iterations per second is 
         // slow enough that we can see what's happening
         WaitForSeconds delay = new WaitForSeconds(1 / 60f);
         List<HexCell> frontier = new List<HexCell>();
-        cell.Distance = 0;
-        frontier.Add(cell);
+        fromCell.Distance = 0;
+        frontier.Add(fromCell);
 
         // algorithm loops as long as there is something in the queue. 
         // //Each iteration, the front-most cell is taken out of the queue.
