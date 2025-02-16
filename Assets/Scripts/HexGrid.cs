@@ -301,6 +301,11 @@ public class HexGrid : MonoBehaviour
 
             if (current == toCell)
             {
+                current = current.PathFrom;
+				while (current != fromCell) {
+					current.EnableHighlight(Color.white);
+					current = current.PathFrom;
+				}
                 //stop search as soon as we've found the final distance 
                 //to the destination cell. 
                 break;
@@ -351,12 +356,14 @@ public class HexGrid : MonoBehaviour
                 if (neighbor.Distance == int.MaxValue)
                 {
                     neighbor.Distance = distance;
+                    neighbor.PathFrom = current;
                     frontier.Add(neighbor);
                 }
 
                 else if (distance < neighbor.Distance)
                 {
                     neighbor.Distance = distance;
+                    neighbor.PathFrom = current;
                 }
 
                 //sort the cells by their distance. To do so, we have to invoke the 

@@ -36,6 +36,8 @@ public class HexCell : MonoBehaviour
 	//cell's distance
 	int distance;
 
+	public HexCell PathFrom { get; set; }
+
 
 	void Refresh()
 	{
