@@ -26,6 +26,8 @@ public class HexGrid : MonoBehaviour
     //seed for features
     public int seed;
 
+    HexCellPriorityQueue searchFrontier;
+
     void Awake()
     {
         HexMetrics.noiseSource = noiseSource;
@@ -273,6 +275,17 @@ public class HexGrid : MonoBehaviour
     //uses priority queue
     IEnumerator Search(HexCell fromCell, HexCell toCell)
     {
+        //use preiority queue
+        if (searchFrontier == null)
+        {
+            searchFrontier = new HexCellPriorityQueue();
+        }
+        else
+        {
+            searchFrontier.Clear();
+        }
+
+
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Distance = int.MaxValue;
@@ -286,26 +299,25 @@ public class HexGrid : MonoBehaviour
         //update frequency of 60 iterations per second is 
         // slow enough that we can see what's happening
         WaitForSeconds delay = new WaitForSeconds(1 / 60f);
-        List<HexCell> frontier = new List<HexCell>();
         fromCell.Distance = 0;
-        frontier.Add(fromCell);
+        searchFrontier.Enqueue(fromCell);
 
         // algorithm loops as long as there is something in the queue. 
         // //Each iteration, the front-most cell is taken out of the queue.
-        while (frontier.Count > 0)
+        while (searchFrontier.Count > 0)
         {
             yield return delay;
-            HexCell current = frontier[0];
-            frontier.RemoveAt(0);
+            HexCell current = searchFrontier.Dequeue();
 
 
             if (current == toCell)
             {
                 current = current.PathFrom;
-				while (current != fromCell) {
-					current.EnableHighlight(Color.white);
-					current = current.PathFrom;
-				}
+                while (current != fromCell)
+                {
+                    current.EnableHighlight(Color.white);
+                    current = current.PathFrom;
+                }
                 //stop search as soon as we've found the final distance 
                 //to the destination cell. 
                 break;
@@ -358,22 +370,17 @@ public class HexGrid : MonoBehaviour
                     neighbor.Distance = distance;
                     neighbor.PathFrom = current;
                     neighbor.SearchHeuristic =
-						neighbor.coordinates.DistanceTo(toCell.coordinates);
-                    frontier.Add(neighbor);
+                        neighbor.coordinates.DistanceTo(toCell.coordinates);
+                    searchFrontier.Enqueue(neighbor);
                 }
 
                 else if (distance < neighbor.Distance)
                 {
+                    int oldPriority = neighbor.SearchPriority;
                     neighbor.Distance = distance;
                     neighbor.PathFrom = current;
+                    searchFrontier.Change(neighbor, oldPriority);
                 }
-
-                //sort the cells by their distance. To do so, we have to invoke the 
-                // //list's sort method with a reference to a method that performs 
-                // this comparison.
-                frontier.Sort(
-					(x, y) => x.SearchPriority.CompareTo(y.SearchPriority)
-				);
             }
         }
     }
