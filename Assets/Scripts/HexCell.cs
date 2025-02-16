@@ -38,6 +38,9 @@ public class HexCell : MonoBehaviour
 
 	public HexCell PathFrom { get; set; }
 
+	//represents our best guess of the remaining distance.
+	public int SearchHeuristic { get; set; }
+
 
 	void Refresh()
 	{
