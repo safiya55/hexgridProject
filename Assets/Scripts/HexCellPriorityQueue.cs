@@ -30,6 +30,15 @@ public class HexCellPriorityQueue
     public HexCell Dequeue()
     {
         count -= 1;
+        for (int i = 0; i < list.Count; i++)
+        {
+            HexCell cell = list[i];
+            if (cell != null)
+            {
+                list[i] = cell.NextWithSamePriority;
+                return cell;
+            }
+        }
         return null;
     }
 
