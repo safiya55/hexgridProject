@@ -652,4 +652,12 @@ public class HexCell : MonoBehaviour
 		highlight.color = color;
 		highlight.enabled = true;
 	}
+
+	public int SearchPriority
+	{
+		get
+		{
+			return distance + SearchHeuristic;
+		}
+	}
 }

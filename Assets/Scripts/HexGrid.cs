@@ -371,7 +371,9 @@ public class HexGrid : MonoBehaviour
                 //sort the cells by their distance. To do so, we have to invoke the 
                 // //list's sort method with a reference to a method that performs 
                 // this comparison.
-                frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+                frontier.Sort(
+					(x, y) => x.SearchPriority.CompareTo(y.SearchPriority)
+				);
             }
         }
     }
