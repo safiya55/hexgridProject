@@ -40,7 +40,7 @@ public class HexMapEditor : MonoBehaviour
 	//Elements to detect Drag to create river
 	bool isDrag;
 	HexDirection dragDirection;
-	HexCell previousCell, searchFromCell;
+	HexCell previousCell, searchFromCell, searchToCell;
 
 	public Material terrainMaterial;
 
@@ -95,7 +95,7 @@ public class HexMapEditor : MonoBehaviour
 				EditCells(currentCell);
 			}
 			// to check whether the shift key is being held down.
-			else if (Input.GetKey(KeyCode.LeftShift))
+			else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
 			{
 				if (searchFromCell)
 				{
@@ -103,11 +103,16 @@ public class HexMapEditor : MonoBehaviour
 				}
 				searchFromCell = currentCell;
 				searchFromCell.EnableHighlight(Color.blue);
+				if (searchToCell)
+				{
+					hexGrid.FindPath(searchFromCell, searchToCell);
+				}
 			}
 			////if not in edit mode find distance of cells
 			else if (searchFromCell && searchFromCell != currentCell)
 			{
-				hexGrid.FindPath(searchFromCell,currentCell);
+				searchToCell = currentCell;
+				hexGrid.FindPath(searchFromCell, searchToCell);
 			}
 
 			previousCell = currentCell;
