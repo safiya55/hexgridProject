@@ -27,6 +27,7 @@ public class HexGrid : MonoBehaviour
     public int seed;
 
     HexCellPriorityQueue searchFrontier;
+    
 
     void Awake()
     {
@@ -323,6 +324,8 @@ public class HexGrid : MonoBehaviour
                 break;
             }
 
+            int currentTurn = current.Distance / speed;
+
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
@@ -364,6 +367,8 @@ public class HexGrid : MonoBehaviour
                     distance += neighbor.UrbanLevel + neighbor.FarmLevel +
                         neighbor.PlantLevel;
                 }
+
+                int turn = distance / speed;
 
                 if (neighbor.Distance == int.MaxValue)
                 {
