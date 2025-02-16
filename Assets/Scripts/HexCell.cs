@@ -41,6 +41,8 @@ public class HexCell : MonoBehaviour
 	//represents our best guess of the remaining distance.
 	public int SearchHeuristic { get; set; }
 
+	public HexCell NextWithSamePriority { get; set; }
+
 
 	void Refresh()
 	{
