@@ -18,7 +18,4 @@ public class HexUnit : MonoBehaviour
             transform.localPosition = value.Position;
         }
     }
-
-    HexCell location;
-
 }
