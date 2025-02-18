@@ -236,6 +236,14 @@ public class HexGrid : MonoBehaviour
         {
             cells[i].Save(writer);
         }
+
+        //Save method will take care of writing the unit data. 
+        // //First write how many units there are, then loop through the units.
+        writer.Write(units.Count);
+        for (int i = 0; i < units.Count; i++)
+        {
+            units[i].Save(writer);
+        }
     }
 
     ////iterate through cells to load info

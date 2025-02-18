@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.IO;
 
 [System.Serializable]
 public struct HexCoordinates
@@ -19,7 +20,7 @@ public struct HexCoordinates
     {
         get { return -X - Z; }
     }
-    
+
     public HexCoordinates(int x, int z)
     {
         this.x = x;
@@ -92,7 +93,16 @@ public struct HexCoordinates
     {
         return //add up the distances in all three dimensions
             (x < other.x ? other.x - x : x - other.x) +
-			(Y < other.Y ? other.Y - Y : Y - other.Y) +
-			(z < other.z ? other.z - z : z - other.z) / 2; // divide by 2 to half the sum 
+            (Y < other.Y ? other.Y - Y : Y - other.Y) +
+            (z < other.z ? other.z - z : z - other.z) / 2; // divide by 2 to half the sum 
+    }
+
+    //to remember which cells they are occupying
+    //by storing the coordinates of their locations
+    //storing x and z field
+    public void Save(BinaryWriter writer)
+    {
+        writer.Write(x);
+        writer.Write(z);
     }
 }

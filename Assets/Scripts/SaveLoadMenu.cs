@@ -143,7 +143,7 @@ public class SaveLoadMenu : MonoBehaviour
 				new BinaryWriter(File.Open(path, FileMode.Create))
 		)
 		{
-			writer.Write(1);
+			writer.Write(2);
 			hexGrid.Save(writer);
 		}
 	}
