@@ -97,22 +97,28 @@ public class HexMapEditor : MonoBehaviour
 			// to check whether the shift key is being held down.
 			else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
 			{
-				if (searchFromCell)
+				if(searchFromCell != currentCell)
 				{
-					searchFromCell.DisableHighlight();
-				}
-				searchFromCell = currentCell;
-				searchFromCell.EnableHighlight(Color.blue);
-				if (searchToCell)
-				{
-					hexGrid.FindPath(searchFromCell, searchToCell, 24);
+					if (searchFromCell)
+					{
+						searchFromCell.DisableHighlight();
+					}
+					searchFromCell = currentCell;
+					searchFromCell.EnableHighlight(Color.blue);
+					if (searchToCell)
+					{
+						hexGrid.FindPath(searchFromCell, searchToCell, 24);
+					}
 				}
 			}
 			////if not in edit mode find distance of cells
 			else if (searchFromCell && searchFromCell != currentCell)
 			{
-				searchToCell = currentCell;
-				hexGrid.FindPath(searchFromCell, searchToCell, 24);
+				if(searchToCell != currentCell)
+				{
+					searchToCell = currentCell;
+					hexGrid.FindPath(searchFromCell, searchToCell, 24);
+				}
 			}
 
 			previousCell = currentCell;
