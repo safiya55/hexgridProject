@@ -374,6 +374,9 @@ public class HexMapEditor : MonoBehaviour
 			HexUnit unit = Instantiate(unitPrefab);
 			//use the grid as the parent for all unit game objects.
 			unit.transform.SetParent(hexGrid.transform, false);
+
+			//assign the cell under the cursor to the unit's location.
+			unit.Location = cell;
 		}
 	}
 }
