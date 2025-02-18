@@ -26,6 +26,8 @@ public class HexGrid : MonoBehaviour
     //seed for features
     public int seed;
 
+    int searchFrontierPhase;
+
     HexCellPriorityQueue searchFrontier;
     
 
@@ -281,6 +283,7 @@ public class HexGrid : MonoBehaviour
     //uses priority queue
     void Search(HexCell fromCell, HexCell toCell, int speed)
     {
+        searchFrontierPhase += 2;
         //use preiority queue
         if (searchFrontier == null)
         {
@@ -306,6 +309,7 @@ public class HexGrid : MonoBehaviour
         //update frequency of 60 iterations per second is 
         // slow enough that we can see what's happening
             //WaitForSeconds delay = new WaitForSeconds(1 / 60f);
+        fromCell.SearchPhase = searchFrontierPhase;
         fromCell.Distance = 0;
         searchFrontier.Enqueue(fromCell);
 
@@ -388,6 +392,7 @@ public class HexGrid : MonoBehaviour
 
                 if (neighbor.Distance == int.MaxValue)
                 {
+                    neighbor.SearchPhase = searchFrontierPhase;
                     neighbor.Distance = distance;
                         //neighbor.SetLable(turn.ToString());
                     neighbor.PathFrom = current;
