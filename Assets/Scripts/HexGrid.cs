@@ -350,10 +350,12 @@ public class HexGrid : MonoBehaviour
 
                 //make it easy and fast to travel by road
                 //leave road at 1 ancrease cost of other edges to 10
-                int distance = current.Distance;
+                    //int distance = current.Distance;
+                int moveCost;
                 if (current.HasRoadThroughEdge(d))
                 {
-                    distance += 1;
+                    //distance += 1;
+                    moveCost = 1;
                 }
                 else if (current.Walled != neighbor.Walled)
                 {
@@ -361,14 +363,19 @@ public class HexGrid : MonoBehaviour
                 }
                 else
                 {
-                    distance += edgeType == HexEdgeType.Flat ? 5 : 10;
+                    moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
 
                     //cost for terrain features
-                    distance += neighbor.UrbanLevel + neighbor.FarmLevel +
+                    moveCost += neighbor.UrbanLevel + neighbor.FarmLevel +
                         neighbor.PlantLevel;
                 }
 
+                int distance = current.Distance + moveCost;
                 int turn = distance / speed;
+
+                if (turn > currentTurn){
+                    distance = turn * speed + moveCost;
+                }
 
                 if (neighbor.Distance == int.MaxValue)
                 {
