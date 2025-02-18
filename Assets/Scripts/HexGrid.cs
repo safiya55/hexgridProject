@@ -29,6 +29,10 @@ public class HexGrid : MonoBehaviour
     int searchFrontierPhase;
 
     HexCellPriorityQueue searchFrontier;
+
+    HexCell currentPathFrom, currentPathTo;
+
+    bool currentPathExists;
     
 
     void Awake()
@@ -269,13 +273,11 @@ public class HexGrid : MonoBehaviour
 
     public void FindPath(HexCell fromCell, HexCell toCell, int speed)
     {
-        //ensure that only a single search is active at any time.
-            // StopAllCoroutines();
-        //starting a new search
-            //StartCoroutine(Search(fromCell, toCell, speed));
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
-        Search(fromCell, toCell, speed);
+        currentPathFrom = fromCell;
+        currentPathTo = toCell;
+        currentPathExists = Search(fromCell, toCell, speed);
         sw.Stop();
         Debug.Log(sw.ElapsedMilliseconds);
     }
