@@ -56,6 +56,7 @@ public class HexGrid : MonoBehaviour
 
         //destroying all the current chunks at the start
         //remove old map
+        ClearPath();
         if (chunks != null)
         {
             for (int i = 0; i < chunks.Length; i++)
@@ -238,6 +239,7 @@ public class HexGrid : MonoBehaviour
     ////iterate through cells to load info
     public void Load(BinaryReader reader, int header)
     {
+        ClearPath();
         int x = 20, z = 15;
         if (header >= 1)
         {
@@ -273,14 +275,11 @@ public class HexGrid : MonoBehaviour
 
     public void FindPath(HexCell fromCell, HexCell toCell, int speed)
     {
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
+        ClearPath();
         currentPathFrom = fromCell;
         currentPathTo = toCell;
         currentPathExists = Search(fromCell, toCell, speed);
         ShowPath(speed);
-        sw.Stop();
-        Debug.Log(sw.ElapsedMilliseconds);
     }
 
     //uses priority queue
@@ -402,5 +401,23 @@ public class HexGrid : MonoBehaviour
         }
         currentPathFrom.EnableHighlight(Color.blue);
         currentPathTo.EnableHighlight(Color.red);
+    }
+
+    void ClearPath(){
+        if(currentPathExists){
+            HexCell current = currentPathTo;
+            while (current != currentPathFrom){
+                current.SetLable(null);
+                current.DisableHighlight();
+                current = current.PathFrom;
+            }
+            current.DisableHighlight();
+            currentPathExists = false;
+        }
+        else if(currentPathFrom){
+            currentPathFrom.DisableHighlight();
+            currentPathTo.DisableHighlight();
+        }
+        currentPathFrom = currentPathTo = null;
     }
 }
