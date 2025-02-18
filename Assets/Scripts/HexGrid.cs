@@ -281,7 +281,7 @@ public class HexGrid : MonoBehaviour
     }
 
     //uses priority queue
-    void Search(HexCell fromCell, HexCell toCell, int speed)
+    bool Search(HexCell fromCell, HexCell toCell, int speed)
     {
         searchFrontierPhase += 2;
         //use preiority queue
@@ -294,21 +294,8 @@ public class HexGrid : MonoBehaviour
             searchFrontier.Clear();
         }
 
-
-        for (int i = 0; i < cells.Length; i++)
-        {
-                //cells[i].Distance = int.MaxValue;
-            //rid of all previous highlights. 
-            cells[i].SetLable(null);
-            cells[i].DisableHighlight();
-        }
-
-        fromCell.EnableHighlight(Color.blue);
-            //toCell.EnableHighlight(Color.red);
-
         //update frequency of 60 iterations per second is 
         // slow enough that we can see what's happening
-            //WaitForSeconds delay = new WaitForSeconds(1 / 60f);
         fromCell.SearchPhase = searchFrontierPhase;
         fromCell.Distance = 0;
         searchFrontier.Enqueue(fromCell);
@@ -324,18 +311,7 @@ public class HexGrid : MonoBehaviour
 
             if (current == toCell)
             {
-                    //current = current.PathFrom;
-                while (current != fromCell)
-                {
-                    int turn = current.Distance / speed;
-                    current.SetLable(turn.ToString());
-                    current.EnableHighlight(Color.white);
-                    current = current.PathFrom;
-                }
-                //stop search as soon as we've found the final distance 
-                //to the destination cell. 
-                toCell.EnableHighlight(Color.red);
-                break;
+                return true;
             }
 
             int currentTurn = current.Distance / speed;
@@ -364,11 +340,9 @@ public class HexGrid : MonoBehaviour
 
                 //make it easy and fast to travel by road
                 //leave road at 1 ancrease cost of other edges to 10
-                    //int distance = current.Distance;
                 int moveCost;
                 if (current.HasRoadThroughEdge(d))
                 {
-                    //distance += 1;
                     moveCost = 1;
                 }
                 else if (current.Walled != neighbor.Walled)
@@ -391,12 +365,10 @@ public class HexGrid : MonoBehaviour
                     distance = turn * speed + moveCost;
                 }
 
-                //if (neighbor.Distance == int.MaxValue)
                 if(neighbor.SearchPhase < searchFrontierPhase)
                 {
                     neighbor.SearchPhase = searchFrontierPhase;
                     neighbor.Distance = distance;
-                        //neighbor.SetLable(turn.ToString());
                     neighbor.PathFrom = current;
                     neighbor.SearchHeuristic =
                         neighbor.coordinates.DistanceTo(toCell.coordinates);
@@ -407,11 +379,12 @@ public class HexGrid : MonoBehaviour
                 {
                     int oldPriority = neighbor.SearchPriority;
                     neighbor.Distance = distance;
-                        //neighbor.SetLable(turn.ToString());
                     neighbor.PathFrom = current;
                     searchFrontier.Change(neighbor, oldPriority);
                 }
             }
         }
+        return false;
     }
+    
 }
