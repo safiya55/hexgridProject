@@ -36,4 +36,10 @@ public class HexUnit : MonoBehaviour
             transform.localRotation = Quaternion.Euler(0f, value, 0f);
         }
     }
+
+    //validate the unit's location after a change has been made by elevation
+    public void ValidateLocation()
+    {
+        transform.localPosition = location.Position;
+    }
 }

@@ -42,8 +42,8 @@ public class HexCell : MonoBehaviour
 	public int SearchHeuristic { get; set; }
 
 	public HexCell NextWithSamePriority { get; set; }
-	
-	public int SearchPhase {get; set;}
+
+	public int SearchPhase { get; set; }
 
 	public HexUnit Unit { get; set; }
 
@@ -60,6 +60,12 @@ public class HexCell : MonoBehaviour
 				{
 					neighbor.chunk.Refresh();
 				}
+			}
+
+			//validate the unit's location whenever we refresh a cell, 
+			if (Unit)
+			{
+				Unit.ValidateLocation();
 			}
 		}
 	}
@@ -203,6 +209,11 @@ public class HexCell : MonoBehaviour
 
 	void RefreshSelfOnly()
 	{
+		//if there is a unit refresh its location
+		if (Unit)
+		{
+			Unit.ValidateLocation();
+		}
 		chunk.Refresh();
 	}
 
@@ -626,12 +637,13 @@ public class HexCell : MonoBehaviour
 		uiRect.localPosition = uiPosition;
 	}
 
-		//void UpdateDistanceLabel()
-		//{
-		//	Text label = uiRect.GetComponent<Text>();
-		//	label.text = distance == int.MaxValue ? "" : distance.ToString();
-		//}
-	public void SetLable (string text){
+	//void UpdateDistanceLabel()
+	//{
+	//	Text label = uiRect.GetComponent<Text>();
+	//	label.text = distance == int.MaxValue ? "" : distance.ToString();
+	//}
+	public void SetLable(string text)
+	{
 		UnityEngine.UI.Text lable = uiRect.GetComponent<Text>();
 		lable.text = text;
 	}
