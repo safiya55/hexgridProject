@@ -7,6 +7,8 @@ public class HexUnit : MonoBehaviour
 
     float orientation;
 
+    public static HexUnit unitPrefab;
+
     //so that Units identify the cell 
     // that they are occupying
     public HexCell Location
@@ -56,5 +58,12 @@ public class HexUnit : MonoBehaviour
         //write the unit's coordinates, and its orientation. 
         location.coordinates.Save(writer);
         writer.Write(orientation);
+    }
+
+    public static void Load(BinaryReader reader)
+    {
+        HexCoordinates coordinates = HexCoordinates.Load(reader);
+        // reading the unit data. 
+        float orientation = reader.ReadSingle();
     }
 }
