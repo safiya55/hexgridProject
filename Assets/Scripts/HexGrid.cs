@@ -271,7 +271,11 @@ public class HexGrid : MonoBehaviour
             // StopAllCoroutines();
         //starting a new search
             //StartCoroutine(Search(fromCell, toCell, speed));
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
         Search(fromCell, toCell, speed);
+        sw.Stop();
+        Debug.Log(sw.ElapsedMilliseconds);
     }
 
     //uses priority queue
