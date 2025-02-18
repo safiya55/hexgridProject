@@ -319,6 +319,7 @@ public class HexGrid : MonoBehaviour
         {
                 //yield return delay;
             HexCell current = searchFrontier.Dequeue();
+            current.SearchPhase += 1;
 
 
             if (current == toCell)
@@ -344,7 +345,7 @@ public class HexGrid : MonoBehaviour
                 HexCell neighbor = current.GetNeighbor(d);
 
                 //skip if cell that dont exist and those we have already given distance to
-                if (neighbor == null)
+                if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase)
                 {
                     continue;
                 }
