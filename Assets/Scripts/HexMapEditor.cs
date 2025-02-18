@@ -46,6 +46,9 @@ public class HexMapEditor : MonoBehaviour
 
 	bool editMode;
 
+	//hexmapeditor is responsible to spawn stuff
+	public HexUnit unitPrefab;
+
 	public void SetBrushSize(float size)
 	{
 		brushSize = (int)size;
@@ -60,27 +63,29 @@ public class HexMapEditor : MonoBehaviour
 
 	void Update()
 	{
-		if (Input.GetMouseButton(0) &&
-			!EventSystem.current.IsPointerOverGameObject())
+		//if the cursor is not on top of a GUI element.
+		if (!EventSystem.current.IsPointerOverGameObject())
 		{
-			HandleInput();
+			if (Input.GetMouseButton(0))
+			{
+				HandleInput();
+				return;
+			}
+			//invokes CreateUnit when the U key is pressed.
+			if (Input.GetKeyDown(KeyCode.U))
+			{
+				CreateUnit();
+				return;
+			}
 		}
-		else
-		{
-			previousCell = null;
-		}
+		previousCell = null;
 	}
 
 	void HandleInput()
 	{
-		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		if (Physics.Raycast(inputRay, out hit))
+		HexCell currentCell = GetCellUnderCursor();
+		if (currentCell)
 		{
-			// current cell is the one that we find based on the hit point.
-			//After we're done editing cells this update, 
-			//that cell becomes the previous cell for the next update.
-			HexCell currentCell = hexGrid.GetCell(hit.point);
 			if (previousCell && previousCell != currentCell)
 			{
 				ValidateDrag(currentCell);
@@ -97,7 +102,7 @@ public class HexMapEditor : MonoBehaviour
 			// to check whether the shift key is being held down.
 			else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
 			{
-				if(searchFromCell != currentCell)
+				if (searchFromCell != currentCell)
 				{
 					if (searchFromCell)
 					{
@@ -114,7 +119,7 @@ public class HexMapEditor : MonoBehaviour
 			////if not in edit mode find distance of cells
 			else if (searchFromCell && searchFromCell != currentCell)
 			{
-				if(searchToCell != currentCell)
+				if (searchToCell != currentCell)
 				{
 					searchToCell = currentCell;
 					hexGrid.FindPath(searchFromCell, searchToCell, 24);
@@ -129,6 +134,18 @@ public class HexMapEditor : MonoBehaviour
 			//set to null when not dragging
 			previousCell = null;
 		}
+	}
+
+
+	HexCell GetCellUnderCursor()
+	{
+		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+		RaycastHit hit;
+		if (Physics.Raycast(inputRay, out hit))
+		{
+			return hexGrid.GetCell(hit.point);
+		}
+		return null;
 	}
 
 	void ValidateDrag(HexCell currentCell)
@@ -345,5 +362,18 @@ public class HexMapEditor : MonoBehaviour
 	{
 		editMode = toggle;
 		hexGrid.ShowUI(!toggle);
+	}
+
+	void CreateUnit()
+	{
+		HexCell cell = GetCellUnderCursor();
+		//if there is a cell
+		if (cell)
+		{
+			//instantiate a new unit
+			HexUnit unit = Instantiate(unitPrefab);
+			//use the grid as the parent for all unit game objects.
+			unit.transform.SetParent(hexGrid.transform, false);
+		}
 	}
 }
