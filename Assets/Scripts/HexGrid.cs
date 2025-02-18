@@ -452,4 +452,12 @@ public class HexGrid : MonoBehaviour
         unit.Location = location;
         unit.Orientation = orientation;
     }
+
+    //for removing a unit to HexGrid as well. 
+    public void RemoveUnit(HexUnit unit)
+    {
+        //remove the unit from the list and tell it to die.
+        units.Remove(unit);
+        unit.Die();
+    }
 }

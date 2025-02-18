@@ -391,8 +391,8 @@ public class HexMapEditor : MonoBehaviour
 		HexCell cell = GetCellUnderCursor();
 		if (cell && cell.Unit)
 		{
-			//call hexunit function to destroy unit
-			cell.Unit.Die();
+			//invoke remove unit from hexgrid n also indirectly tells it to die
+			hexGrid.RemoveUnit(cell.Unit);
 		}
 	}
 }
