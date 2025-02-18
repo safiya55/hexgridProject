@@ -291,6 +291,7 @@ public class HexGrid : MonoBehaviour
         {
             cells[i].Distance = int.MaxValue;
             //rid of all previous highlights. 
+            cells[i].SetLable(null);
             cells[i].DisableHighlight();
         }
 
@@ -380,6 +381,7 @@ public class HexGrid : MonoBehaviour
                 if (neighbor.Distance == int.MaxValue)
                 {
                     neighbor.Distance = distance;
+                    neighbor.SetLable(turn.ToString());
                     neighbor.PathFrom = current;
                     neighbor.SearchHeuristic =
                         neighbor.coordinates.DistanceTo(toCell.coordinates);
@@ -390,6 +392,7 @@ public class HexGrid : MonoBehaviour
                 {
                     int oldPriority = neighbor.SearchPriority;
                     neighbor.Distance = distance;
+                    neighbor.SetLable(turn.ToString());
                     neighbor.PathFrom = current;
                     searchFrontier.Change(neighbor, oldPriority);
                 }
