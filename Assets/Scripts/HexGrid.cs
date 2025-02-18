@@ -33,7 +33,8 @@ public class HexGrid : MonoBehaviour
     HexCell currentPathFrom, currentPathTo;
 
     bool currentPathExists;
-    
+
+    List<HexUnit> units = new List<HexUnit>();
 
     void Awake()
     {
@@ -57,6 +58,7 @@ public class HexGrid : MonoBehaviour
         //destroying all the current chunks at the start
         //remove old map
         ClearPath();
+        ClearUnits();
         if (chunks != null)
         {
             for (int i = 0; i < chunks.Length; i++)
@@ -240,6 +242,7 @@ public class HexGrid : MonoBehaviour
     public void Load(BinaryReader reader, int header)
     {
         ClearPath();
+        ClearUnits();
         int x = 20, z = 15;
         if (header >= 1)
         {
@@ -306,7 +309,7 @@ public class HexGrid : MonoBehaviour
         // //Each iteration, the front-most cell is taken out of the queue.
         while (searchFrontier.Count > 0)
         {
-                //yield return delay;
+            //yield return delay;
             HexCell current = searchFrontier.Dequeue();
             current.SearchPhase += 1;
 
@@ -363,11 +366,12 @@ public class HexGrid : MonoBehaviour
                 int distance = current.Distance + moveCost;
                 int turn = distance / speed;
 
-                if (turn > currentTurn){
+                if (turn > currentTurn)
+                {
                     distance = turn * speed + moveCost;
                 }
 
-                if(neighbor.SearchPhase < searchFrontierPhase)
+                if (neighbor.SearchPhase < searchFrontierPhase)
                 {
                     neighbor.SearchPhase = searchFrontierPhase;
                     neighbor.Distance = distance;
@@ -388,14 +392,17 @@ public class HexGrid : MonoBehaviour
         }
         return false;
     }
-    
-    void ShowPath (int speed){
-     if(currentPathExists){
+
+    void ShowPath(int speed)
+    {
+        if (currentPathExists)
+        {
             HexCell current = currentPathTo;
-            while(current != currentPathFrom){
+            while (current != currentPathFrom)
+            {
                 int turn = current.Distance / speed;
-               current.SetLable(turn.ToString());
-               current.EnableHighlight(Color.white);
+                current.SetLable(turn.ToString());
+                current.EnableHighlight(Color.white);
                 current = current.PathFrom;
             }
         }
@@ -403,10 +410,13 @@ public class HexGrid : MonoBehaviour
         currentPathTo.EnableHighlight(Color.red);
     }
 
-    void ClearPath(){
-        if(currentPathExists){
+    void ClearPath()
+    {
+        if (currentPathExists)
+        {
             HexCell current = currentPathTo;
-            while (current != currentPathFrom){
+            while (current != currentPathFrom)
+            {
                 current.SetLable(null);
                 current.DisableHighlight();
                 current = current.PathFrom;
@@ -414,10 +424,22 @@ public class HexGrid : MonoBehaviour
             current.DisableHighlight();
             currentPathExists = false;
         }
-        else if(currentPathFrom){
+        else if (currentPathFrom)
+        {
             currentPathFrom.DisableHighlight();
             currentPathTo.DisableHighlight();
         }
         currentPathFrom = currentPathTo = null;
+    }
+
+    //when new map is created or loaded
+    void ClearUnits()
+    {
+        //get rid of all units currently on the map
+        for (int i = 0; i < units.Count; i++)
+        {
+            units[i].Die();
+        }
+        units.Clear();
     }
 }
