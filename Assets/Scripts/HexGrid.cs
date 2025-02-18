@@ -301,7 +301,7 @@ public class HexGrid : MonoBehaviour
         }
 
         fromCell.EnableHighlight(Color.blue);
-        toCell.EnableHighlight(Color.red);
+            //toCell.EnableHighlight(Color.red);
 
         //update frequency of 60 iterations per second is 
         // slow enough that we can see what's happening
@@ -319,14 +319,17 @@ public class HexGrid : MonoBehaviour
 
             if (current == toCell)
             {
-                current = current.PathFrom;
+                    //current = current.PathFrom;
                 while (current != fromCell)
                 {
+                    int turn = current.Distance / speed;
+                    current.SetLable(turn.ToString());
                     current.EnableHighlight(Color.white);
                     current = current.PathFrom;
                 }
                 //stop search as soon as we've found the final distance 
                 //to the destination cell. 
+                toCell.EnableHighlight(Color.red);
                 break;
             }
 
@@ -386,7 +389,7 @@ public class HexGrid : MonoBehaviour
                 if (neighbor.Distance == int.MaxValue)
                 {
                     neighbor.Distance = distance;
-                    neighbor.SetLable(turn.ToString());
+                        //neighbor.SetLable(turn.ToString());
                     neighbor.PathFrom = current;
                     neighbor.SearchHeuristic =
                         neighbor.coordinates.DistanceTo(toCell.coordinates);
@@ -397,7 +400,7 @@ public class HexGrid : MonoBehaviour
                 {
                     int oldPriority = neighbor.SearchPriority;
                     neighbor.Distance = distance;
-                    neighbor.SetLable(turn.ToString());
+                        //neighbor.SetLable(turn.ToString());
                     neighbor.PathFrom = current;
                     searchFrontier.Change(neighbor, oldPriority);
                 }
