@@ -442,4 +442,14 @@ public class HexGrid : MonoBehaviour
         }
         units.Clear();
     }
+
+    // add new units to the list when we create them.
+    public void AddUnit(HexUnit unit, HexCell location, float orientation)
+    {
+        //takes care of positioning the unit and settings its parent.
+        units.Add(unit);
+        unit.transform.SetParent(transform, false);
+        unit.Location = location;
+        unit.Orientation = orientation;
+    }
 }

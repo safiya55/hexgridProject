@@ -377,16 +377,11 @@ public class HexMapEditor : MonoBehaviour
 		//if there is a cell
 		if (cell && !cell.Unit)
 		{
-			//instantiate a new unit
-			HexUnit unit = Instantiate(unitPrefab);
-			//use the grid as the parent for all unit game objects.
-			unit.transform.SetParent(hexGrid.transform, false);
-
-			//assign the cell under the cursor to the unit's location.
-			unit.Location = cell;
-
-			//randomizes units orientation
-			unit.Orientation = Random.Range(0f, 360f);
+			//invoking AddUnit with a newly 
+			// //instantiated unit, its location, and a random orientation.
+			hexGrid.AddUnit(
+				Instantiate(unitPrefab), cell, Random.Range(0f, 360f)
+			); 
 		}
 	}
 
