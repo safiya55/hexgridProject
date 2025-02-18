@@ -268,13 +268,14 @@ public class HexGrid : MonoBehaviour
     public void FindPath(HexCell fromCell, HexCell toCell, int speed)
     {
         //ensure that only a single search is active at any time.
-        StopAllCoroutines();
+            // StopAllCoroutines();
         //starting a new search
-        StartCoroutine(Search(fromCell, toCell, speed));
+            //StartCoroutine(Search(fromCell, toCell, speed));
+        Search(fromCell, toCell, speed);
     }
 
     //uses priority queue
-    IEnumerator Search(HexCell fromCell, HexCell toCell, int speed)
+    void Search(HexCell fromCell, HexCell toCell, int speed)
     {
         //use preiority queue
         if (searchFrontier == null)
@@ -300,7 +301,7 @@ public class HexGrid : MonoBehaviour
 
         //update frequency of 60 iterations per second is 
         // slow enough that we can see what's happening
-        WaitForSeconds delay = new WaitForSeconds(1 / 60f);
+            //WaitForSeconds delay = new WaitForSeconds(1 / 60f);
         fromCell.Distance = 0;
         searchFrontier.Enqueue(fromCell);
 
@@ -308,7 +309,7 @@ public class HexGrid : MonoBehaviour
         // //Each iteration, the front-most cell is taken out of the queue.
         while (searchFrontier.Count > 0)
         {
-            yield return delay;
+                //yield return delay;
             HexCell current = searchFrontier.Dequeue();
 
 
