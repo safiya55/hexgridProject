@@ -368,7 +368,7 @@ public class HexMapEditor : MonoBehaviour
 	{
 		HexCell cell = GetCellUnderCursor();
 		//if there is a cell
-		if (cell)
+		if (cell && !cell.Unit)
 		{
 			//instantiate a new unit
 			HexUnit unit = Instantiate(unitPrefab);

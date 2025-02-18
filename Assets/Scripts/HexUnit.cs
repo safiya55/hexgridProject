@@ -17,6 +17,8 @@ public class HexUnit : MonoBehaviour
         set
         {
             location = value;
+            //make the cell aware that there is a unit standing on it.
+            value.Unit = this;
             transform.localPosition = value.Position;
         }
     }
