@@ -278,6 +278,7 @@ public class HexGrid : MonoBehaviour
         currentPathFrom = fromCell;
         currentPathTo = toCell;
         currentPathExists = Search(fromCell, toCell, speed);
+        ShowPath(speed);
         sw.Stop();
         Debug.Log(sw.ElapsedMilliseconds);
     }
@@ -389,4 +390,17 @@ public class HexGrid : MonoBehaviour
         return false;
     }
     
+    void ShowPath (int speed){
+     if(currentPathExists){
+            HexCell current = currentPathTo;
+            while(current != currentPathFrom){
+                int turn = current.Distance / speed;
+               current.SetLable(turn.ToString());
+               current.EnableHighlight(Color.white);
+                current = current.PathFrom;
+            }
+        }
+        currentPathFrom.EnableHighlight(Color.blue);
+        currentPathTo.EnableHighlight(Color.red);
+    }
 }
