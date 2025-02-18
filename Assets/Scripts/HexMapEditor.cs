@@ -377,6 +377,9 @@ public class HexMapEditor : MonoBehaviour
 
 			//assign the cell under the cursor to the unit's location.
 			unit.Location = cell;
+			
+			//randomizes units orientation
+			unit.Orientation = Random.Range(0f, 360f);
 		}
 	}
 }
