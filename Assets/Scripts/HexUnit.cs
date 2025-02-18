@@ -42,4 +42,11 @@ public class HexUnit : MonoBehaviour
     {
         transform.localPosition = location.Position;
     }
+
+    // clearing the cell's unit reference
+    public void Die()
+    {
+        location.Unit = null;
+        Destroy(gameObject);
+    }
 }

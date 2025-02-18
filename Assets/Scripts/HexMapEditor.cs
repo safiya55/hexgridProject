@@ -74,7 +74,14 @@ public class HexMapEditor : MonoBehaviour
 			//invokes CreateUnit when the U key is pressed.
 			if (Input.GetKeyDown(KeyCode.U))
 			{
-				CreateUnit();
+				if (Input.GetKey(KeyCode.LeftShift))
+				{
+					DestroyUnit();
+				}
+				else
+				{
+					CreateUnit();
+				}
 				return;
 			}
 		}
@@ -377,9 +384,20 @@ public class HexMapEditor : MonoBehaviour
 
 			//assign the cell under the cursor to the unit's location.
 			unit.Location = cell;
-			
+
 			//randomizes units orientation
 			unit.Orientation = Random.Range(0f, 360f);
+		}
+	}
+
+	//make it able to destroy units
+	void DestroyUnit()
+	{
+		HexCell cell = GetCellUnderCursor();
+		if (cell && cell.Unit)
+		{
+			//call hexunit function to destroy unit
+			cell.Unit.Die();
 		}
 	}
 }
