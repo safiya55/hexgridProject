@@ -10,6 +10,9 @@ public class HexUnit : MonoBehaviour
 
     public static HexUnit unitPrefab;
 
+    //HexUnit remember the path it's supposed to travel, so it can visualize it using gizmos.
+    List<HexCell> pathToTravel;
+
     //so that Units identify the cell 
     // that they are occupying
     public HexCell Location
@@ -36,6 +39,7 @@ public class HexUnit : MonoBehaviour
     public void Travel(List<HexCell> path)
     {
         Location = path[path.Count - 1];
+        pathToTravel = path;
     }
 
     //sets the hexunits orientation or allows it to be changed in how it is facing
@@ -86,5 +90,23 @@ public class HexUnit : MonoBehaviour
     public bool IsValidDestination(HexCell cell)
     {
         return !cell.IsUnderwater && !cell.Unit;
+    }
+
+    //to show the last path that should be traveled,
+    void OnDrawGizmos()
+    {
+        if (pathToTravel == null || pathToTravel.Count == 0)
+        {
+            return;
+        }
+
+        for (int i = 1; i < pathToTravel.Count; i++)
+        {
+            Vector3 a = pathToTravel[i - 1].Position;
+			Vector3 b = pathToTravel[i].Position;
+			for (float t = 0f; t < 1f; t += 0.1f) {
+				Gizmos.DrawSphere(Vector3.Lerp(a, b, t), 2f);
+			}
+        }
     }
 }
