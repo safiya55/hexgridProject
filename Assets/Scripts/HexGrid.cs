@@ -357,7 +357,7 @@ public class HexGrid : MonoBehaviour
                 }
 
                 //skip cells that are underwater
-                if (neighbor.IsUnderwater)
+                if (neighbor.IsUnderwater|| neighbor.Unit)
                 {
                     continue;
                 }
