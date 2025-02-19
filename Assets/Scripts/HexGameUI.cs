@@ -94,6 +94,7 @@ public class HexGameUI : MonoBehaviour
         }
     }
 
+    //To request a journey
     void DoMove()
     {
         if (grid.HasPath)
