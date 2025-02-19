@@ -46,9 +46,6 @@ public class HexMapEditor : MonoBehaviour
 
 	bool editMode;
 
-	//hexmapeditor is responsible to spawn stuff
-	public HexUnit unitPrefab;
-
 	public void SetBrushSize(float size)
 	{
 		brushSize = (int)size;
@@ -380,7 +377,7 @@ public class HexMapEditor : MonoBehaviour
 			//invoking AddUnit with a newly 
 			// //instantiated unit, its location, and a random orientation.
 			hexGrid.AddUnit(
-				Instantiate(unitPrefab), cell, Random.Range(0f, 360f)
+				Instantiate(HexUnit.unitPrefab), cell, Random.Range(0f, 360f)
 			); 
 		}
 	}

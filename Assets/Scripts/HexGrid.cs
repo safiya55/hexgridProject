@@ -36,10 +36,13 @@ public class HexGrid : MonoBehaviour
 
     List<HexUnit> units = new List<HexUnit>();
 
+    public HexUnit unitPrefab;
+
     void Awake()
     {
         HexMetrics.noiseSource = noiseSource;
         HexMetrics.InitializeHashGrid(seed);
+        HexUnit.unitPrefab = unitPrefab;
         CreateMap(cellCountX, cellCountZ);
     }
 
@@ -114,6 +117,7 @@ public class HexGrid : MonoBehaviour
         {
             HexMetrics.noiseSource = noiseSource;
             HexMetrics.InitializeHashGrid(seed);
+            HexUnit.unitPrefab = unitPrefab;
         }
     }
 
@@ -281,6 +285,19 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < chunks.Length; i++)
         {
             chunks[i].Refresh();
+        }
+
+
+        if (header >= 2) // only works for save files that 
+        // are at least version 2, otherwise there are no units to load.
+        {
+            //read the unit count and use it to load all 
+            // the stored units, passing itself as an additional argument.
+            int unitCount = reader.ReadInt32();
+            for (int i = 0; i < unitCount; i++)
+            {
+                HexUnit.Load(reader, this);
+            }
         }
     }
 
