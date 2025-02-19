@@ -19,6 +19,11 @@ public class HexUnit : MonoBehaviour
         }
         set
         {
+            if (location)
+            {
+                location.Unit = null;
+            }
+
             location = value;
             //make the cell aware that there is a unit standing on it.
             value.Unit = this;

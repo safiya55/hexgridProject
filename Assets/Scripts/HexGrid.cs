@@ -495,4 +495,14 @@ public class HexGrid : MonoBehaviour
         }
         return null;
     }
+
+    //If we have a valid path, 
+    // then it should be possible to move the unit to the destination. 
+    public bool HasPath
+    {
+        get
+        {
+            return currentPathExists;
+        }
+    }
 }
