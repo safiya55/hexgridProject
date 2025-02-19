@@ -184,9 +184,6 @@ public class HexGrid : MonoBehaviour
         label.rectTransform.anchoredPosition =
             new Vector2(position.x, position.z);
 
-
-
-
         cell.uiRect = label.rectTransform;
         cell.Elevation = 0;
 
@@ -273,9 +270,6 @@ public class HexGrid : MonoBehaviour
                 return;
             }
         }
-
-
-        CreateMap(x, z);
 
         for (int i = 0; i < cells.Length; i++)
         {
