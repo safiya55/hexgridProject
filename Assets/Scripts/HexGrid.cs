@@ -351,7 +351,7 @@ public class HexGrid : MonoBehaviour
                 }
 
                 //skip cells that are underwater
-                if (neighbor.IsUnderwater|| neighbor.Unit)
+                if (neighbor.IsUnderwater || neighbor.Unit)
                 {
                     continue;
                 }
@@ -498,5 +498,26 @@ public class HexGrid : MonoBehaviour
         {
             return currentPathExists;
         }
+    }
+
+    //method to retrieve the current path in the form of a list of cells. 
+    // It can grab one from the list pool and return it, if there actually is a path.
+    public List<HexCell> GetPath()
+    {
+        if (!currentPathExists)
+        {
+            return null;
+        }
+        List<HexCell> path = ListPool<HexCell>.Get();
+        // list is filled by following the path reference from the destination back to the start,
+        for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
+        {
+            path.Add(c);
+        }
+        //want the entire path, which also includes the starting cell.
+        path.Add(currentPathFrom);
+        //reverse the order since initially order was in reverse
+        path.Reverse();
+        return path;
     }
 }
