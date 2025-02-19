@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -12,6 +13,25 @@ public class HexUnit : MonoBehaviour
 
     //HexUnit remember the path it's supposed to travel, so it can visualize it using gizmos.
     List<HexCell> pathToTravel;
+
+    const float travelSpeed = 4f;
+
+    //set the unit's position. Use the time delta instead of fixed 0.1 increments. 
+    // //And yield each iteration. That will move the unit from one cell to the 
+    // next in one second.
+    IEnumerator TravelPath()
+    {
+        for (int i = 1; i < pathToTravel.Count; i++)
+        {
+            Vector3 a = pathToTravel[i - 1].Position;
+            Vector3 b = pathToTravel[i].Position;
+            for (float t = 0f; t < 1f; t += Time.deltaTime * travelSpeed)
+            {
+                transform.localPosition = Vector3.Lerp(a, b, t);
+                yield return null;
+            }
+        }
+    }
 
     //so that Units identify the cell 
     // that they are occupying
@@ -40,6 +60,9 @@ public class HexUnit : MonoBehaviour
     {
         Location = path[path.Count - 1];
         pathToTravel = path;
+        //stop all existing coroutines. 
+        StopAllCoroutines();
+        StartCoroutine(TravelPath());
     }
 
     //sets the hexunits orientation or allows it to be changed in how it is facing
@@ -103,10 +126,11 @@ public class HexUnit : MonoBehaviour
         for (int i = 1; i < pathToTravel.Count; i++)
         {
             Vector3 a = pathToTravel[i - 1].Position;
-			Vector3 b = pathToTravel[i].Position;
-			for (float t = 0f; t < 1f; t += 0.1f) {
-				Gizmos.DrawSphere(Vector3.Lerp(a, b, t), 2f);
-			}
+            Vector3 b = pathToTravel[i].Position;
+            for (float t = 0f; t < 1f; t += 0.1f)
+            {
+                Gizmos.DrawSphere(Vector3.Lerp(a, b, t), 2f);
+            }
         }
     }
 }

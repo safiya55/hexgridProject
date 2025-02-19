@@ -420,7 +420,7 @@ public class HexGrid : MonoBehaviour
             while (current != currentPathFrom)
             {
                 int turn = (current.Distance - 1) / speed;
-                current.SetLable(turn.ToString());
+                current.SetLabel(turn.ToString());
                 current.EnableHighlight(Color.white);
                 current = current.PathFrom;
             }
@@ -436,7 +436,7 @@ public class HexGrid : MonoBehaviour
             HexCell current = currentPathTo;
             while (current != currentPathFrom)
             {
-                current.SetLable(null);
+                current.SetLabel(null);
                 current.DisableHighlight();
                 current = current.PathFrom;
             }
