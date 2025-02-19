@@ -40,11 +40,9 @@ public class HexMapEditor : MonoBehaviour
 	//Elements to detect Drag to create river
 	bool isDrag;
 	HexDirection dragDirection;
-	HexCell previousCell, searchFromCell, searchToCell;
+	HexCell previousCell;
 
 	public Material terrainMaterial;
-
-	bool editMode;
 
 	public void SetBrushSize(float size)
 	{
@@ -54,8 +52,8 @@ public class HexMapEditor : MonoBehaviour
 
 	void Awake()
 	{
-		SetTerrainTypeIndex(0);
 		terrainMaterial.DisableKeyword("GRID_ON");
+		SetEditMode(false);
 	}
 
 	void Update()
@@ -99,36 +97,38 @@ public class HexMapEditor : MonoBehaviour
 				isDrag = false;
 			}
 
-			if (editMode)
-			{
 				EditCells(currentCell);
-			}
-			// to check whether the shift key is being held down.
-			else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
-			{
-				if (searchFromCell != currentCell)
-				{
-					if (searchFromCell)
-					{
-						searchFromCell.DisableHighlight();
-					}
-					searchFromCell = currentCell;
-					searchFromCell.EnableHighlight(Color.blue);
-					if (searchToCell)
-					{
-						hexGrid.FindPath(searchFromCell, searchToCell, 24);
-					}
-				}
-			}
-			////if not in edit mode find distance of cells
-			else if (searchFromCell && searchFromCell != currentCell)
-			{
-				if (searchToCell != currentCell)
-				{
-					searchToCell = currentCell;
-					hexGrid.FindPath(searchFromCell, searchToCell, 24);
-				}
-			}
+			
+
+			//old code for path finding
+			// {
+			// // to check whether the shift key is being held down.
+			// else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
+			 	{
+			// 		if (searchFromCell != currentCell)
+			// 		{
+			// 			if (searchFromCell)
+			// 			{
+			// 				searchFromCell.DisableHighlight();
+			// 			}
+			// 			searchFromCell = currentCell;
+			// 			searchFromCell.EnableHighlight(Color.blue);
+			// 			if (searchToCell)
+			// 			{
+			// 				hexGrid.FindPath(searchFromCell, searchToCell, 24);
+			// 			}
+			// 		}
+			// 	}
+			// 	////if not in edit mode find distance of cells
+			// 	else if (searchFromCell && searchFromCell != currentCell)
+			// 	{
+			// 		if (searchToCell != currentCell)
+			// 		{
+			// 			searchToCell = currentCell;
+			// 			hexGrid.FindPath(searchFromCell, searchToCell, 24);
+			// 		}
+			// 	}
+			 }
 
 			previousCell = currentCell;
 
@@ -143,13 +143,8 @@ public class HexMapEditor : MonoBehaviour
 
 	HexCell GetCellUnderCursor()
 	{
-		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		if (Physics.Raycast(inputRay, out hit))
-		{
-			return hexGrid.GetCell(hit.point);
-		}
-		return null;
+		return
+			hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 	}
 
 	void ValidateDrag(HexCell currentCell)
@@ -364,8 +359,7 @@ public class HexMapEditor : MonoBehaviour
 
 	public void SetEditMode(bool toggle)
 	{
-		editMode = toggle;
-		hexGrid.ShowUI(!toggle);
+		enabled = toggle;
 	}
 
 	void CreateUnit()
@@ -378,7 +372,7 @@ public class HexMapEditor : MonoBehaviour
 			// //instantiated unit, its location, and a random orientation.
 			hexGrid.AddUnit(
 				Instantiate(HexUnit.unitPrefab), cell, Random.Range(0f, 360f)
-			); 
+			);
 		}
 	}
 

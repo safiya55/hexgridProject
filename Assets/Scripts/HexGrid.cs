@@ -485,4 +485,14 @@ public class HexGrid : MonoBehaviour
         units.Remove(unit);
         unit.Die();
     }
+
+    public HexCell GetCell(Ray ray)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            return GetCell(hit.point);
+        }
+        return null;
+    }
 }
