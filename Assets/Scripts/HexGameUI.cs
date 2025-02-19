@@ -18,6 +18,8 @@ public class HexGameUII : MonoBehaviour
     {
         enabled = !toggle;
         grid.ShowUI(!toggle);
+        //clear the path when the edit mode is changed.
+        grid.ClearPath();
     }
 
     //bool to updating the current cell, we might like to know whether it has changed.
@@ -37,6 +39,8 @@ public class HexGameUII : MonoBehaviour
     //When we attempt a selection,
     void DoSelection()
     {
+
+        grid.ClearPath(); 
         // updating the current cell.
         UpdateCurrentCell();
         //If there is a current cell,
@@ -58,6 +62,26 @@ public class HexGameUII : MonoBehaviour
             {
                 DoSelection();
             }
+
+            else if (selectedUnit)
+            {
+                DoPathfinding();
+            }
+        }
+    }
+
+    //simply updates the current cell and invokes HexGrid.FindPath 
+    // if there's a destination. We'll again use a fixed speed of 24.
+    void DoPathfinding()
+    {
+        if (UpdateCurrentCell())
+        {
+            if (currentCell) {
+				grid.FindPath(selectedUnit.Location, currentCell, 24);
+			}
+			else {
+				grid.ClearPath();
+			}
         }
     }
 }

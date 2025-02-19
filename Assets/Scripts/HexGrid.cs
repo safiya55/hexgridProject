@@ -435,7 +435,7 @@ public class HexGrid : MonoBehaviour
         currentPathTo.EnableHighlight(Color.red);
     }
 
-    void ClearPath()
+    public void ClearPath()
     {
         if (currentPathExists)
         {
