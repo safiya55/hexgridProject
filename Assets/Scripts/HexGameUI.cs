@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class HexGameUII : MonoBehaviour
+public class HexGameUI : MonoBehaviour
 {
 
     //HexGameUI needs to know which cell is currently underneath the cursor.
