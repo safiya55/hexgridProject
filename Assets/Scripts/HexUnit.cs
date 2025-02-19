@@ -16,6 +16,14 @@ public class HexUnit : MonoBehaviour
 
     const float travelSpeed = 4f;
 
+    void OnEnable()
+    {
+        if (location)
+        {
+            transform.localPosition = location.Position;
+        }
+    }
+
     //set the unit's position. Use the time delta instead of fixed 0.1 increments. 
     // //And yield each iteration. That will move the unit from one cell to the 
     // next in one second.
