@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using System.IO;
 
 public class HexUnit : MonoBehaviour
@@ -29,6 +30,12 @@ public class HexUnit : MonoBehaviour
             value.Unit = this;
             transform.localPosition = value.Position;
         }
+    }
+
+    //teleport Unit to the destination.
+    public void Travel(List<HexCell> path)
+    {
+        Location = path[path.Count - 1];
     }
 
     //sets the hexunits orientation or allows it to be changed in how it is facing
