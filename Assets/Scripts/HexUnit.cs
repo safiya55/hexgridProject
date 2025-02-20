@@ -18,6 +18,10 @@ public class HexUnit : MonoBehaviour
 
     const float rotationSpeed = 180f;
 
+    public HexGrid Grid { get; set; }
+
+    const int visionRange = 3;
+
     void OnEnable()
     {
         if (location)
@@ -89,14 +93,14 @@ public class HexUnit : MonoBehaviour
         {
             if (location)
             {
-                location.DecreaseVisibility();
+                Grid.DecreaseVisibility(location, visionRange);
                 location.Unit = null;
             }
 
             location = value;
             //make the cell aware that there is a unit standing on it.
             value.Unit = this;
-            value.IncreaseVisibility();
+            Grid.IncreaseVisibility(value, visionRange);
             transform.localPosition = value.Position;
         }
     }
@@ -136,7 +140,7 @@ public class HexUnit : MonoBehaviour
     {
         if (location)
         {
-            location.DecreaseVisibility();
+            Grid.DecreaseVisibility(location, visionRange);
         }
         location.Unit = null;
         Destroy(gameObject);
