@@ -51,6 +51,8 @@ public class HexCell : MonoBehaviour
 
 	public int Index { get; set; }
 
+	int visibility;
+
 
 	void Refresh()
 	{
@@ -681,6 +683,38 @@ public class HexCell : MonoBehaviour
 		get
 		{
 			return distance + SearchHeuristic;
+		}
+	}
+
+	public bool IsVisible
+	{
+		get
+		{
+			return visibility > 0;
+		}
+	}
+
+	public void IncreaseVisibility()
+	{
+		visibility += 1;
+
+		//Invoke this method both when a cell's visibility is 
+		// increased and decreased, when changing between a score of 0 and 1.
+		if (visibility == 1)
+		{
+			ShaderData.RefreshVisibility(this);
+		}
+	}
+
+	public void DecreaseVisibility()
+	{
+		visibility -= 1;
+
+		//Invoke this method both when a cell's visibility is 
+		// increased and decreased, when changing between a score of 0 and 1.
+		if (visibility == 0)
+		{
+			ShaderData.RefreshVisibility(this);
 		}
 	}
 }
