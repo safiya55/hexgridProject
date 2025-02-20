@@ -8,7 +8,7 @@ public class HexCellPriorityQueue
     int count = 0;
 
     int minimum = int.MaxValue;
-//
+    //
     public int Count
     {
         get
@@ -68,6 +68,9 @@ public class HexCellPriorityQueue
             while (next != cell)
             {
                 current = next;
+                //another road bug fix
+                if (current == null)
+                    break;
                 next = current.NextWithSamePriority;
             }
             //can remove the changed cell from the linked list, by skipping it.

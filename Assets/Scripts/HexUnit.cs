@@ -40,6 +40,12 @@ public class HexUnit : MonoBehaviour
             for (; t < 1f; t += Time.deltaTime * travelSpeed)
             {
                 transform.localPosition = Bezier.GetPoint(a, b, c, t);
+
+                //derivative vector aligns with the travel direction. 
+                //method to convert that into a rotation for our unit
+                Vector3 d = Bezier.GetDerivative(a, b, c, t);
+                d.y = 0f;
+				transform.localRotation = Quaternion.LookRotation(d);
                 yield return null;
             }
             t -= 1f;
@@ -51,11 +57,15 @@ public class HexUnit : MonoBehaviour
         for (; t < 1f; t += Time.deltaTime * travelSpeed)
         {
             transform.localPosition = Bezier.GetPoint(a, b, c, t);
+            Vector3 d = Bezier.GetDerivative(a, b, c, t);
+            d.y = 0f;
+			transform.localRotation = Quaternion.LookRotation(d);
             yield return null;
         }
 
         // make sure that the unit ends up exactly at its destination.
         transform.localPosition = location.Position;
+        orientation = transform.localRotation.eulerAngles.y;
     }
 
     //so that Units identify the cell 

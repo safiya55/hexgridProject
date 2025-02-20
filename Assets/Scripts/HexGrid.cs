@@ -5,6 +5,7 @@ using UnityEngine.UI;  // Add this for UI components
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class HexGrid : MonoBehaviour
 {
@@ -330,6 +331,13 @@ public class HexGrid : MonoBehaviour
         {
             //yield return delay;
             HexCell current = searchFrontier.Dequeue();
+
+            //fixes the damned road bug
+            if (current == null)
+            {
+                break;
+            }
+
             current.SearchPhase += 1;
 
 
@@ -347,7 +355,7 @@ public class HexGrid : MonoBehaviour
                 //skip if cell that dont exist and those we have already given distance to
                 if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase)
                 {
-                    continue;
+                    break;
                 }
 
                 //skip cells that are underwater
