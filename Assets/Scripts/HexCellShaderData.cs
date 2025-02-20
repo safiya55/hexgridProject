@@ -32,6 +32,8 @@ public class HexCellShaderData : MonoBehaviour
                 cellTextureData[i] = new Color32(0, 0, 0, 0);
             }
         }
+        //To make sure that the data is updated after creating a new map
+        //enable the component after initialization.
         enabled = true;
     }
     

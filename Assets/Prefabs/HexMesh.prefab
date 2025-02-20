@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f666b3b6898ef64799268106378d640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useCollider: 0
-  useColors: 0
+  useCollider: 1
+  useCellData: 1
   useUVCoordinates: 0
   useUV2Coordinates: 0

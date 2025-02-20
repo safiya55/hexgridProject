@@ -154,6 +154,8 @@ public class HexGrid : MonoBehaviour
         // Assign the HexCoordinates to the cell
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
         cell.Index = i;
+
+        //assign its shader data component to this property.
         cell.ShaderData = cellShaderData;
 
         // Set the color to the default color
