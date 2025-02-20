@@ -49,6 +49,8 @@ public class HexCell : MonoBehaviour
 
 	public HexCellShaderData ShaderData { get; set; }
 
+	public int Index { get; set; }
+
 
 	void Refresh()
 	{
