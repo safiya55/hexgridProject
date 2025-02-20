@@ -29,24 +29,26 @@ public class HexUnit : MonoBehaviour
     // next in one second.
     IEnumerator TravelPath()
     {
-        Vector3 a, b = pathToTravel[0].Position;
+        Vector3 a, b, c = pathToTravel[0].Position;
 
         for (int i = 1; i < pathToTravel.Count; i++)
         {
-            a = b;
-            b = (pathToTravel[i - 1].Position + pathToTravel[i].Position) * 0.5f;
+            a = c;
+            b = pathToTravel[i - 1].Position;
+            c = (b + pathToTravel[i].Position) * 0.5f;
             for (float t = 0f; t < 1f; t += Time.deltaTime * travelSpeed)
             {
-                transform.localPosition = Vector3.Lerp(a, b, t);
+                transform.localPosition = Bezier.GetPoint(a, b, c, t);
                 yield return null;
             }
         }
 
-        a = b;
+        a = c;
         b = pathToTravel[pathToTravel.Count - 1].Position;
+        c = b;
         for (float t = 0f; t < 1f; t += Time.deltaTime * travelSpeed)
         {
-            transform.localPosition = Vector3.Lerp(a, b, t);
+            transform.localPosition = Bezier.GetPoint(a, b, c, t);
             yield return null;
         }
     }
@@ -141,25 +143,26 @@ public class HexUnit : MonoBehaviour
             return;
         }
 
-        Vector3 a, b = pathToTravel[0].Position;
+        Vector3 a, b, c = pathToTravel[0].Position;
 
         for (int i = 1; i < pathToTravel.Count; i++)
         {
-            a = b;
-            b = (pathToTravel[i - 1].Position + pathToTravel[i].Position) * 0.5f;
-            for (float t = 0f; t < 1f; t += 0.1f)
-            {
-                Gizmos.DrawSphere(Vector3.Lerp(a, b, t), 2f);
-            }
+            a = c;
+			b = pathToTravel[i - 1].Position;
+			c = (b + pathToTravel[i].Position) * 0.5f;
+			for (float t = 0f; t < 1f; t += Time.deltaTime * travelSpeed) {
+				Gizmos.DrawSphere(Bezier.GetPoint(a, b, c, t), 2f);
+			}
         }
 
         //To reach the center of the destination cell,
-        a = b;
+        a = c;
         //use cell's position as the final point, instead of an edge.
         b = pathToTravel[pathToTravel.Count - 1].Position;
+        c = b;
         for (float t = 0f; t < 1f; t += 0.1f)
         {
-            Gizmos.DrawSphere(Vector3.Lerp(a, b, t), 2f);
+            Gizmos.DrawSphere(Bezier.GetPoint(a, b, c, t), 2f);
         }
     }
 }
