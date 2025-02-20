@@ -74,7 +74,7 @@ public class HexUnit : MonoBehaviour
         //no longer need to remember which path we traveled
         // can release the cell list at the end
         ListPool<HexCell>.Add(pathToTravel);
-		pathToTravel = null;
+        pathToTravel = null;
     }
 
     //so that Units identify the cell 
@@ -89,12 +89,14 @@ public class HexUnit : MonoBehaviour
         {
             if (location)
             {
+                location.DecreaseVisibility();
                 location.Unit = null;
             }
 
             location = value;
             //make the cell aware that there is a unit standing on it.
             value.Unit = this;
+            value.IncreaseVisibility();
             transform.localPosition = value.Position;
         }
     }
@@ -132,6 +134,10 @@ public class HexUnit : MonoBehaviour
     // clearing the cell's unit reference
     public void Die()
     {
+        if (location)
+        {
+            location.DecreaseVisibility();
+        }
         location.Unit = null;
         Destroy(gameObject);
     }
