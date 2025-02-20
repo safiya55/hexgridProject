@@ -31,26 +31,31 @@ public class HexUnit : MonoBehaviour
     {
         Vector3 a, b, c = pathToTravel[0].Position;
 
+        float t = Time.deltaTime * travelSpeed;
         for (int i = 1; i < pathToTravel.Count; i++)
         {
             a = c;
             b = pathToTravel[i - 1].Position;
             c = (b + pathToTravel[i].Position) * 0.5f;
-            for (float t = 0f; t < 1f; t += Time.deltaTime * travelSpeed)
+            for (; t < 1f; t += Time.deltaTime * travelSpeed)
             {
                 transform.localPosition = Bezier.GetPoint(a, b, c, t);
                 yield return null;
             }
+            t -= 1f;
         }
 
         a = c;
         b = pathToTravel[pathToTravel.Count - 1].Position;
         c = b;
-        for (float t = 0f; t < 1f; t += Time.deltaTime * travelSpeed)
+        for (; t < 1f; t += Time.deltaTime * travelSpeed)
         {
             transform.localPosition = Bezier.GetPoint(a, b, c, t);
             yield return null;
         }
+
+        // make sure that the unit ends up exactly at its destination.
+        transform.localPosition = location.Position;
     }
 
     //so that Units identify the cell 
