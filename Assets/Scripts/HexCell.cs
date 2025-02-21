@@ -53,6 +53,8 @@ public class HexCell : MonoBehaviour
 
 	int visibility;
 
+	public bool IsExplored { get; private set; }
+
 
 	void Refresh()
 	{
@@ -702,6 +704,7 @@ public class HexCell : MonoBehaviour
 		// increased and decreased, when changing between a score of 0 and 1.
 		if (visibility == 1)
 		{
+			IsExplored = true;
 			ShaderData.RefreshVisibility(this);
 		}
 	}
