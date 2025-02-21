@@ -307,18 +307,19 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    public void FindPath(HexCell fromCell, HexCell toCell, int speed)
+    public void FindPath(HexCell fromCell, HexCell toCell, HexUnit unit)
     {
         ClearPath();
         currentPathFrom = fromCell;
         currentPathTo = toCell;
-        currentPathExists = Search(fromCell, toCell, speed);
-        ShowPath(speed);
+        currentPathExists = Search(fromCell, toCell, unit);
+        ShowPath(unit.Speed);
     }
 
     //uses priority queue
-    bool Search(HexCell fromCell, HexCell toCell, int speed)
+    bool Search(HexCell fromCell, HexCell toCell, HexUnit unit)
     {
+        int speed = unit.Speed;
         searchFrontierPhase += 2;
         //use preiority queue
         if (searchFrontier == null)
@@ -364,41 +365,22 @@ public class HexGrid : MonoBehaviour
                 HexCell neighbor = current.GetNeighbor(d);
 
                 //skip if cell that dont exist and those we have already given distance to
-                if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase)
-                {
-                    break;
-                }
-
-                //skip cells that are underwater
-                if (neighbor.IsUnderwater || neighbor.Unit)
-                {
-                    continue;
-                }
-                //cells skip cliffs
-                HexEdgeType edgeType = current.GetEdgeType(neighbor);
-                if (edgeType == HexEdgeType.Cliff)
+                if (
+                    neighbor == null ||
+                    neighbor.SearchPhase > searchFrontierPhase
+                )
                 {
                     continue;
                 }
 
-                //make it easy and fast to travel by road
-                //leave road at 1 ancrease cost of other edges to 10
-                int moveCost;
-                if (current.HasRoadThroughEdge(d))
-                {
-                    moveCost = 1;
-                }
-                else if (current.Walled != neighbor.Walled)
+                if (!unit.IsValidDestination(neighbor))
                 {
                     continue;
                 }
-                else
+                int moveCost = unit.GetMoveCost(current, neighbor, d);
+                if (moveCost < 0)
                 {
-                    moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
-
-                    //cost for terrain features
-                    moveCost += neighbor.UrbanLevel + neighbor.FarmLevel +
-                        neighbor.PlantLevel;
+                    continue;
                 }
 
                 int distance = current.Distance + moveCost;

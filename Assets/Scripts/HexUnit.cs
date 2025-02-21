@@ -218,4 +218,46 @@ public class HexUnit : MonoBehaviour
         transform.LookAt(point);
         orientation = transform.localRotation.eulerAngles.y;
     }
+
+    //to determine the move cost.
+    //needs to know which cells the movement is between as well as the direction. 
+    public int GetMoveCost(
+        HexCell fromCell, HexCell toCell, HexDirection direction)
+    {
+         //cells skip cliffs
+        HexEdgeType edgeType = fromCell.GetEdgeType(toCell);
+        if (edgeType == HexEdgeType.Cliff)
+        {
+            return -1;
+        }
+
+        //make it easy and fast to travel by road
+                //leave road at 1 ancrease cost of other edges to 10
+        int moveCost;
+        if (fromCell.HasRoadThroughEdge(direction))
+        {
+            moveCost = 1;
+        }
+        else if (fromCell.Walled != toCell.Walled)
+        {
+            return -1;
+        }
+        else
+        {
+            moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
+
+            //cost for terrain features
+            moveCost +=
+                toCell.UrbanLevel + toCell.FarmLevel + toCell.PlantLevel;
+        }
+        return moveCost;
+    }
+
+    public int Speed
+    {
+        get
+        {
+            return 24;
+        }
+    }
 }
