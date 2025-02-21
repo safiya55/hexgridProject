@@ -20,6 +20,15 @@ public class HexGameUI : MonoBehaviour
         grid.ShowUI(!toggle);
         //clear the path when the edit mode is changed.
         grid.ClearPath();
+
+        if (toggle)
+        {
+            Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
+        }
+        else
+        {
+            Shader.DisableKeyword("HEX_MAP_EDIT_MODE");
+        }
     }
 
     //bool to updating the current cell, we might like to know whether it has changed.
