@@ -22,6 +22,7 @@ Shader "Custom/WaterShore" {
 			float2 uv_MainTex;
 			float3 worldPos;
 			float visibility;
+			float2 visibility;
 		};
 
 		half _Glossiness;
@@ -35,9 +36,11 @@ Shader "Custom/WaterShore" {
 			float4 cell1 = GetCellData(v, 1);
 			float4 cell2 = GetCellData(v, 2);
 
-			data.visibility =
+			data.visibility.x =
 				cell0.x * v.color.x + cell1.x * v.color.y + cell2.x * v.color.z;
-			data.visibility = lerp(0.25, 1, data.visibility);
+			data.visibility.x = lerp(0.25, 1, data.visibility.x);
+			data.visibility.y =
+				cell0.y * v.color.x + cell1.y * v.color.y + cell2.y * v.color.z;
 		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
@@ -48,10 +51,12 @@ Shader "Custom/WaterShore" {
 
 
 			fixed4 c = fixed4(IN.uv_MainTex, 1, 1);
-			o.Albedo = c.rgb * IN.visibility;
-			o.Metallic = _Metallic;
+			float explored = IN.visibility.y;
+			o.Albedo = c.rgb * IN.visibility.x;
+			o.Specular = _Specular * explored;
 			o.Smoothness = _Glossiness;
-			o.Alpha = c.a;
+			o.Occlusion = explored;
+			o.Alpha = c.a * explored;
 		}
 		ENDCG
 	}

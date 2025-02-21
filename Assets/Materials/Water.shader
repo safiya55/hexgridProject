@@ -35,9 +35,11 @@ Shader "Custom/Water" {
 			float4 cell1 = GetCellData(v, 1);
 			float4 cell2 = GetCellData(v, 2);
 
-			data.visibility =
+			data.visibility.x =
 				cell0.x * v.color.x + cell1.x * v.color.y + cell2.x * v.color.z;
-			data.visibility = lerp(0.25, 1, data.visibility);
+			data.visibility.x = lerp(0.25, 1, data.visibility.x);
+			data.visibility.y =
+				cell0.y * v.color.x + cell1.y * v.color.y + cell2.y * v.color.z;
 		}
 
 
@@ -45,10 +47,12 @@ Shader "Custom/Water" {
 			float waves = Waves(IN.worldPos.xz, _MainTex);
 			
 			fixed4 c = saturate(_Color + waves);
-			o.Albedo = c.rgb * IN.visibility;
-			o.Metallic = _Metallic;
+			float explored = IN.visibility.y;
+			o.Albedo = c.rgb * IN.visibility.x;
+			o.Specular = _Specular * explored;
 			o.Smoothness = _Glossiness;
-			o.Alpha = c.a;
+			o.Occlusion = explored;
+			o.Alpha = c.a * explored;
 		}
 		ENDCG
 	}
