@@ -282,9 +282,10 @@ public class HexGrid : MonoBehaviour
             }
         }
 
+        //HexGrid.Load has to pass the header data on to HexCell.Load.
         for (int i = 0; i < cells.Length; i++)
         {
-            cells[i].Load(reader);
+            cells[i].Load(reader, header);
         }
         //refresh all chunks
         for (int i = 0; i < chunks.Length; i++)
