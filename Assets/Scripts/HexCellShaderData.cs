@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class HexCellShaderData : MonoBehaviour
@@ -5,6 +6,8 @@ public class HexCellShaderData : MonoBehaviour
 
     Texture2D cellTexture;
     Color32[] cellTextureData;
+
+    List<HexCell> transitioningCells = new List<HexCell>();
 
     //toggle whether we want immediate transitions. 
     public bool ImmediateMode { get; set; }
@@ -41,6 +44,8 @@ public class HexCellShaderData : MonoBehaviour
                 cellTextureData[i] = new Color32(0, 0, 0, 0);
             }
         }
+        transitioningCells.Clear();
+
         //To make sure that the data is updated after creating a new map
         //enable the component after initialization.
         enabled = true;
@@ -62,8 +67,15 @@ public class HexCellShaderData : MonoBehaviour
     public void RefreshVisibility(HexCell cell)
     {
         int index = cell.Index;
-		cellTextureData[index].r = cell.IsVisible ? (byte)255 : (byte)0;
-		cellTextureData[index].g = cell.IsExplored ? (byte)255 : (byte)0;
+        if (ImmediateMode)
+        {
+            cellTextureData[index].r = cell.IsVisible ? (byte)255 : (byte)0;
+            cellTextureData[index].g = cell.IsExplored ? (byte)255 : (byte)0;
+        }
+        else
+        {
+            transitioningCells.Add(cell);
+        } 
         enabled = true;
     }
 }
