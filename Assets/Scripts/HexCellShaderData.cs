@@ -6,6 +6,9 @@ public class HexCellShaderData : MonoBehaviour
     Texture2D cellTexture;
     Color32[] cellTextureData;
 
+    //toggle whether we want immediate transitions. 
+    public bool ImmediateMode { get; set; }
+
     public void Initialize(int x, int z)
     {
         if (cellTexture)
