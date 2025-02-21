@@ -29,6 +29,7 @@ Shader "Custom/Road"
         {
             float2 uv_MainTex;
             float3 worldPos;
+            float2 visibility;
         };
 
         half _Glossiness;

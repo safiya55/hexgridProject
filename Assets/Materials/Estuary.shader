@@ -22,7 +22,7 @@ Shader "Custom/Estuary" {
 			float2 uv_MainTex;
 			float2 riverUV;
 			float3 worldPos;
-			float visibility;
+			float2 visibility;
 		};
 
 		half _Glossiness;
@@ -36,8 +36,9 @@ Shader "Custom/Estuary" {
 			float4 cell0 = GetCellData(v, 0);
 			float4 cell1 = GetCellData(v, 1);
 
-			o.visibility = cell0.x * v.color.x + cell1.x * v.color.y;
-			o.visibility = lerp(0.25, 1, o.visibility);
+			data.visibility.x = cell0.x * v.color.x + cell1.x * v.color.y;
+			data.visibility.x = lerp(0.25, 1, data.visibility.x);
+			data.visibility.y = cell0.y * v.color.x + cell1.y * v.color.y;
 		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
@@ -51,11 +52,14 @@ Shader "Custom/Estuary" {
 			float water = lerp(shoreWater, river, IN.uv_MainTex.x);
 
 
+			float explored = IN.visibility.y;
 			fixed4 c = saturate(_Color + water);
-			o.Albedo = c.rgb * IN.visibility;
-			o.Metallic = _Metallic;
+			o.Albedo = c.rgb * IN.visibility.x;
+			o.Specular = _Specular * explored;
 			o.Smoothness = _Glossiness;
-			o.Alpha = c.a;
+			o.Occlusion = explored;
+			o.Alpha = c.a * explored;
+
 		}
 		ENDCG
 	}

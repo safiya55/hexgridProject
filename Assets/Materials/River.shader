@@ -26,6 +26,7 @@ Shader "Custom/River"
         struct Input
         {
             float2 uv_MainTex;
+            float2 visibility;
         };
 
         half _Glossiness;
@@ -43,11 +44,13 @@ Shader "Custom/River"
         {
             float river = River(IN.uv_MainTex, _MainTex);
 			
-			fixed4 c = saturate(_Color + river);
-			o.Albedo = c.rgb;
-			o.Metallic = _Metallic;
+			float explored = IN.visibility.y;
+			fixed4 c = saturate(_Color + water);
+			o.Albedo = c.rgb * IN.visibility.x;
+			o.Specular = _Specular * explored;
 			o.Smoothness = _Glossiness;
-			o.Alpha = c.a;
+			o.Occlusion = explored;
+			o.Alpha = c.a * explored;
         }
         ENDCG
     }
