@@ -282,6 +282,13 @@ public class HexGrid : MonoBehaviour
             }
         }
 
+        //remember the original mode 
+        bool originalImmediateMode = cellShaderData.ImmediateMode;
+
+        //switch to immediate mode in HexGrid.Load before the cells and units are loaded.
+        //prevent slow downs on larger maps
+        cellShaderData.ImmediateMode = true;
+
         //HexGrid.Load has to pass the header data on to HexCell.Load.
         for (int i = 0; i < cells.Length; i++)
         {
@@ -305,6 +312,9 @@ public class HexGrid : MonoBehaviour
                 HexUnit.Load(reader, this);
             }
         }
+
+        //switch back to original mode after the work is done.
+        cellShaderData.ImmediateMode = originalImmediateMode;
     }
 
     public void FindPath(HexCell fromCell, HexCell toCell, HexUnit unit)
