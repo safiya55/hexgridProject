@@ -350,6 +350,7 @@ public class HexGrid : MonoBehaviour
         fromCell.Distance = 0;
         searchFrontier.Enqueue(fromCell);
 
+        HexCoordinates fromCoordinates = fromCell.coordinates;
         // algorithm loops as long as there is something in the queue. 
         // //Each iteration, the front-most cell is taken out of the queue.
         while (searchFrontier.Count > 0)
@@ -440,6 +441,9 @@ public class HexGrid : MonoBehaviour
             searchFrontier.Clear();
         }
 
+        //The unit's inherent range represents its own height, 
+        // flight altitude, or scouting potential.
+        range += fromCell.ViewElevation;
         fromCell.SearchPhase = searchFrontierPhase;
         fromCell.Distance = 0;
         searchFrontier.Enqueue(fromCell);
@@ -463,7 +467,9 @@ public class HexGrid : MonoBehaviour
                 int distance = current.Distance + 1;
                 // to add the neighbor's view elevation to the covered distance 
                 // when determining when we can see a cell.
-                if (distance + neighbor.ViewElevation > range)
+                if (distance + neighbor.ViewElevation > range ||
+					distance > fromCoordinates.DistanceTo(neighbor.coordinates)
+                    )
                 {
                     continue;
                 }
