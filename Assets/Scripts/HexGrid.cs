@@ -161,8 +161,9 @@ public class HexGrid : MonoBehaviour
         //assign its shader data component to this property.
         cell.ShaderData = cellShaderData;
 
-        // Set the color to the default color
-        //cell.color = defaultColor;
+        //Cells that's aren't at the edge are explorable, while all others are inexplorable.
+        cell.Explorable =
+			x > 0 && z > 0 && x < cellCountX - 1 && z < cellCountZ - 1;
 
         //connect cells from east to west direction
         if (x > 0)
@@ -458,7 +459,8 @@ public class HexGrid : MonoBehaviour
                 HexCell neighbor = current.GetNeighbor(d);
                 if (
                     neighbor == null ||
-                    neighbor.SearchPhase > searchFrontierPhase
+                    neighbor.SearchPhase > searchFrontierPhase ||
+					!neighbor.Explorable
                 )
                 {
                     continue;
