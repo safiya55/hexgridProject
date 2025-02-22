@@ -98,8 +98,10 @@ public class HexCellShaderData : MonoBehaviour
             cellTextureData[index].r = cell.IsVisible ? (byte)255 : (byte)0;
             cellTextureData[index].g = cell.IsExplored ? (byte)255 : (byte)0;
         }
-        else
+        else if (cellTextureData[index].b != 255)
         {
+            cellTextureData[index].b = 255;
+
             transitioningCells.Add(cell);
         }
         enabled = transitioningCells.Count > 0;
@@ -118,6 +120,12 @@ public class HexCellShaderData : MonoBehaviour
             //t is still in transition, so keep track of this fact.
             stillUpdating = true;
 
+
+            if (!stillUpdating)
+            {
+                //only add cells whose B value isn't 255.Immediately Loading Visibility
+                data.b = 0;
+            }
             //add the delta to the cell's G value. 
             int t = data.g + delta;
             //Arithmatic operations don't work on bytes, they are always 
