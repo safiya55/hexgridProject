@@ -53,7 +53,20 @@ public class HexCell : MonoBehaviour
 
 	int visibility;
 
-	public bool IsExplored { get; private set; }
+	bool explored;
+
+	//convert it into an explicit property to be able to adjust its getter logic.
+	public bool IsExplored {
+		get {
+			return explored && Explorable;
+		}
+		private set {
+			explored = value;
+		}
+	}
+
+	//To indicate that a cell is explorable
+	public bool Explorable { get; set; }
 
 
 	void Refresh()
@@ -713,7 +726,7 @@ public class HexCell : MonoBehaviour
 	{
 		get
 		{
-			return visibility > 0;
+			return visibility > 0 && Explorable;
 		}
 	}
 
