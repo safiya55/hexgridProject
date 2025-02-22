@@ -112,6 +112,27 @@ public class HexCellShaderData : MonoBehaviour
         Color32 data = cellTextureData[index];
         bool stillUpdating = false;
 
+        //If the cell is explored but its G value isn't 255 yet,
+        if (cell.IsExplored && data.g < 255)
+        {
+            //t is still in transition, so keep track of this fact.
+            stillUpdating = true;
+
+            //add the delta to the cell's G value. 
+            int t = data.g + delta;
+            //Arithmatic operations don't work on bytes, they are always 
+            // converted to integers first. So the sum is an integer, which has to be cast to a byte.
+            data.g = t >= 255 ? (byte)255 : (byte)t;
+        }
+
+        //do the same thing for the visibility, which uses the R value.
+        if (cell.IsVisible && data.r < 255)
+        {
+            stillUpdating = true;
+            int t = data.r + delta;
+            data.r = t >= 255 ? (byte)255 : (byte)t;
+        }
+
         //has to determine whether this cell still requires further updating.
         //adjusted data has to be applied and the still-updating status returned.
         cellTextureData[index] = data;
