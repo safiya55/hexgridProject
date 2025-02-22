@@ -102,7 +102,16 @@ public class HexCell : MonoBehaviour
 			{
 				return;
 			}
+			int originalViewElevation = ViewElevation;
+
 			elevation = value;
+
+			//notify HexCellShaderData that the situation has changed
+			if (ViewElevation != originalViewElevation)
+			{
+				ShaderData.ViewElevationChanged();
+			}
+
 			RefreshPosition();
 
 			//Preventing Uphill Rivers and remove them
@@ -402,7 +411,14 @@ public class HexCell : MonoBehaviour
 			{
 				return;
 			}
+
+			int originalViewElevation = ViewElevation;
 			waterLevel = value;
+
+			if (ViewElevation != originalViewElevation)
+			{
+				ShaderData.ViewElevationChanged();
+			}
 			ValidateRivers();
 			Refresh();
 		}
@@ -723,6 +739,15 @@ public class HexCell : MonoBehaviour
 		if (visibility == 0)
 		{
 			ShaderData.RefreshVisibility(this);
+		}
+	}
+
+	//To take elevation into consideration for vision
+	public int ViewElevation
+	{
+		get
+		{
+			return elevation >= waterLevel ? elevation : waterLevel;
 		}
 	}
 }
