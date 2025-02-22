@@ -461,7 +461,9 @@ public class HexGrid : MonoBehaviour
                 }
 
                 int distance = current.Distance + 1;
-                if (distance > range)
+                // to add the neighbor's view elevation to the covered distance 
+                // when determining when we can see a cell.
+                if (distance + neighbor.ViewElevation > range)
                 {
                     continue;
                 }
