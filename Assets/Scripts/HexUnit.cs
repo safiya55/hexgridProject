@@ -20,6 +20,8 @@ public class HexUnit : MonoBehaviour
 
     public HexGrid Grid { get; set; }
 
+    const int visionRange = 3;
+
     public int VisionRange
     {
         get

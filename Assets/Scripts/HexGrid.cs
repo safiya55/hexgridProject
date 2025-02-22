@@ -448,6 +448,9 @@ public class HexGrid : MonoBehaviour
         fromCell.SearchPhase = searchFrontierPhase;
         fromCell.Distance = 0;
         searchFrontier.Enqueue(fromCell);
+
+        HexCoordinates fromCoordinates = fromCell.coordinates;
+
         while (searchFrontier.Count > 0)
         {
             HexCell current = searchFrontier.Dequeue();
@@ -469,7 +472,7 @@ public class HexGrid : MonoBehaviour
                 int distance = current.Distance + 1;
                 // to add the neighbor's view elevation to the covered distance 
                 // when determining when we can see a cell.
-                if (distance + neighbor.ViewElevation > range ||
+                if (distance + neighbor.ViewElevation > range || //ensure that only the shortest paths are considered when determining a cell's visibility. This can be done by skipping paths that would become longer than that.
 					distance > fromCoordinates.DistanceTo(neighbor.coordinates)
                     )
                 {
