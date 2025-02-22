@@ -125,6 +125,9 @@ public class HexGrid : MonoBehaviour
             HexMetrics.noiseSource = noiseSource;
             HexMetrics.InitializeHashGrid(seed);
             HexUnit.unitPrefab = unitPrefab;
+
+            //To ensure that the vision adjusts itself automatically
+            ResetVisibility();
         }
     }
 
@@ -609,5 +612,25 @@ public class HexGrid : MonoBehaviour
             cells[i].DecreaseVisibility();
         }
         ListPool<HexCell>.Add(cells);
+    }
+
+    //to reset all the cells
+    public void ResetVisibility()
+    {
+        //loop through the cells
+        for (int i = 0; i < cells.Length; i++)
+        {
+            //delegate the resetting to them.
+            cells[i].ResetVisibility();
+        }
+
+        //has to apply the vision of all units again
+        for (int i = 0; i < units.Count; i++)
+        {
+            //needs to know each unit's vision range.
+            HexUnit unit = units[i];
+            //available via a VisionRange property.
+            IncreaseVisibility(unit.Location, unit.VisionRange);
+        }
     }
 }

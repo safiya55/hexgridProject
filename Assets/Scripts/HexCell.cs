@@ -750,4 +750,15 @@ public class HexCell : MonoBehaviour
 			return elevation >= waterLevel ? elevation : waterLevel;
 		}
 	}
+
+	public void ResetVisibility()
+	{
+		//set the cell's visibility to zero and trigger a visibility refresh.
+		//only need to do this when the cell's visibility was actually larger than zero.
+		if (visibility > 0)
+		{
+			visibility = 0;
+			ShaderData.RefreshVisibility(this);
+		}
+	}
 }

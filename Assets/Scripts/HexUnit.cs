@@ -20,10 +20,17 @@ public class HexUnit : MonoBehaviour
 
     public HexGrid Grid { get; set; }
 
-    const int visionRange = 3;
+    public int VisionRange
+    {
+        get
+        {
+            return 3;
+        }
+    }
 
     void OnEnable()
     {
+
         if (location)
         {
             transform.localPosition = location.Position;
@@ -224,7 +231,7 @@ public class HexUnit : MonoBehaviour
     public int GetMoveCost(
         HexCell fromCell, HexCell toCell, HexDirection direction)
     {
-         //cells skip cliffs
+        //cells skip cliffs
         HexEdgeType edgeType = fromCell.GetEdgeType(toCell);
         if (edgeType == HexEdgeType.Cliff)
         {
@@ -232,7 +239,7 @@ public class HexUnit : MonoBehaviour
         }
 
         //make it easy and fast to travel by road
-                //leave road at 1 ancrease cost of other edges to 10
+        //leave road at 1 ancrease cost of other edges to 10
         int moveCost;
         if (fromCell.HasRoadThroughEdge(direction))
         {
@@ -260,4 +267,6 @@ public class HexUnit : MonoBehaviour
             return 24;
         }
     }
+
+    
 }

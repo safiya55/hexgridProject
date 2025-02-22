@@ -14,6 +14,12 @@ public class HexCellShaderData : MonoBehaviour
     //toggle whether we want immediate transitions. 
     public bool ImmediateMode { get; set; }
 
+    bool needsVisibilityReset;
+
+    //access to resetting the visibility of all cells
+    public HexGrid Grid { get; set; }
+
+
     public void Initialize(int x, int z)
     {
         if (cellTexture)
@@ -61,6 +67,13 @@ public class HexCellShaderData : MonoBehaviour
 
     void LateUpdate()
     {
+        //request a reset
+        if (needsVisibilityReset)
+        {
+            needsVisibilityReset = false;
+            Grid.ResetVisibility();
+        }
+
         //get delta
         int delta = (int)(Time.deltaTime * transitionSpeed);
         //It is also theoretically possible to get very high frame rates. 
@@ -145,5 +158,15 @@ public class HexCellShaderData : MonoBehaviour
         //adjusted data has to be applied and the still-updating status returned.
         cellTextureData[index] = data;
         return stillUpdating;
+    }
+
+    //Figuring out how the overall visibility situation could have changed
+    public void ViewElevationChanged()
+    {
+        //schedule a reset of all cell visibility
+        //Add a boolean field to keep track of whether this is required. 
+        //reset everything
+        needsVisibilityReset = true;
+        enabled = true;
     }
 }
