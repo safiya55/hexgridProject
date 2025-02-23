@@ -48,6 +48,8 @@ public class HexGrid : MonoBehaviour
         HexUnit.unitPrefab = unitPrefab;
 
         cellShaderData = gameObject.AddComponent<HexCellShaderData>();
+        // setup the grid reference after creating shader data
+        cellShaderData.Grid = this;
         CreateMap(cellCountX, cellCountZ);
     }
 
