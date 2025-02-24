@@ -165,7 +165,7 @@ public class HexGrid : MonoBehaviour
 
         //Cells that's aren't at the edge are explorable, while all others are inexplorable.
         cell.Explorable =
-			x > 0 && z > 0 && x < cellCountX - 1 && z < cellCountZ - 1;
+            x > 0 && z > 0 && x < cellCountX - 1 && z < cellCountZ - 1;
 
         //connect cells from east to west direction
         if (x > 0)
@@ -465,7 +465,7 @@ public class HexGrid : MonoBehaviour
                 if (
                     neighbor == null ||
                     neighbor.SearchPhase > searchFrontierPhase ||
-					!neighbor.Explorable
+                    !neighbor.Explorable
                 )
                 {
                     continue;
@@ -475,7 +475,7 @@ public class HexGrid : MonoBehaviour
                 // to add the neighbor's view elevation to the covered distance 
                 // when determining when we can see a cell.
                 if (distance + neighbor.ViewElevation > range || //ensure that only the shortest paths are considered when determining a cell's visibility. This can be done by skipping paths that would become longer than that.
-					distance > fromCoordinates.DistanceTo(neighbor.coordinates)
+                    distance > fromCoordinates.DistanceTo(neighbor.coordinates)
                     )
                 {
                     continue;
@@ -647,5 +647,15 @@ public class HexGrid : MonoBehaviour
             //available via a VisionRange property.
             IncreaseVisibility(unit.Location, unit.VisionRange);
         }
+    }
+
+    public HexCell GetCell(int xOffset, int zOffset)
+    {
+        return cells[xOffset + zOffset * cellCountX];
+    }
+
+    public HexCell GetCell(int cellIndex)
+    {
+        return cells[cellIndex];
     }
 }
