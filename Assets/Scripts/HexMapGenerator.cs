@@ -26,6 +26,9 @@ public class HexMapGenerator : MonoBehaviour
 
     [Range(1, 5)]
 	public int waterLevel = 3;
+
+    [Range(0f, 1f)]
+	public float highRiseProbability = 0.25f;
 	
 
     public void GenerateMap(int x, int z)
@@ -93,6 +96,7 @@ public class HexMapGenerator : MonoBehaviour
         //use the first random cell as the center of the chunk. 
         HexCoordinates center = firstCell.coordinates;
 
+        int rise = Random.value < highRiseProbability ? 2 : 1;
         int size = 0;
         while (size < chunkSize && searchFrontier.Count > 0)
         { // Each iteration, dequeue the next cell, set its terrain type, increase the size, 
@@ -101,13 +105,18 @@ public class HexMapGenerator : MonoBehaviour
             //All neighbors are simply added to the frontier
             HexCell current = searchFrontier.Dequeue();
 
+            int originalElevation = current.Elevation;
+			current.Elevation = originalElevation + rise;
+
             current.Elevation += 1;
 
             //When the current cell's new elevation is by water level, it has 
             // just become land, so the budget decrements,
             //  which could end the chunk's growth.
-            if (current.Elevation == waterLevel && --budget == 0)
-            {
+            if (
+				originalElevation < waterLevel &&
+				current.Elevation >= waterLevel && --budget == 0
+			) {
                 break;
             }
 
