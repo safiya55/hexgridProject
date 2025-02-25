@@ -38,6 +38,13 @@ public class HexMapGenerator : MonoBehaviour
             searchFrontier = new HexCellPriorityQueue();
         }
 
+        //make it explicit which cells are land or water
+        for (int i = 0; i < cellCount; i++)
+        {
+            // setting the water level of all cells to 1.
+            grid.GetCell(i).WaterLevel = 1;
+        }
+
         //calculate how many cells have to become land. That amount is our land budget.
         CreateLand();
 
@@ -139,7 +146,11 @@ public class HexMapGenerator : MonoBehaviour
         for (int i = 0; i < cellCount; i++)
         {
             HexCell cell = grid.GetCell(i);
-            cell.TerrainTypeIndex = cell.Elevation;
+            if (!cell.IsUnderwater)
+            {
+                //All underwater cells remain sand, as well as the lowest land cells.
+                cell.TerrainTypeIndex = cell.Elevation - cell.WaterLevel;
+            }
         }
     }
 }
