@@ -12,6 +12,9 @@ public class HexMapGenerator : MonoBehaviour
 
     int searchFrontierPhase;
 
+    [Range(0f, 0.5f)]
+	public float jitterProbability = 0.25f;
+
     public void GenerateMap(int x, int z)
     {
         //keep track of the amount of cells in HexMapGenerator 
@@ -73,7 +76,11 @@ public class HexMapGenerator : MonoBehaviour
                     //distance of all other cells is relative to first random cell 
                     // as the center of the chunk.
                     neighbor.Distance = neighbor.coordinates.DistanceTo(center);
-                    neighbor.SearchHeuristic = 0;
+                    //if the next Random.value number is less than some threshold, set that cell's heuristic to 1 instead of 0. Let's
+                    // use jitterProbability as the threshold, which means most likely a certain percentage of the cells will be affected.
+                    //mess the chunk up to make it random
+                    neighbor.SearchHeuristic =
+						Random.value < jitterProbability ? 1: 0;
                     searchFrontier.Enqueue(neighbor);
                 }
             }
