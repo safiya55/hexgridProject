@@ -16,10 +16,13 @@ public class HexMapGenerator : MonoBehaviour
     public float jitterProbability = 0.25f;
 
     [Range(20, 200)]
-	public int chunkSizeMin = 30;
+    public int chunkSizeMin = 30;
 
-	[Range(20, 200)]
-	public int chunkSizeMax = 100;
+    [Range(20, 200)]
+    public int chunkSizeMax = 100;
+
+    [Range(5, 95)]
+    public int landPercentage = 50;
 
     public void GenerateMap(int x, int z)
     {
@@ -35,14 +38,8 @@ public class HexMapGenerator : MonoBehaviour
             searchFrontier = new HexCellPriorityQueue();
         }
 
-        //generate 5 chunks
-        for (int i = 0; i < 5; i++)
-        {
-            //set the terrain of the middle 
-            // cell column to grass, using offset coordinates.
-            // randomly determine the chunk size when invoking RaiseTerrain.
-            RaiseTerrain(Random.Range(chunkSizeMin, chunkSizeMax + 1));
-        }
+        //calculate how many cells have to become land. That amount is our land budget.
+        CreateLand();
 
         //After a new map has been created
 
@@ -53,7 +50,21 @@ public class HexMapGenerator : MonoBehaviour
         }
     }
 
-    void RaiseTerrain(int chunkSize)
+    //invoke RaiseTerrain as long as there's still land budget to be spent.     
+    void CreateLand()
+    {
+        int landBudget = Mathf.RoundToInt(cellCount * landPercentage * 0.01f);
+
+        //keep raising land as long as it has budget.
+        while (landBudget > 0)
+        {
+            landBudget = RaiseTerrain(
+                Random.Range(chunkSizeMin, chunkSizeMax + 1), landBudget
+            );
+        }
+    }
+
+    int RaiseTerrain(int chunkSize, int budget)
     {
         // search for appropriate cells 
         //increasing the search frontier phase by 1
@@ -75,7 +86,15 @@ public class HexMapGenerator : MonoBehaviour
 
             //All neighbors are simply added to the frontier
             HexCell current = searchFrontier.Dequeue();
-            current.TerrainTypeIndex = 1;
+
+            if (current.TerrainTypeIndex == 0)
+            {
+                current.TerrainTypeIndex = 1;
+                if (--budget == 0)
+                {
+                    break;
+                }
+            }
             size += 1;
 
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
@@ -98,6 +117,8 @@ public class HexMapGenerator : MonoBehaviour
         }
         //Once done, clear the frontier.
         searchFrontier.Clear();
+
+        return budget;
     }
 
     //determines a random cell index and retrieves the 
