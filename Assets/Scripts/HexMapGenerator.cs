@@ -28,7 +28,7 @@ public class HexMapGenerator : MonoBehaviour
 
         //set the terrain of the middle 
         // cell column to grass, using offset coordinates.
-        RaiseTerrain(7);
+        RaiseTerrain(30);
 
         //After a new map has been created
 
@@ -51,6 +51,8 @@ public class HexMapGenerator : MonoBehaviour
         firstCell.Distance = 0;
         firstCell.SearchHeuristic = 0;
         searchFrontier.Enqueue(firstCell);
+        //use the first random cell as the center of the chunk. 
+        HexCoordinates center = firstCell.coordinates;
 
         int size = 0;
         while (size < chunkSize && searchFrontier.Count > 0)
@@ -68,7 +70,9 @@ public class HexMapGenerator : MonoBehaviour
                 if (neighbor && neighbor.SearchPhase < searchFrontierPhase)
                 {
                     neighbor.SearchPhase = searchFrontierPhase;
-                    neighbor.Distance = 0;
+                    //distance of all other cells is relative to first random cell 
+                    // as the center of the chunk.
+                    neighbor.Distance = neighbor.coordinates.DistanceTo(center);
                     neighbor.SearchHeuristic = 0;
                     searchFrontier.Enqueue(neighbor);
                 }
