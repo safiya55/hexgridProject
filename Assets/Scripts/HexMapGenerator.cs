@@ -24,6 +24,10 @@ public class HexMapGenerator : MonoBehaviour
     [Range(5, 95)]
     public int landPercentage = 50;
 
+    [Range(1, 5)]
+	public int waterLevel = 3;
+	
+
     public void GenerateMap(int x, int z)
     {
         //keep track of the amount of cells in HexMapGenerator 
@@ -42,7 +46,7 @@ public class HexMapGenerator : MonoBehaviour
         for (int i = 0; i < cellCount; i++)
         {
             // setting the water level of all cells to 1.
-            grid.GetCell(i).WaterLevel = 1;
+            grid.GetCell(i).WaterLevel = waterLevel;
         }
 
         //calculate how many cells have to become land. That amount is our land budget.
@@ -99,10 +103,10 @@ public class HexMapGenerator : MonoBehaviour
 
             current.Elevation += 1;
 
-            //When the current cell's new elevation is 1, it has 
+            //When the current cell's new elevation is by water level, it has 
             // just become land, so the budget decrements,
             //  which could end the chunk's growth.
-            if (current.Elevation == 1 && --budget == 0)
+            if (current.Elevation == waterLevel && --budget == 0)
             {
                 break;
             }
