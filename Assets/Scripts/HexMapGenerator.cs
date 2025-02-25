@@ -41,6 +41,9 @@ public class HexMapGenerator : MonoBehaviour
         //calculate how many cells have to become land. That amount is our land budget.
         CreateLand();
 
+        //set all terrain types once.
+        SetTerrainType();
+
         //After a new map has been created
 
         for (int i = 0; i < cellCount; i++)
@@ -87,14 +90,16 @@ public class HexMapGenerator : MonoBehaviour
             //All neighbors are simply added to the frontier
             HexCell current = searchFrontier.Dequeue();
 
-            if (current.TerrainTypeIndex == 0)
+            current.Elevation += 1;
+
+            //When the current cell's new elevation is 1, it has 
+            // just become land, so the budget decrements,
+            //  which could end the chunk's growth.
+            if (current.Elevation == 1 && --budget == 0)
             {
-                current.TerrainTypeIndex = 1;
-                if (--budget == 0)
-                {
-                    break;
-                }
+                break;
             }
+
             size += 1;
 
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
@@ -126,5 +131,15 @@ public class HexMapGenerator : MonoBehaviour
     HexCell GetRandomCell()
     {
         return grid.GetCell(Random.Range(0, cellCount));
+    }
+
+    //to set all terrain types once.
+    void SetTerrainType()
+    {
+        for (int i = 0; i < cellCount; i++)
+        {
+            HexCell cell = grid.GetCell(i);
+            cell.TerrainTypeIndex = cell.Elevation;
+        }
     }
 }
