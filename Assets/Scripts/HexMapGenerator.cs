@@ -13,7 +13,13 @@ public class HexMapGenerator : MonoBehaviour
     int searchFrontierPhase;
 
     [Range(0f, 0.5f)]
-	public float jitterProbability = 0.25f;
+    public float jitterProbability = 0.25f;
+
+    [Range(20, 200)]
+	public int chunkSizeMin = 30;
+
+	[Range(20, 200)]
+	public int chunkSizeMax = 100;
 
     public void GenerateMap(int x, int z)
     {
@@ -29,9 +35,14 @@ public class HexMapGenerator : MonoBehaviour
             searchFrontier = new HexCellPriorityQueue();
         }
 
-        //set the terrain of the middle 
-        // cell column to grass, using offset coordinates.
-        RaiseTerrain(30);
+        //generate 5 chunks
+        for (int i = 0; i < 5; i++)
+        {
+            //set the terrain of the middle 
+            // cell column to grass, using offset coordinates.
+            // randomly determine the chunk size when invoking RaiseTerrain.
+            RaiseTerrain(Random.Range(chunkSizeMin, chunkSizeMax + 1));
+        }
 
         //After a new map has been created
 
@@ -60,9 +71,9 @@ public class HexMapGenerator : MonoBehaviour
         int size = 0;
         while (size < chunkSize && searchFrontier.Count > 0)
         { // Each iteration, dequeue the next cell, set its terrain type, increase the size, 
-        // then go through that cell's neighbors
+          // then go through that cell's neighbors
 
-        //All neighbors are simply added to the frontier
+            //All neighbors are simply added to the frontier
             HexCell current = searchFrontier.Dequeue();
             current.TerrainTypeIndex = 1;
             size += 1;
@@ -80,7 +91,7 @@ public class HexMapGenerator : MonoBehaviour
                     // use jitterProbability as the threshold, which means most likely a certain percentage of the cells will be affected.
                     //mess the chunk up to make it random
                     neighbor.SearchHeuristic =
-						Random.value < jitterProbability ? 1: 0;
+                        Random.value < jitterProbability ? 1 : 0;
                     searchFrontier.Enqueue(neighbor);
                 }
             }
