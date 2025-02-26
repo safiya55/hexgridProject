@@ -6,6 +6,8 @@ public class HexMapGenerator : MonoBehaviour
 
     public HexGrid grid;
 
+    public bool useFixedSeed;
+
     int cellCount;
 
     HexCellPriorityQueue searchFrontier;
@@ -42,7 +44,7 @@ public class HexMapGenerator : MonoBehaviour
 
     [Range(6, 10)]
     public int elevationMaximum = 8;
-    
+
 
 
     public void GenerateMap(int x, int z)
@@ -50,13 +52,16 @@ public class HexMapGenerator : MonoBehaviour
         //It first stores the current state of the number generator, 
         // initialized it with a specific seed,
         Random.State originalRandomState = Random.state;
-        
-        //Seed initialize random and generate random maps
-        seed = Random.Range(0, int.MaxValue);
-        seed ^= (int)System.DateTime.Now.Ticks;
-		seed ^= (int)Time.unscaledTime;
-        seed &= int.MaxValue;
-		Random.InitState(seed);
+
+        if (!useFixedSeed)
+        {
+            //Seed initialize random and generate random maps
+            seed = Random.Range(0, int.MaxValue);
+            seed ^= (int)System.DateTime.Now.Ticks;
+            seed ^= (int)Time.unscaledTime;
+            seed &= int.MaxValue;
+            Random.InitState(seed);
+        }
 
         //keep track of the amount of cells in HexMapGenerator 
         cellCount = x * z;
