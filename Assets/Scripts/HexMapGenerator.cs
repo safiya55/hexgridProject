@@ -46,10 +46,13 @@ public class HexMapGenerator : MonoBehaviour
     public int elevationMaximum = 8;
 
     [Range(0, 10)]
-	public int mapBorderX = 10;
+	public int mapBorderX = 5;
 
 	[Range(0, 10)]
-	public int mapBorderZ = 10;
+	public int mapBorderZ = 5;
+
+    [Range(0, 10)]
+    public int regionBorder = 5;
 
 
     public void GenerateMap(int x, int z)
@@ -314,10 +317,25 @@ public class HexMapGenerator : MonoBehaviour
             regions.Clear();
         }
         MapRegion region;
-        region.xMin = mapBorderX;
-        region.xMax = grid.cellCountX - mapBorderX;
-        region.zMin = mapBorderZ;
-        region.zMax = grid.cellCountZ - mapBorderZ;
-        regions.Add(region);
+        if(Random.value < 0.5f){
+            region.xMin = mapBorderX;
+            region.xMax = grid.cellCountX / 2 - regionBorder;
+            region.zMin = mapBorderZ;
+            region.zMax = grid.cellCountZ - mapBorderZ;
+            regions.Add(region);
+            region.xMin = grid.cellCountX / 2 + regionBorder;
+            region.xMax = grid.cellCountX - mapBorderX;
+            regions.Add(region);
+        }
+        else{
+            region.xMin = mapBorderX;
+            region.xMax = grid.cellCountX - mapBorderX;
+            region.zMin = mapBorderZ;
+            region.zMax = grid.cellCountZ / 2 - regionBorder;
+            regions.Add(region);
+            region.xMin = grid.cellCountX / 2 + regionBorder;
+            region.xMax = grid.cellCountX - mapBorderX;
+            regions.Add(region);
+        }
     }
 }
