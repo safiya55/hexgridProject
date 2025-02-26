@@ -12,6 +12,8 @@ public class HexMapGenerator : MonoBehaviour
 
     int searchFrontierPhase;
 
+    public int seed;
+
     [Range(0f, 0.5f)]
     public float jitterProbability = 0.25f;
 
@@ -40,10 +42,22 @@ public class HexMapGenerator : MonoBehaviour
 
     [Range(6, 10)]
     public int elevationMaximum = 8;
+    
 
 
     public void GenerateMap(int x, int z)
     {
+        //It first stores the current state of the number generator, 
+        // initialized it with a specific seed,
+        Random.State originalRandomState = Random.state;
+        
+        //Seed initialize random and generate random maps
+        seed = Random.Range(0, int.MaxValue);
+        seed ^= (int)System.DateTime.Now.Ticks;
+		seed ^= (int)Time.unscaledTime;
+        seed &= int.MaxValue;
+		Random.InitState(seed);
+
         //keep track of the amount of cells in HexMapGenerator 
         cellCount = x * z;
 
@@ -76,6 +90,9 @@ public class HexMapGenerator : MonoBehaviour
             //search frontier of all cells is zero.
             grid.GetCell(i).SearchPhase = 0;
         }
+
+        // later restores it back to its old state.
+        Random.state = originalRandomState;
     }
 
     //invoke RaiseTerrain as long as there's still land budget to be spent.     
