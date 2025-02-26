@@ -396,7 +396,17 @@ public class HexMapGenerator : MonoBehaviour
             erodibleCells.Add(cell);
         }
        }
+       //making cells no longer erodible
        int targetErodibleCount = (int)(erodibleCells.Count * (100 - erosionPercentage) * 0.01f);
+       while(erodibleCells.Count > targetErodibleCount){
+        int index = Random.Range(0, erodibleCells.Count);
+        HexCell cell = erodibleCells[index];
+
+        cell.Elevation -= 1;
+        
+        erodibleCells[index] = erodibleCells[erodibleCells.Count - 1];
+		erodibleCells.RemoveAt(erodibleCells.Count - 1);
+       }
        ListPool<HexCell>.Add(erodibleCells);
     }
     bool IsErodible(HexCell cell){
