@@ -25,16 +25,22 @@ public class HexMapGenerator : MonoBehaviour
     public int landPercentage = 50;
 
     [Range(1, 5)]
-	public int waterLevel = 3;
+    public int waterLevel = 3;
 
     [Range(0f, 1f)]
-	public float highRiseProbability = 0.25f;
+    public float highRiseProbability = 0.25f;
 
     //probability land sinks under
     //should always make it less likely to sink than to raise. 
     [Range(0f, 0.4f)]
-	public float sinkProbability = 0.2f;
-	
+    public float sinkProbability = 0.2f;
+
+    [Range(-4, 0)]
+    public int elevationMinimum = -2;
+
+    [Range(6, 10)]
+    public int elevationMaximum = 8;
+
 
     public void GenerateMap(int x, int z)
     {
@@ -82,13 +88,15 @@ public class HexMapGenerator : MonoBehaviour
         {
             //Each iteration inside the loop should now either raise 
             // or sink a chunk of land, depending on the sink probability.
-           int chunkSize = Random.Range(chunkSizeMin, chunkSizeMax - 1);
-			if (Random.value < sinkProbability) {
-				landBudget = SinkTerrain(chunkSize, landBudget);
-			}
-			else {
-				landBudget = RaiseTerrain(chunkSize, landBudget);
-			}
+            int chunkSize = Random.Range(chunkSizeMin, chunkSizeMax - 1);
+            if (Random.value < sinkProbability)
+            {
+                landBudget = SinkTerrain(chunkSize, landBudget);
+            }
+            else
+            {
+                landBudget = RaiseTerrain(chunkSize, landBudget);
+            }
         }
     }
 
@@ -117,15 +125,23 @@ public class HexMapGenerator : MonoBehaviour
             HexCell current = searchFrontier.Dequeue();
 
             int originalElevation = current.Elevation;
-			current.Elevation = originalElevation + rise;
+            //ensure that we do not go above the maximum allowed elevation.
+            int newElevation = originalElevation + rise;
+            if (newElevation > elevationMaximum)
+            {
+                continue;
+            }
+
+            current.Elevation = newElevation;
 
             //When the current cell's new elevation is by water level, it has 
             // just become land, so the budget decrements,
             //  which could end the chunk's growth.
             if (
-				originalElevation < waterLevel &&
-				current.Elevation >= waterLevel && --budget == 0
-			) {
+                originalElevation < waterLevel &&
+                newElevation >= waterLevel && --budget == 0
+            )
+            {
                 break;
             }
 
@@ -179,15 +195,22 @@ public class HexMapGenerator : MonoBehaviour
             HexCell current = searchFrontier.Dequeue();
 
             int originalElevation = current.Elevation;
-			current.Elevation = originalElevation - sink;
+
+            int newElevation = current.Elevation - sink;
+            if (newElevation < elevationMinimum)
+            {
+                continue;
+            }
+            current.Elevation = newElevation;
 
             //When the current cell's new elevation is by water level, it has 
             // just become land, so the budget decrements,
             //  which could end the chunk's growth.
             if (
-				originalElevation >= waterLevel &&
-				current.Elevation < waterLevel
-			) {
+                originalElevation >= waterLevel &&
+                newElevation < waterLevel
+            )
+            {
                 budget += 1;
             }
 
