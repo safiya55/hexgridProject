@@ -404,8 +404,19 @@ public class HexMapGenerator : MonoBehaviour
 
         cell.Elevation -= 1;
         
+        if(!IsErodible(cell)){
         erodibleCells[index] = erodibleCells[erodibleCells.Count - 1];
 		erodibleCells.RemoveAt(erodibleCells.Count - 1);
+       }
+       for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
+				HexCell neighbor = cell.GetNeighbor(d);
+				if (
+					neighbor && IsErodible(neighbor) &&
+					!erodibleCells.Contains(neighbor)
+				) {
+					erodibleCells.Add(neighbor);
+				}
+			}
        }
        ListPool<HexCell>.Add(erodibleCells);
     }
