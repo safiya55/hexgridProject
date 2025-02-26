@@ -57,6 +57,9 @@ public class HexMapGenerator : MonoBehaviour
     [Range(1, 4)]
     public int regionCount = 1;
 
+    [Range(0, 100)]
+    public int erosionPercentage = 50;
+
 
     public void GenerateMap(int x, int z)
     {
@@ -97,6 +100,9 @@ public class HexMapGenerator : MonoBehaviour
 
         //calculate how many cells have to become land. That amount is our land budget.
         CreateLand();
+
+        //make the terrain look more rough and jagged
+        ErodeLand();
 
         //set all terrain types once.
         SetTerrainType();
@@ -381,4 +387,8 @@ public class HexMapGenerator : MonoBehaviour
             break;
         }
     }
+
+    void ErodeLand(){}
+      
+   
 }
