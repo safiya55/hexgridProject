@@ -388,7 +388,25 @@ public class HexMapGenerator : MonoBehaviour
         }
     }
 
-    void ErodeLand(){}
-      
-   
+     void ErodeLand(){
+       List<HexCell> erodibleCells = ListPool<HexCell>.Get();
+       for(int i = 0; i < cellCount; i++){
+        HexCell cell = grid.GetCell(i);
+        if(IsErodible(cell)){
+            erodibleCells.Add(cell);
+        }
+       }
+       int targetErodibleCount = (int)(erodibleCells.Count * (100 - erosionPercentage) * 0.01f);
+       ListPool<HexCell>.Add(erodibleCells);
+    }
+    bool IsErodible(HexCell cell){
+        int erodibleElevation = cell.Elevation - 2;
+        for(HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
+            HexCell neighbor = cell.GetNeighbor(d);
+            if(neighbor && neighbor.Elevation <= erodibleElevation){
+                return true;
+            }
+        }
+        return false;
+    }
 }
