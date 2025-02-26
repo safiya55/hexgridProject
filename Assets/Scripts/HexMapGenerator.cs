@@ -86,11 +86,7 @@ public class HexMapGenerator : MonoBehaviour
             // setting the water level of all cells to 1.
             grid.GetCell(i).WaterLevel = waterLevel;
 
-            //initialize constraints before creating lan
-            region.xMin = mapBorderX;
-            region.xMax = x - mapBorderX;
-            region.zMin = mapBorderZ;
-            region.zMax = z - mapBorderZ;
+            CreateRegions();
         }
 
         //calculate how many cells have to become land. That amount is our land budget.
@@ -117,18 +113,26 @@ public class HexMapGenerator : MonoBehaviour
         int landBudget = Mathf.RoundToInt(cellCount * landPercentage * 0.01f);
 
         //keep raising land as long as it has budget.
-        for(int guard = 0; landBudget > 0 && guard < 10000; guard++)
+        for(int guard = 0; guard < 10000; guard++)
         {
+            bool sink = Random.value < sinkProbability;
             //Each iteration inside the loop should now either raise 
             // or sink a chunk of land, depending on the sink probability.
-            int chunkSize = Random.Range(chunkSizeMin, chunkSizeMax - 1);
-            if (Random.value < sinkProbability)
-            {
-                landBudget = SinkTerrain(chunkSize, landBudget);
-            }
-            else
-            {
-                landBudget = RaiseTerrain(chunkSize, landBudget);
+            for(int i = 0; i < regions.Count; i++){
+                MapRegion region = regions[i];
+            
+                int chunkSize = Random.Range(chunkSizeMin, chunkSizeMax - 1);
+                if (sink)
+                {
+                    landBudget = SinkTerrain(chunkSize, landBudget, region);
+                }
+                else
+                {
+                    landBudget = RaiseTerrain(chunkSize, landBudget, region);
+                    if (landBudget == 0){
+                        return;
+                    }
+                }
             }
         }
         if(landBudget > 0){
@@ -136,13 +140,13 @@ public class HexMapGenerator : MonoBehaviour
         }
     }
 
-    int RaiseTerrain(int chunkSize, int budget)
+    int RaiseTerrain(int chunkSize, int budget, MapRegion region)
     {
         // search for appropriate cells 
         //increasing the search frontier phase by 1
         searchFrontierPhase += 1;
         //Then initialize the frontier with the first cell by random
-        HexCell firstCell = GetRandomCell();
+        HexCell firstCell = GetRandomCell(region);
         firstCell.SearchPhase = searchFrontierPhase;
         //set its distance and heuristic to zero besides setting its search phase
         firstCell.Distance = 0;
@@ -206,13 +210,13 @@ public class HexMapGenerator : MonoBehaviour
         return budget;
     }
 
-    int SinkTerrain(int chunkSize, int budget)
+    int SinkTerrain(int chunkSize, int budget, MapRegion region)
     {
         // search for appropriate cells 
         //increasing the search frontier phase by 1
         searchFrontierPhase += 1;
         //Then initialize the frontier with the first cell by random
-        HexCell firstCell = GetRandomCell();
+        HexCell firstCell = GetRandomCell(region);
         firstCell.SearchPhase = searchFrontierPhase;
         //set its distance and heuristic to zero besides setting its search phase
         firstCell.Distance = 0;
@@ -277,7 +281,7 @@ public class HexMapGenerator : MonoBehaviour
 
     //determines a random cell index and retrieves the 
     // corresponding cell from the grid.
-    HexCell GetRandomCell()
+    HexCell GetRandomCell(MapRegion region)
     {
         return grid.GetCell(Random.Range(region.xMin, region.xMax), Random.Range(region.zMax, region.zMin));
     }
@@ -299,5 +303,21 @@ public class HexMapGenerator : MonoBehaviour
     struct MapRegion{
         public int xMin, xMax, zMin, zMax;
     }
-    MapRegion region;
+    List<MapRegion> regions;
+
+    //create the required list or clear it if there already is one
+    void CreateRegions(){
+        if (regions == null){
+            regions = new List<MapRegion>();
+        }
+        else{
+            regions.Clear();
+        }
+        MapRegion region;
+        region.xMin = mapBorderX;
+        region.xMax = grid.cellCountX - mapBorderX;
+        region.zMin = mapBorderZ;
+        region.zMax = grid.cellCountZ - mapBorderZ;
+        regions.Add(region);
+    }
 }
