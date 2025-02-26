@@ -26,7 +26,7 @@ public class HexMapGenerator : MonoBehaviour
     public int chunkSizeMax = 100;
 
     [Range(5, 95)]
-    public int landPercentage = 50;
+    public int landPercentage = 40;
 
     [Range(1, 5)]
     public int waterLevel = 3;
@@ -46,10 +46,10 @@ public class HexMapGenerator : MonoBehaviour
     public int elevationMaximum = 8;
 
     [Range(0, 10)]
-	public int mapBorderX = 5;
+	public int mapBorderX = 10;
 
 	[Range(0, 10)]
-	public int mapBorderZ = 5;
+	public int mapBorderZ = 10;
 
     int xMin, xMax, zMin, zMax;
 
