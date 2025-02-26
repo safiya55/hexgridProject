@@ -401,22 +401,30 @@ public class HexMapGenerator : MonoBehaviour
        while(erodibleCells.Count > targetErodibleCount){
         int index = Random.Range(0, erodibleCells.Count);
         HexCell cell = erodibleCells[index];
+        HexCell targetCell = GetErosionTarget(cell);
 
         cell.Elevation -= 1;
+        targetCell.Elevation += 1;
         
         if(!IsErodible(cell)){
         erodibleCells[index] = erodibleCells[erodibleCells.Count - 1];
 		erodibleCells.RemoveAt(erodibleCells.Count - 1);
        }
        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
-				HexCell neighbor = cell.GetNeighbor(d);
-				if (
-					neighbor && IsErodible(neighbor) &&
-					!erodibleCells.Contains(neighbor)
-				) {
-					erodibleCells.Add(neighbor);
+			HexCell neighbor = cell.GetNeighbor(d);
+			if (
+				neighbor && IsErodible(neighbor) &&
+				!erodibleCells.Contains(neighbor)) {
+				  erodibleCells.Add(neighbor);
 				}
 			}
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
+        HexCell neighbor = targetCell.GetNeighbor(d);
+        if(neighbor && !IsErodible(neighbor) && erodibleCells.Contains(neighbor)){
+            erodibleCells.Remove(neighbor);
+        }
+       }
+      
        }
        ListPool<HexCell>.Add(erodibleCells);
     }
@@ -429,5 +437,19 @@ public class HexMapGenerator : MonoBehaviour
             }
         }
         return false;
+    }
+    //erosion lowers one cell and raise its neighbors
+    HexCell GetErosionTarget (HexCell cell){
+        List<HexCell> candiddates = ListPool<HexCell>.Get();
+        int erodibleElevation = cell.Elevation - 2;
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
+            HexCell neighbor = cell.GetNeighbor(d);
+            if(neighbor && neighbor.Elevation <= erodibleElevation){
+                candiddates.Add(neighbor);
+            }
+        }
+        HexCell target = candiddates[Random.Range(0, candiddates.Count)];
+        ListPool<HexCell>.Add(candiddates);
+        return target;
     }
 }
