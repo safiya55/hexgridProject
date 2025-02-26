@@ -45,6 +45,12 @@ public class HexMapGenerator : MonoBehaviour
     [Range(6, 10)]
     public int elevationMaximum = 8;
 
+    [Range(0, 10)]
+	public int mapBorderX = 5;
+
+	[Range(0, 10)]
+	public int mapBorderZ = 5;
+
 
 
     public void GenerateMap(int x, int z)
