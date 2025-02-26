@@ -413,14 +413,22 @@ public class HexMapGenerator : MonoBehaviour
        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
 			HexCell neighbor = cell.GetNeighbor(d);
 			if (
-				neighbor && IsErodible(neighbor) &&
+				neighbor &&
 				!erodibleCells.Contains(neighbor)) {
 				  erodibleCells.Add(neighbor);
 				}
 			}
+
+        if(IsErodible(targetCell) && !erodibleCells.Contains(targetCell)){
+            erodibleCells.Add(targetCell);
+        }
+
         for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
         HexCell neighbor = targetCell.GetNeighbor(d);
-        if(neighbor && !IsErodible(neighbor) && erodibleCells.Contains(neighbor)){
+        if(neighbor && neighbor != cell && 
+        neighbor.Elevation == targetCell.Elevation + 1 && 
+        !IsErodible(neighbor))
+        {
             erodibleCells.Remove(neighbor);
         }
        }
