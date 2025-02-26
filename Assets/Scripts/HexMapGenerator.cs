@@ -46,10 +46,10 @@ public class HexMapGenerator : MonoBehaviour
     public int elevationMaximum = 8;
 
     [Range(0, 10)]
-	public int mapBorderX = 5;
+    public int mapBorderX = 5;
 
-	[Range(0, 10)]
-	public int mapBorderZ = 5;
+    [Range(0, 10)]
+    public int mapBorderZ = 5;
 
     [Range(0, 10)]
     public int regionBorder = 5;
@@ -125,14 +125,15 @@ public class HexMapGenerator : MonoBehaviour
         int landBudget = Mathf.RoundToInt(cellCount * landPercentage * 0.01f);
 
         //keep raising land as long as it has budget.
-        for(int guard = 0; guard < 10000; guard++)
+        for (int guard = 0; guard < 10000; guard++)
         {
             bool sink = Random.value < sinkProbability;
             //Each iteration inside the loop should now either raise 
             // or sink a chunk of land, depending on the sink probability.
-            for(int i = 0; i < regions.Count; i++){
+            for (int i = 0; i < regions.Count; i++)
+            {
                 MapRegion region = regions[i];
-            
+
                 int chunkSize = Random.Range(chunkSizeMin, chunkSizeMax - 1);
                 if (sink)
                 {
@@ -141,13 +142,15 @@ public class HexMapGenerator : MonoBehaviour
                 else
                 {
                     landBudget = RaiseTerrain(chunkSize, landBudget, region);
-                    if (landBudget == 0){
+                    if (landBudget == 0)
+                    {
                         return;
                     }
                 }
             }
         }
-        if(landBudget > 0){
+        if (landBudget > 0)
+        {
             Debug.LogWarning("Failed to use up " + landBudget + "land budget");
         }
     }
@@ -309,150 +312,177 @@ public class HexMapGenerator : MonoBehaviour
                 //All underwater cells remain sand, as well as the lowest land cells.
                 cell.TerrainTypeIndex = cell.Elevation - cell.WaterLevel;
             }
+
+            cell.SetMapData(
+                (cell.Elevation - elevationMinimum) /
+                (float)(elevationMaximum - elevationMinimum)
+            );
         }
     }
 
-    struct MapRegion{
+    struct MapRegion
+    {
         public int xMin, xMax, zMin, zMax;
     }
     List<MapRegion> regions;
 
     //create the required list or clear it if there already is one
-    void CreateRegions(){
-        if (regions == null){
+    void CreateRegions()
+    {
+        if (regions == null)
+        {
             regions = new List<MapRegion>();
         }
-        else{
+        else
+        {
             regions.Clear();
         }
         MapRegion region;
-        switch(regionCount){
+        switch (regionCount)
+        {
             default:
-            region.xMin = mapBorderX;
-            region.xMax = grid.cellCountX - mapBorderX;
-            region.zMin = mapBorderZ;
-            region.zMax = grid.cellCountZ - mapBorderZ;
-            regions.Add(region);
-            break;
-        case 2:
-            if(Random.value < 0.5f){
                 region.xMin = mapBorderX;
-                region.xMax = grid.cellCountX / 2 - regionBorder;
+                region.xMax = grid.cellCountX - mapBorderX;
                 region.zMin = mapBorderZ;
                 region.zMax = grid.cellCountZ - mapBorderZ;
                 regions.Add(region);
-                region.xMin = grid.cellCountX / 2 + regionBorder;
+                break;
+            case 2:
+                if (Random.value < 0.5f)
+                {
+                    region.xMin = mapBorderX;
+                    region.xMax = grid.cellCountX / 2 - regionBorder;
+                    region.zMin = mapBorderZ;
+                    region.zMax = grid.cellCountZ - mapBorderZ;
+                    regions.Add(region);
+                    region.xMin = grid.cellCountX / 2 + regionBorder;
+                    region.xMax = grid.cellCountX - mapBorderX;
+                    regions.Add(region);
+                }
+                else
+                {
+                    region.xMin = mapBorderX;
+                    region.xMax = grid.cellCountX - mapBorderX;
+                    region.zMin = mapBorderZ;
+                    region.zMax = grid.cellCountZ / 2 - regionBorder;
+                    regions.Add(region);
+                    region.xMin = grid.cellCountX / 2 + regionBorder;
+                    region.xMax = grid.cellCountX - mapBorderX;
+                    regions.Add(region);
+                }
+                break;
+            case 3:
+                region.xMin = mapBorderX;
+                region.xMax = grid.cellCountX / 3 - regionBorder;
+                region.zMin = mapBorderZ;
+                region.zMax = grid.cellCountZ - mapBorderZ;
+                regions.Add(region);
+                region.xMin = grid.cellCountX / 3 - regionBorder;
+                region.xMax = grid.cellCountX * 2 / 3 + regionBorder;
+                regions.Add(region);
+                region.xMin = grid.cellCountX * 2 / 3 + regionBorder;
                 region.xMax = grid.cellCountX - mapBorderX;
                 regions.Add(region);
-            }
-            else{
+                break;
+            case 4:
                 region.xMin = mapBorderX;
-                region.xMax = grid.cellCountX - mapBorderX;
+                region.xMax = grid.cellCountX / 2 - regionBorder;
                 region.zMin = mapBorderZ;
                 region.zMax = grid.cellCountZ / 2 - regionBorder;
                 regions.Add(region);
                 region.xMin = grid.cellCountX / 2 + regionBorder;
                 region.xMax = grid.cellCountX - mapBorderX;
                 regions.Add(region);
-            }
-            break;
-        case 3:
-            region.xMin = mapBorderX;
-            region.xMax = grid.cellCountX / 3 - regionBorder;
-            region.zMin = mapBorderZ;
-            region.zMax = grid.cellCountZ - mapBorderZ;
-            regions.Add(region);
-            region.xMin = grid.cellCountX / 3 - regionBorder;
-            region.xMax = grid.cellCountX * 2 / 3 + regionBorder;
-            regions.Add(region);
-            region.xMin = grid.cellCountX * 2 / 3 + regionBorder;
-            region.xMax = grid.cellCountX - mapBorderX;
-            regions.Add(region);
-            break;
-        case 4:
-            region.xMin = mapBorderX;
-            region.xMax = grid.cellCountX / 2 - regionBorder;
-            region.zMin = mapBorderZ;
-            region.zMax = grid.cellCountZ / 2 - regionBorder;
-            regions.Add(region);
-            region.xMin = grid.cellCountX / 2 + regionBorder;
-            region.xMax = grid.cellCountX - mapBorderX;
-            regions.Add(region);
-            region.zMin = grid.cellCountZ / 2 + regionBorder;
-            region.zMax = grid.cellCountZ - mapBorderZ;
-            regions.Add(region);
-            region.xMin = mapBorderX;
-            region.xMax = grid.cellCountX / 2 - regionBorder;
-            regions.Add(region);
-            break;
+                region.zMin = grid.cellCountZ / 2 + regionBorder;
+                region.zMax = grid.cellCountZ - mapBorderZ;
+                regions.Add(region);
+                region.xMin = mapBorderX;
+                region.xMax = grid.cellCountX / 2 - regionBorder;
+                regions.Add(region);
+                break;
         }
     }
 
-     void ErodeLand(){
-       List<HexCell> erodibleCells = ListPool<HexCell>.Get();
-       for(int i = 0; i < cellCount; i++){
-        HexCell cell = grid.GetCell(i);
-        if(IsErodible(cell)){
-            erodibleCells.Add(cell);
-        }
-       }
-       //making cells no longer erodible
-       int targetErodibleCount = (int)(erodibleCells.Count * (100 - erosionPercentage) * 0.01f);
-       while(erodibleCells.Count > targetErodibleCount){
-        int index = Random.Range(0, erodibleCells.Count);
-        HexCell cell = erodibleCells[index];
-        HexCell targetCell = GetErosionTarget(cell);
-
-        cell.Elevation -= 1;
-        targetCell.Elevation += 1;
-        
-        if(!IsErodible(cell)){
-        erodibleCells[index] = erodibleCells[erodibleCells.Count - 1];
-		erodibleCells.RemoveAt(erodibleCells.Count - 1);
-       }
-       for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
-			HexCell neighbor = cell.GetNeighbor(d);
-			if (
-				neighbor &&
-				!erodibleCells.Contains(neighbor)) {
-				  erodibleCells.Add(neighbor);
-				}
-			}
-
-        if(IsErodible(targetCell) && !erodibleCells.Contains(targetCell)){
-            erodibleCells.Add(targetCell);
-        }
-
-        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
-        HexCell neighbor = targetCell.GetNeighbor(d);
-        if(neighbor && neighbor != cell && 
-        neighbor.Elevation == targetCell.Elevation + 1 && 
-        !IsErodible(neighbor))
+    void ErodeLand()
+    {
+        List<HexCell> erodibleCells = ListPool<HexCell>.Get();
+        for (int i = 0; i < cellCount; i++)
         {
-            erodibleCells.Remove(neighbor);
+            HexCell cell = grid.GetCell(i);
+            if (IsErodible(cell))
+            {
+                erodibleCells.Add(cell);
+            }
         }
-       }
-      
-       }
-       ListPool<HexCell>.Add(erodibleCells);
+        //making cells no longer erodible
+        int targetErodibleCount = (int)(erodibleCells.Count * (100 - erosionPercentage) * 0.01f);
+        while (erodibleCells.Count > targetErodibleCount)
+        {
+            int index = Random.Range(0, erodibleCells.Count);
+            HexCell cell = erodibleCells[index];
+            HexCell targetCell = GetErosionTarget(cell);
+
+            cell.Elevation -= 1;
+            targetCell.Elevation += 1;
+
+            if (!IsErodible(cell))
+            {
+                erodibleCells[index] = erodibleCells[erodibleCells.Count - 1];
+                erodibleCells.RemoveAt(erodibleCells.Count - 1);
+            }
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = cell.GetNeighbor(d);
+                if (
+                    neighbor &&
+                    !erodibleCells.Contains(neighbor))
+                {
+                    erodibleCells.Add(neighbor);
+                }
+            }
+
+            if (IsErodible(targetCell) && !erodibleCells.Contains(targetCell))
+            {
+                erodibleCells.Add(targetCell);
+            }
+
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = targetCell.GetNeighbor(d);
+                if (neighbor && neighbor != cell &&
+                neighbor.Elevation == targetCell.Elevation + 1 &&
+                !IsErodible(neighbor))
+                {
+                    erodibleCells.Remove(neighbor);
+                }
+            }
+
+        }
+        ListPool<HexCell>.Add(erodibleCells);
     }
-    bool IsErodible(HexCell cell){
+    bool IsErodible(HexCell cell)
+    {
         int erodibleElevation = cell.Elevation - 2;
-        for(HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+        {
             HexCell neighbor = cell.GetNeighbor(d);
-            if(neighbor && neighbor.Elevation <= erodibleElevation){
+            if (neighbor && neighbor.Elevation <= erodibleElevation)
+            {
                 return true;
             }
         }
         return false;
     }
     //erosion lowers one cell and raise its neighbors
-    HexCell GetErosionTarget (HexCell cell){
+    HexCell GetErosionTarget(HexCell cell)
+    {
         List<HexCell> candiddates = ListPool<HexCell>.Get();
         int erodibleElevation = cell.Elevation - 2;
-        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+        {
             HexCell neighbor = cell.GetNeighbor(d);
-            if(neighbor && neighbor.Elevation <= erodibleElevation){
+            if (neighbor && neighbor.Elevation <= erodibleElevation)
+            {
                 candiddates.Add(neighbor);
             }
         }
