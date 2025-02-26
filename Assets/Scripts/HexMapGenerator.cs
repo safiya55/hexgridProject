@@ -51,6 +51,8 @@ public class HexMapGenerator : MonoBehaviour
 	[Range(0, 10)]
 	public int mapBorderZ = 5;
 
+    int xMin, xMax, zMin, zMax;
+
 
 
     public void GenerateMap(int x, int z)
@@ -86,6 +88,12 @@ public class HexMapGenerator : MonoBehaviour
         {
             // setting the water level of all cells to 1.
             grid.GetCell(i).WaterLevel = waterLevel;
+
+            //initialize constraints before creating lan
+            xMin = mapBorderX;
+            xMax = x - mapBorderX;
+            zMin = mapBorderZ;
+            zMax = z - mapBorderZ;
         }
 
         //calculate how many cells have to become land. That amount is our land budget.
@@ -271,7 +279,7 @@ public class HexMapGenerator : MonoBehaviour
     // corresponding cell from the grid.
     HexCell GetRandomCell()
     {
-        return grid.GetCell(Random.Range(0, cellCount));
+        return grid.GetCell(Random.Range(xMin, xMax), Random.Range(zMax, zMin));
     }
 
     //to set all terrain types once.
