@@ -29,6 +29,11 @@ public class HexMapGenerator : MonoBehaviour
 
     [Range(0f, 1f)]
 	public float highRiseProbability = 0.25f;
+
+    //probability land sinks under
+    //should always make it less likely to sink than to raise. 
+    [Range(0f, 0.4f)]
+	public float sinkProbability = 0.2f;
 	
 
     public void GenerateMap(int x, int z)
@@ -75,9 +80,15 @@ public class HexMapGenerator : MonoBehaviour
         //keep raising land as long as it has budget.
         while (landBudget > 0)
         {
-            landBudget = RaiseTerrain(
-                Random.Range(chunkSizeMin, chunkSizeMax + 1), landBudget
-            );
+            //Each iteration inside the loop should now either raise 
+            // or sink a chunk of land, depending on the sink probability.
+           int chunkSize = Random.Range(chunkSizeMin, chunkSizeMax - 1);
+			if (Random.value < sinkProbability) {
+				landBudget = SinkTerrain(chunkSize, landBudget);
+			}
+			else {
+				landBudget = RaiseTerrain(chunkSize, landBudget);
+			}
         }
     }
 
@@ -107,8 +118,6 @@ public class HexMapGenerator : MonoBehaviour
 
             int originalElevation = current.Elevation;
 			current.Elevation = originalElevation + rise;
-
-            current.Elevation += 1;
 
             //When the current cell's new elevation is by water level, it has 
             // just become land, so the budget decrements,
@@ -142,7 +151,68 @@ public class HexMapGenerator : MonoBehaviour
         }
         //Once done, clear the frontier.
         searchFrontier.Clear();
+        return budget;
+    }
 
+    int SinkTerrain(int chunkSize, int budget)
+    {
+        // search for appropriate cells 
+        //increasing the search frontier phase by 1
+        searchFrontierPhase += 1;
+        //Then initialize the frontier with the first cell by random
+        HexCell firstCell = GetRandomCell();
+        firstCell.SearchPhase = searchFrontierPhase;
+        //set its distance and heuristic to zero besides setting its search phase
+        firstCell.Distance = 0;
+        firstCell.SearchHeuristic = 0;
+        searchFrontier.Enqueue(firstCell);
+        //use the first random cell as the center of the chunk. 
+        HexCoordinates center = firstCell.coordinates;
+
+        int sink = Random.value < highRiseProbability ? 2 : 1;
+        int size = 0;
+        while (size < chunkSize && searchFrontier.Count > 0)
+        { // Each iteration, dequeue the next cell, set its terrain type, increase the size, 
+          // then go through that cell's neighbors
+
+            //All neighbors are simply added to the frontier
+            HexCell current = searchFrontier.Dequeue();
+
+            int originalElevation = current.Elevation;
+			current.Elevation = originalElevation - sink;
+
+            //When the current cell's new elevation is by water level, it has 
+            // just become land, so the budget decrements,
+            //  which could end the chunk's growth.
+            if (
+				originalElevation >= waterLevel &&
+				current.Elevation < waterLevel
+			) {
+                budget += 1;
+            }
+
+            size += 1;
+
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = current.GetNeighbor(d);
+                if (neighbor && neighbor.SearchPhase < searchFrontierPhase)
+                {
+                    neighbor.SearchPhase = searchFrontierPhase;
+                    //distance of all other cells is relative to first random cell 
+                    // as the center of the chunk.
+                    neighbor.Distance = neighbor.coordinates.DistanceTo(center);
+                    //if the next Random.value number is less than some threshold, set that cell's heuristic to 1 instead of 0. Let's
+                    // use jitterProbability as the threshold, which means most likely a certain percentage of the cells will be affected.
+                    //mess the chunk up to make it random
+                    neighbor.SearchHeuristic =
+                        Random.value < jitterProbability ? 1 : 0;
+                    searchFrontier.Enqueue(neighbor);
+                }
+            }
+        }
+        //Once done, clear the frontier.
+        searchFrontier.Clear();
         return budget;
     }
 
