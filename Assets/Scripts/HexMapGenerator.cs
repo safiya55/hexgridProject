@@ -120,7 +120,7 @@ public class HexMapGenerator : MonoBehaviour
         int landBudget = Mathf.RoundToInt(cellCount * landPercentage * 0.01f);
 
         //keep raising land as long as it has budget.
-        while (landBudget > 0)
+        for(int guard = 0; landBudget > 0 && guard < 10000; guard++)
         {
             //Each iteration inside the loop should now either raise 
             // or sink a chunk of land, depending on the sink probability.
@@ -133,6 +133,9 @@ public class HexMapGenerator : MonoBehaviour
             {
                 landBudget = RaiseTerrain(chunkSize, landBudget);
             }
+        }
+        if(landBudget > 0){
+            Debug.LogWarning("Failed to use up " + landBudget + "land budget");
         }
     }
 
