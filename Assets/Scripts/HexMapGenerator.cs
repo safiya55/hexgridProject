@@ -60,6 +60,9 @@ public class HexMapGenerator : MonoBehaviour
     [Range(0, 100)]
     public int erosionPercentage = 50;
 
+    [Range(0f, 1f)]
+	public float evaporation = 0.5f;
+
     struct ClimateData {
 		public float clouds;
 	}
@@ -68,9 +71,22 @@ public class HexMapGenerator : MonoBehaviour
     void CreateClimate () {
 		climate.Clear();
 		ClimateData initialData = new ClimateData();
-		for (int i = 0; i < cellCount; i++) {
-			climate.Add(initialData);
+		for (int cycle = 0; cycle < 40; cycle++) {
+			for (int i = 0; i < cellCount; i++) {
+				EvolveClimate(i);
+			}
 		}
+	}
+
+    void EvolveClimate (int cellIndex) {
+		HexCell cell = grid.GetCell(cellIndex);
+		ClimateData cellClimate = climate[cellIndex];
+		
+		if (cell.IsUnderwater) {
+			cellClimate.clouds += evaporation;
+		}
+
+		climate[cellIndex] = cellClimate;
 	}
 
 
