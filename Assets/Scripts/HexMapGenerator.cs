@@ -63,6 +63,9 @@ public class HexMapGenerator : MonoBehaviour
     [Range(0f, 1f)]
 	public float evaporation = 0.5f;
 
+    [Range(0f, 1f)]
+	public float precipitationFactor = 0.25f;
+
     struct ClimateData {
 		public float clouds;
 	}
@@ -85,6 +88,10 @@ public class HexMapGenerator : MonoBehaviour
 		if (cell.IsUnderwater) {
 			cellClimate.clouds += evaporation;
 		}
+        
+        float precipitation = cellClimate.clouds * precipitationFactor;
+		cellClimate.clouds -= precipitation;
+
         float cloudDispersal = cellClimate.clouds * (1f / 6f);
         for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
 			HexCell neighbor = cell.GetNeighbor(d);
