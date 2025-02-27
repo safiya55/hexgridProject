@@ -83,14 +83,23 @@ public class HexMapGenerator : MonoBehaviour
 
 
     List<ClimateData> climate = new List<ClimateData>();
+    List<ClimateData> nextClimate = new List<ClimateData>();
 
     void CreateClimate () {
 		climate.Clear();
+        nextClimate.Clear();
 		ClimateData initialData = new ClimateData();
+        for (int i = 0; i < cellCount; i++) {
+			climate.Add(initialData);
+			nextClimate.Add(initialData);
+		}
 		for (int cycle = 0; cycle < 40; cycle++) {
 			for (int i = 0; i < cellCount; i++) {
 				EvolveClimate(i);
 			}
+            List<ClimateData> swap = climate;
+			climate = nextClimate;
+			nextClimate = swap;
 		}
 	}
 
@@ -128,7 +137,7 @@ public class HexMapGenerator : MonoBehaviour
 			if (!neighbor) {
 				continue;
 			}
-			ClimateData neighborClimate = climate[neighbor.Index];
+			ClimateData neighborClimate = nextClimate[neighbor.Index];
             if (d == mainDispersalDirection) {
 				neighborClimate.clouds += cloudDispersal * windStrength;
 			}
@@ -144,11 +153,16 @@ public class HexMapGenerator : MonoBehaviour
 				cellClimate.moisture -= seepage;
 				neighborClimate.moisture += seepage;
 			}
-			climate[neighbor.Index] = neighborClimate;
+			nextClimate[neighbor.Index] = neighborClimate;
 		}
-		cellClimate.clouds = 0f;
-
-		climate[cellIndex] = cellClimate;
+		//cellClimate.clouds = 0f;
+        ClimateData nextCellClimate = nextClimate[cellIndex];
+		nextCellClimate.moisture += cellClimate.moisture;
+        if (nextCellClimate.moisture > 1f) {
+			nextCellClimate.moisture = 1f;
+		}
+		nextClimate[cellIndex] = nextCellClimate;
+		climate[cellIndex] = new ClimateData();
 	}
 
 
