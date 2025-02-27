@@ -61,13 +61,13 @@ public class HexMapGenerator : MonoBehaviour
     public int erosionPercentage = 50;
 
     [Range(0f, 1f)]
-	public float evaporation = 0.5f;
+	public float evaporationFactor = 0.5f;
 
     [Range(0f, 1f)]
 	public float precipitationFactor = 0.25f;
 
     struct ClimateData {
-		public float clouds;
+		public float clouds, moisture;
 	}
     List<ClimateData> climate = new List<ClimateData>();
 
@@ -86,11 +86,19 @@ public class HexMapGenerator : MonoBehaviour
 		ClimateData cellClimate = climate[cellIndex];
 		
 		if (cell.IsUnderwater) {
+            cellClimate.moisture = 1f;
+			cellClimate.clouds += evaporationFactor;
+		}
+        else {
+			float evaporation = cellClimate.moisture * evaporationFactor;
+			cellClimate.moisture -= evaporation;
 			cellClimate.clouds += evaporation;
 		}
-        
+
         float precipitation = cellClimate.clouds * precipitationFactor;
 		cellClimate.clouds -= precipitation;
+        cellClimate.moisture += precipitation;
+
 
         float cloudDispersal = cellClimate.clouds * (1f / 6f);
         for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
@@ -364,7 +372,7 @@ public class HexMapGenerator : MonoBehaviour
             }
 
             cell.SetMapData(
-                climate[i].clouds
+                climate[i].moisture
                 //(cell.Elevation - elevationMinimum) /
                 //(float)(elevationMaximum - elevationMinimum)
             );
