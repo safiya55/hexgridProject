@@ -69,6 +69,10 @@ public class HexMapGenerator : MonoBehaviour
     struct ClimateData {
 		public float clouds, moisture;
 	}
+
+    [Range(0f, 1f)]
+	public float runoffFactor = 0.25f;
+
     List<ClimateData> climate = new List<ClimateData>();
 
     void CreateClimate () {
@@ -101,6 +105,7 @@ public class HexMapGenerator : MonoBehaviour
 
 
         float cloudDispersal = cellClimate.clouds * (1f / 6f);
+        float runoff = cellClimate.moisture * runoffFactor * (1f / 6f);
         for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
 			HexCell neighbor = cell.GetNeighbor(d);
 			if (!neighbor) {
@@ -108,6 +113,11 @@ public class HexMapGenerator : MonoBehaviour
 			}
 			ClimateData neighborClimate = climate[neighbor.Index];
 			neighborClimate.clouds += cloudDispersal;
+            int elevationDelta = neighbor.ViewElevation - cell.ViewElevation;
+			if (elevationDelta < 0) {
+				cellClimate.moisture -= runoff;
+				neighborClimate.moisture += runoff;
+			}
 			climate[neighbor.Index] = neighborClimate;
 		}
 		cellClimate.clouds = 0f;
