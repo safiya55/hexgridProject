@@ -60,6 +60,19 @@ public class HexMapGenerator : MonoBehaviour
     [Range(0, 100)]
     public int erosionPercentage = 50;
 
+    struct ClimateData {
+		public float clouds;
+	}
+    List<ClimateData> climate = new List<ClimateData>();
+
+    void CreateClimate () {
+		climate.Clear();
+		ClimateData initialData = new ClimateData();
+		for (int i = 0; i < cellCount; i++) {
+			climate.Add(initialData);
+		}
+	}
+
 
     public void GenerateMap(int x, int z)
     {
@@ -103,6 +116,9 @@ public class HexMapGenerator : MonoBehaviour
 
         //make the terrain look more rough and jagged
         ErodeLand();
+
+        // creating a climate after the land has been eroded and before the terrain types are set
+        CreateClimate();
 
         //set all terrain types once.
         SetTerrainType();
@@ -314,8 +330,9 @@ public class HexMapGenerator : MonoBehaviour
             }
 
             cell.SetMapData(
-                (cell.Elevation - elevationMinimum) /
-                (float)(elevationMaximum - elevationMinimum)
+                climate[i].clouds
+                //(cell.Elevation - elevationMinimum) /
+                //(float)(elevationMaximum - elevationMinimum)
             );
         }
     }
