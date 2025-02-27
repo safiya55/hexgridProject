@@ -85,6 +85,17 @@ public class HexMapGenerator : MonoBehaviour
 		if (cell.IsUnderwater) {
 			cellClimate.clouds += evaporation;
 		}
+        float cloudDispersal = cellClimate.clouds * (1f / 6f);
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
+			HexCell neighbor = cell.GetNeighbor(d);
+			if (!neighbor) {
+				continue;
+			}
+			ClimateData neighborClimate = climate[neighbor.Index];
+			neighborClimate.clouds += cloudDispersal;
+			climate[neighbor.Index] = neighborClimate;
+		}
+		cellClimate.clouds = 0f;
 
 		climate[cellIndex] = cellClimate;
 	}
