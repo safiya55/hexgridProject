@@ -61,6 +61,10 @@ public class HexMapGenerator : MonoBehaviour
     public int erosionPercentage = 50;
 
     [Range(0f, 1f)]
+	public float startingMoisture = 0.1f;
+
+
+    [Range(0f, 1f)]
 	public float evaporationFactor = 0.5f;
 
     [Range(0f, 1f)]
@@ -89,9 +93,11 @@ public class HexMapGenerator : MonoBehaviour
 		climate.Clear();
         nextClimate.Clear();
 		ClimateData initialData = new ClimateData();
+        initialData.moisture = startingMoisture;
+		ClimateData clearData = new ClimateData();
         for (int i = 0; i < cellCount; i++) {
 			climate.Add(initialData);
-			nextClimate.Add(initialData);
+			nextClimate.Add(clearData);
 		}
 		for (int cycle = 0; cycle < 40; cycle++) {
 			for (int i = 0; i < cellCount; i++) {
