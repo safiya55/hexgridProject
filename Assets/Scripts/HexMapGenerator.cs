@@ -421,14 +421,32 @@ public class HexMapGenerator : MonoBehaviour
         for (int i = 0; i < cellCount; i++)
         {
             HexCell cell = grid.GetCell(i);
-            if (!cell.IsUnderwater)
-            {
-                //All underwater cells remain sand, as well as the lowest land cells.
-                cell.TerrainTypeIndex = cell.Elevation - cell.WaterLevel;
-            }
+            float moisture = climate[i].moisture;
+			if (!cell.IsUnderwater) {
+				if (moisture < 0.05f) {
+					cell.TerrainTypeIndex = 4;
+				}
+				else if (moisture < 0.12f) {
+					cell.TerrainTypeIndex = 0;
+				}
+				else if (moisture < 0.28f) {
+					cell.TerrainTypeIndex = 3;
+				}
+				else if (moisture < 0.85f) {
+					cell.TerrainTypeIndex = 1;
+				}
+				else {
+					cell.TerrainTypeIndex = 2;
+				}
+			}
+			else {
+				cell.TerrainTypeIndex = 2;
+			}
+            
 
             cell.SetMapData(
-                climate[i].moisture
+                moisture
+                //climate[i].moisture
                 //(cell.Elevation - elevationMinimum) /
                 //(float)(elevationMaximum - elevationMinimum)
             );
