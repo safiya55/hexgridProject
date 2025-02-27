@@ -112,6 +112,12 @@ public class HexMapGenerator : MonoBehaviour
 		cellClimate.clouds -= precipitation;
         cellClimate.moisture += precipitation;
 
+        float cloudMaximum = 1f - cell.ViewElevation / (elevationMaximum + 1f);
+        if (cellClimate.clouds > cloudMaximum) {
+			cellClimate.moisture += cellClimate.clouds - cloudMaximum;
+			cellClimate.clouds = cloudMaximum;
+		}
+
 
         HexDirection mainDispersalDirection = windDirection.Opposite();
         float cloudDispersal = cellClimate.clouds * (1f / (5f + windStrength));
