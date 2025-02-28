@@ -14,6 +14,8 @@ public class HexMapGenerator : MonoBehaviour
 
     int searchFrontierPhase;
 
+    int temperatureJitterChannel;
+
     public int seed;
 
     [Range(0f, 0.5f)]
@@ -92,6 +94,9 @@ public class HexMapGenerator : MonoBehaviour
 
     [Range(0f, 1f)]
     public float highTemperature = 1f;
+
+    [Range(0f, 1f)]
+    public float temperatureJitter = 0.1f;
     
 
     struct ClimateData {
@@ -436,6 +441,7 @@ public class HexMapGenerator : MonoBehaviour
     //to set all terrain types once.
     void SetTerrainType()
     {
+        temperatureJitterChannel = Random.Range(0, 4);
         for (int i = 0; i < cellCount; i++)
         {
             HexCell cell = grid.GetCell(i);
@@ -767,8 +773,15 @@ public class HexMapGenerator : MonoBehaviour
 			latitude = 1f - latitude;
 		}
         float temperature = Mathf.LerpUnclamped(lowTemperature, highTemperature, latitude);
+        
         temperature *= 1f - (cell.ViewElevation - waterLevel) /
 			(elevationMaximum - waterLevel + 1f);
+        
+        float jitter =
+			HexMetrics.SampleNoise(cell.Position * 0.1f)[temperatureJitterChannel];
+
+        temperature += (jitter * 2f - 1f) * temperatureJitter;
+
         return temperature; 
     }
 
