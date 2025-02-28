@@ -83,6 +83,9 @@ public class HexMapGenerator : MonoBehaviour
 
     [Range(0, 20)]
     public int riverPercentage = 10;
+
+    [Range(0f, 1f)]
+    public float extraLakeProbability = 0.25f;
     
 
     struct ClimateData {
@@ -735,6 +738,10 @@ public class HexMapGenerator : MonoBehaviour
             direction = flowDirections[Random.Range(0, flowDirections.Count)];
             cell.SetOutgoingRiver(direction);
             length += 1;
+            if(minNeighborElevation >= cell.Elevation && Random.value < extraLakeProbability){
+                cell.WaterLevel = cell.Elevation;
+                cell.Elevation -= 1;
+            }
             cell = cell.GetNeighbor(direction);
         }
         return length;
