@@ -679,6 +679,15 @@ public class HexMapGenerator : MonoBehaviour
                 if(!neighbor || neighbor.HasRiver){
                     continue;
                 }
+                int delta = neighbor.Elevation - cell.Elevation;
+                if(delta > 0){
+                    continue;
+                }
+                if(delta < 0){
+                    flowDirections.Add(d);
+                    flowDirections.Add(d);
+                    flowDirections.Add(d);
+                }
             }
             if(flowDirections.Count == 0){
                 return length > 1 ? length : 0;
