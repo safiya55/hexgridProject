@@ -8,7 +8,7 @@ public class HexMapGenerator : MonoBehaviour
 
     public bool useFixedSeed;
 
-    int cellCount;
+    int cellCount, landCells;
 
     HexCellPriorityQueue searchFrontier;
 
@@ -80,6 +80,10 @@ public class HexMapGenerator : MonoBehaviour
 	
 	[Range(1f, 10f)]
 	public float windStrength = 4f;
+
+    [Range(0, 20)]
+    public int riverPercentage = 10;
+    
 
     struct ClimateData {
 		public float clouds, moisture;
@@ -240,6 +244,7 @@ public class HexMapGenerator : MonoBehaviour
     void CreateLand()
     {
         int landBudget = Mathf.RoundToInt(cellCount * landPercentage * 0.01f);
+        landCells = landBudget;
 
         //keep raising land as long as it has budget.
         for (int guard = 0; guard < 10000; guard++)
@@ -269,6 +274,7 @@ public class HexMapGenerator : MonoBehaviour
         if (landBudget > 0)
         {
             Debug.LogWarning("Failed to use up " + landBudget + "land budget");
+            landCells -= landBudget;
         }
     }
 
@@ -445,7 +451,6 @@ public class HexMapGenerator : MonoBehaviour
 			else {
 				cell.TerrainTypeIndex = 2;
 			}
-            
         }
     }
 
@@ -641,6 +646,29 @@ public class HexMapGenerator : MonoBehaviour
                 riverOrigins.Add(cell);
             }
         }
+        int riverBudget = Mathf.RoundToInt(landCells * riverPercentage * 0.01f);
+        while (riverBudget > 0 && riverOrigins.Count > 0) {
+			int index = Random.Range(0, riverOrigins.Count);
+			int lastIndex = riverOrigins.Count - 1;
+			HexCell origin = riverOrigins[index];
+			riverOrigins[index] = riverOrigins[lastIndex];
+			riverOrigins.RemoveAt(lastIndex);
+
+            if(!origin.HasRiver){
+                riverBudget -= CreateRiver(origin);
+            }
+		}
+		
+		if (riverBudget > 0) {
+			Debug.LogWarning("Failed to use up river budget.");
+		}
+
         ListPool<HexCell>.Add(riverOrigins);
+    }
+
+    //create river
+    int CreateRiver(HexCell origin){
+        int length = 0;
+        return length;
     }
 }
