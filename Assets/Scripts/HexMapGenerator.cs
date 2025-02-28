@@ -677,12 +677,16 @@ public class HexMapGenerator : MonoBehaviour
             flowDirections.Clear();
             for(HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
                 HexCell neighbor = cell.GetNeighbor(d);
-                if(!neighbor || neighbor.HasRiver){
+                if(!neighbor || neighbor == origin || neighbor.HasIncomingRiver){
                     continue;
                 }
                 int delta = neighbor.Elevation - cell.Elevation;
                 if(delta > 0){
                     continue;
+                }
+                if(neighbor.HasOutgoingRiver){
+                    cell.SetOutgoingRiver(d);
+                    return length;
                 }
                 if(delta < 0){
                     flowDirections.Add(d);
