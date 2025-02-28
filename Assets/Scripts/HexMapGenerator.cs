@@ -474,6 +474,7 @@ public class HexMapGenerator : MonoBehaviour
                     cellBiome.terrain = 4;
                 }
 				cell.TerrainTypeIndex = cellBiome.terrain;
+                cell.PlantLevel = cellBiome.plant;
 			}
 			else {
 				cell.TerrainTypeIndex = 2;
@@ -802,17 +803,18 @@ public class HexMapGenerator : MonoBehaviour
     public HemisphereMode hemisphere;
 
     struct Biome{
-        public int terrain;
+        public int terrain, plant;
 
-        public Biome(int terrain){
+        public Biome(int terrain, int plant){
             this.terrain = terrain;
+            this.plant = plant;
         }
     }
     //create a static array that contains matrix data
     static Biome[] biomes = {
-		new Biome(0), new Biome(4), new Biome(4), new Biome(4),
-		new Biome(0), new Biome(2), new Biome(2), new Biome(2),
-		new Biome(0), new Biome(1), new Biome(1), new Biome(1),
-		new Biome(0), new Biome(1), new Biome(1), new Biome(1)
+		new Biome(0, 0), new Biome(4, 0), new Biome(4, 0), new Biome(4, 0),
+		new Biome(0, 0), new Biome(2, 0), new Biome(2, 1), new Biome(2, 2),
+		new Biome(0, 0), new Biome(1, 0), new Biome(1, 1), new Biome(1, 2),
+		new Biome(0, 0), new Biome(1, 1), new Biome(1, 2), new Biome(1, 3)
 	};
 }
