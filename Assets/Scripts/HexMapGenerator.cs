@@ -218,6 +218,9 @@ public class HexMapGenerator : MonoBehaviour
         // creating a climate after the land has been eroded and before the terrain types are set
         CreateClimate();
 
+        //make the moister data available
+        CreateRivers();
+
         //set all terrain types once.
         SetTerrainType();
 
@@ -443,13 +446,6 @@ public class HexMapGenerator : MonoBehaviour
 				cell.TerrainTypeIndex = 2;
 			}
             
-
-            cell.SetMapData(
-                moisture
-                //climate[i].moisture
-                //(cell.Elevation - elevationMinimum) /
-                //(float)(elevationMaximum - elevationMinimum)
-            );
         }
     }
 
@@ -622,5 +618,29 @@ public class HexMapGenerator : MonoBehaviour
         HexCell target = candiddates[Random.Range(0, candiddates.Count)];
         ListPool<HexCell>.Add(candiddates);
         return target;
+    }
+    
+    void CreateRivers(){
+        List<HexCell> riverOrigins = ListPool<HexCell>.Get();
+        for(int i = 0; i < cellCount; i++){
+            HexCell cell = grid.GetCell(i);
+            if(cell.IsUnderwater){
+                continue;
+            }
+            ClimateData data = climate[i];
+            float weight = data.moisture * (cell.Elevation - waterLevel)/
+                            (elevationMaximum - waterLevel);
+            if(weight > 0.75f){
+                riverOrigins.Add(cell);
+                riverOrigins.Add(cell);
+            }
+            if(weight > 0.75f){
+                riverOrigins.Add(cell);
+            }
+            if(weight > 0.75f){
+                riverOrigins.Add(cell);
+            }
+        }
+        ListPool<HexCell>.Add(riverOrigins);
     }
 }
