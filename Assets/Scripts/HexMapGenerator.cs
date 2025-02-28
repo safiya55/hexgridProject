@@ -672,6 +672,7 @@ public class HexMapGenerator : MonoBehaviour
     int CreateRiver(HexCell origin){
         int length = 1;
         HexCell cell = origin;
+        HexDirection direction = HexDirection.NE;
         while(!cell.IsUnderwater){
             flowDirections.Clear();
             for(HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
@@ -688,11 +689,18 @@ public class HexMapGenerator : MonoBehaviour
                     flowDirections.Add(d);
                     flowDirections.Add(d);
                 }
+                if(length == 1 || 
+                (d != direction.Next2() && d != direction.Previous2())){
+                    flowDirections.Add(d);
+                }
+                flowDirections.Add(d);
+
             }
             if(flowDirections.Count == 0){
                 return length > 1 ? length : 0;
             }
-            HexDirection direction = flowDirections[Random.Range(0, flowDirections.Count)];
+
+            direction = flowDirections[Random.Range(0, flowDirections.Count)];
             cell.SetOutgoingRiver(direction);
             length += 1;
             cell = cell.GetNeighbor(direction);
