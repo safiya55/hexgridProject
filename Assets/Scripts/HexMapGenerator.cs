@@ -97,6 +97,9 @@ public class HexMapGenerator : MonoBehaviour
 
     [Range(0f, 1f)]
     public float temperatureJitter = 0.1f;
+
+    static float[] temperatureBands = {0.1f, 0,3f, 0.6f};
+    static float[] moistureBands = {0.12f, 0,28, 0.85f};
     
 
     struct ClimateData {
@@ -790,4 +793,19 @@ public class HexMapGenerator : MonoBehaviour
     }
 
     public HemisphereMode hemisphere;
+
+    struct Biome{
+        public int terrain;
+
+        public Biome(int terrain){
+            this.terrain = terrain;
+        }
+    }
+    //create a static array that contains matrix data
+    static Biome[] biomes = {
+		new Biome(0), new Biome(4), new Biome(4), new Biome(4),
+		new Biome(0), new Biome(2), new Biome(2), new Biome(2),
+		new Biome(0), new Biome(1), new Biome(1), new Biome(1),
+		new Biome(0), new Biome(1), new Biome(1), new Biome(1)
+	};
 }
