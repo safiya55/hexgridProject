@@ -757,7 +757,22 @@ public class HexMapGenerator : MonoBehaviour
 
     float DetermineTemperature(HexCell cell){
         float latitude = (float)cell.coordinates.Z / grid.cellCountZ;
+        if (hemisphere == HemisphereMode.Both) {
+			latitude *= 2f;
+			if (latitude > 1f) {
+				latitude = 2f - latitude;
+			}
+		}
+		else if (hemisphere == HemisphereMode.North) {
+			latitude = 1f - latitude;
+		}
         float temperature = Mathf.LerpUnclamped(lowTemperature, highTemperature, latitude);
         return temperature; 
     }
+
+    public enum HemisphereMode{
+        Both, North, South
+    }
+
+    public HemisphereMode hemisphere;
 }
