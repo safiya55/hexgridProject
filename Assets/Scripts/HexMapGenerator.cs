@@ -647,6 +647,7 @@ public class HexMapGenerator : MonoBehaviour
             }
         }
         int riverBudget = Mathf.RoundToInt(landCells * riverPercentage * 0.01f);
+
         while (riverBudget > 0 && riverOrigins.Count > 0) {
 			int index = Random.Range(0, riverOrigins.Count);
 			int lastIndex = riverOrigins.Count - 1;
@@ -655,7 +656,17 @@ public class HexMapGenerator : MonoBehaviour
 			riverOrigins.RemoveAt(lastIndex);
 
             if(!origin.HasRiver){
+                bool isValidOrigin = true;
+                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
+                    HexCell neighbor = origin.GetNeighbor(d);
+                    if(neighbor && (neighbor.HasRiver || neighbor.IsUnderwater)){
+                        isValidOrigin = false;
+                        break;
+                    }
+                }
+                if(!isValidOrigin){
                 riverBudget -= CreateRiver(origin);
+                }
             }
 		}
 		
