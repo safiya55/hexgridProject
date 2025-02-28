@@ -767,6 +767,8 @@ public class HexMapGenerator : MonoBehaviour
 			latitude = 1f - latitude;
 		}
         float temperature = Mathf.LerpUnclamped(lowTemperature, highTemperature, latitude);
+        temperature *= 1f - (cell.ViewElevation - waterLevel) /
+			(elevationMaximum - waterLevel + 1f);
         return temperature; 
     }
 
