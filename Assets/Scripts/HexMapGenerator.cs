@@ -86,6 +86,12 @@ public class HexMapGenerator : MonoBehaviour
 
     [Range(0f, 1f)]
     public float extraLakeProbability = 0.25f;
+
+    [Range(0f, 1f)]
+    public float lowTemperature = 0f;
+
+    [Range(0f, 1f)]
+    public float highTemperature = 1f;
     
 
     struct ClimateData {
@@ -433,6 +439,8 @@ public class HexMapGenerator : MonoBehaviour
         for (int i = 0; i < cellCount; i++)
         {
             HexCell cell = grid.GetCell(i);
+            float temperature = DetermineTemperature(cell);
+            cell.SetMapData(temperature);
             float moisture = climate[i].moisture;
 			if (!cell.IsUnderwater) {
 				if (moisture < 0.05f) {
@@ -745,5 +753,11 @@ public class HexMapGenerator : MonoBehaviour
             cell = cell.GetNeighbor(direction);
         }
         return length;
+    }
+
+    float DetermineTemperature(HexCell cell){
+        float latitude = (float)cell.coordinates.Z / grid.cellCountZ;
+        float temperature = Mathf.LerpUnclamped(lowTemperature, highTemperature, latitude);
+        return temperature; 
     }
 }
