@@ -445,6 +445,7 @@ public class HexMapGenerator : MonoBehaviour
     void SetTerrainType()
     {
         temperatureJitterChannel = Random.Range(0, 4);
+        int rockDesertElevation = elevationMaximum - (elevationMaximum -waterLevel) / 2;
         for (int i = 0; i < cellCount; i++)
         {
             HexCell cell = grid.GetCell(i);
@@ -464,6 +465,14 @@ public class HexMapGenerator : MonoBehaviour
 					}
 				}
 				Biome cellBiome = biomes[t * 4 + m];
+                if(cellBiome.terrain == 0){
+                    if(cell.Elevation >= rockDesertElevation){
+                        cellBiome.terrain = 3;
+                    }
+                }
+                else if(cell.Elevation == elevationMaximum){
+                    cellBiome.terrain = 4;
+                }
 				cell.TerrainTypeIndex = cellBiome.terrain;
 			}
 			else {
