@@ -666,9 +666,28 @@ public class HexMapGenerator : MonoBehaviour
         ListPool<HexCell>.Add(riverOrigins);
     }
 
+    List<HexDirection> flowDirections = new List<HexDirection>();
+
     //create river
     int CreateRiver(HexCell origin){
-        int length = 0;
+        int length = 1;
+        HexCell cell = origin;
+        while(!cell.IsUnderwater){
+            flowDirections.Clear();
+            for(HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++){
+                HexCell neighbor = cell.GetNeighbor(d);
+                if(!neighbor || neighbor.HasRiver){
+                    continue;
+                }
+            }
+            if(flowDirections.Count == 0){
+                return length > 1 ? length : 0;
+            }
+            HexDirection direction = flowDirections[Random.Range(0, flowDirections.Count)];
+            cell.SetOutgoingRiver(direction);
+            length += 1;
+            cell = cell.GetNeighbor(direction);
+        }
         return length;
     }
 }
