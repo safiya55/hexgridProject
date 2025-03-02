@@ -30,7 +30,7 @@ public struct HexCoordinates
     public static HexCoordinates FromPosition(Vector3 position)
     {
         // Calculate the x-coordinate based on the world position's x value
-        float x = position.x / (HexMetrics.innerRadius * 2f);
+        float x = position.x / HexMetrics.innerDiameter;
 
         // The y-coordinate is simply the negative of x to ensure the staggered pattern
         float y = -x;

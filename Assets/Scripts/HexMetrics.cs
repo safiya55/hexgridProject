@@ -17,6 +17,7 @@ public static class HexMetrics
     public const float outerRadius = 10f;
 
     public const float innerRadius = outerRadius * outerToInner;
+    public const float innerDiameter = innerRadius * 2f;
 
     public const float solidFactor = 0.8f;
 
