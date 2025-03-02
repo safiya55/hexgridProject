@@ -208,9 +208,13 @@ public class HexGrid : MonoBehaviour
         cell.ShaderData = cellShaderData;
 
         //Cells that's aren't at the edge are explorable, while all others are inexplorable.
-        cell.Explorable =
-            x > 0 && z > 0 && x < cellCountX - 1 && z < cellCountZ - 1;
-
+        if (wrapping) {
+			cell.Explorable = z > 0 && z < cellCountZ - 1;
+		}
+		else {
+			cell.Explorable =
+				x > 0 && z > 0 && x < cellCountX - 1 && z < cellCountZ - 1;
+		}
         //connect cells from east to west direction
         if (x > 0)
         {
