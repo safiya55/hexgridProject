@@ -53,6 +53,14 @@ public static class HexMetrics
 
     public const float bridgeDesignLength = 18f;
 
+    public static int wrapSize;
+
+	public static bool Wrapping {
+		get {
+			return wrapSize > 0;
+		}
+	}
+
     static float[][] featureThresholds = {
         new float[] {0.0f, 0.0f, 0.4f},
         new float[] {0.0f, 0.4f, 0.6f},

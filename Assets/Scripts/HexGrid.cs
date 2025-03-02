@@ -82,6 +82,7 @@ public class HexGrid : MonoBehaviour
         cellCountX = x;
         cellCountZ = z;
         this.wrapping = wrapping;
+        HexMetrics.wrapSize = wrapping ? cellCountX : 0;
 
         chunkCountX = cellCountX / HexMetrics.chunkSizeX;
         chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
@@ -129,6 +130,8 @@ public class HexGrid : MonoBehaviour
             HexMetrics.noiseSource = noiseSource;
             HexMetrics.InitializeHashGrid(seed);
             HexUnit.unitPrefab = unitPrefab;
+
+            HexMetrics.wrapSize = wrapping ? cellCountX : 0;
 
             //To ensure that the vision adjusts itself automatically
             ResetVisibility();
