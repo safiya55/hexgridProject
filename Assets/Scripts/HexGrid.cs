@@ -14,6 +14,7 @@ public class HexGrid : MonoBehaviour
     public int cellCountX = 20, cellCountZ = 15;
     public bool wrapping;
     int chunkCountX, chunkCountZ;
+    int currentCenterColumnIndex = -1;
     public HexCell cellPrefab;       // HexCell prefab
     public Text cellLabelPrefab;     // Text prefab for cell labels
 
@@ -83,6 +84,7 @@ public class HexGrid : MonoBehaviour
         cellCountX = x;
         cellCountZ = z;
         this.wrapping = wrapping;
+        currentCenterColumnIndex = -1;
         HexMetrics.wrapSize = wrapping ? cellCountX : 0;
 
         chunkCountX = cellCountX / HexMetrics.chunkSizeX;
@@ -95,6 +97,34 @@ public class HexGrid : MonoBehaviour
 
         return true;
     }
+
+    public void CenterMap (float xPosition) {
+		int centerColumnIndex = (int)
+			(xPosition / (HexMetrics.innerDiameter * HexMetrics.chunkSizeX));
+        if (centerColumnIndex == currentCenterColumnIndex) {
+			return;
+		}
+		currentCenterColumnIndex = centerColumnIndex;
+        int minColumnIndex = centerColumnIndex - chunkCountX / 2;
+		int maxColumnIndex = centerColumnIndex + chunkCountX / 2;
+        Vector3 position;
+		position.y = position.z = 0f;
+		for (int i = 0; i < columns.Length; i++) {
+			if (i < minColumnIndex) {
+				position.x = chunkCountX *
+					(HexMetrics.innerDiameter * HexMetrics.chunkSizeX);
+			}
+			else if (i > maxColumnIndex) {
+				position.x = chunkCountX *
+					-(HexMetrics.innerDiameter * HexMetrics.chunkSizeX);
+			}
+			else {
+				position.x = 0f;
+			}
+			columns[i].localPosition = position;
+		}
+	}
+    
 
     void CreateChunks()
     {
