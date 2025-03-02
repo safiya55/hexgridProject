@@ -618,7 +618,7 @@ public class HexGrid : MonoBehaviour
         //takes care of positioning the unit and settings its parent.
         units.Add(unit);
         unit.Grid = this;
-        unit.transform.SetParent(transform, false);
+        //unit.transform.SetParent(transform, false);
         unit.Location = location;
         unit.Orientation = orientation;
     }
@@ -630,6 +630,10 @@ public class HexGrid : MonoBehaviour
         units.Remove(unit);
         unit.Die();
     }
+    public void MakeChildOfColumn (Transform child, int columnIndex) {
+		child.SetParent(columns[columnIndex], false);
+	}
+
 
     public HexCell GetCell(Ray ray)
     {

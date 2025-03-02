@@ -52,10 +52,15 @@ public class HexUnit : MonoBehaviour
     {
         Vector3 a, b, c = pathToTravel[0].Position;
         yield return LookAt(pathToTravel[1].Position);
-        Grid.DecreaseVisibility(
+       /* Grid.DecreaseVisibility(
             currentTravelLocation ? currentTravelLocation : pathToTravel[0],
             visionRange
-        );
+        );*/
+        if (!currentTravelLocation) {
+			currentTravelLocation = pathToTravel[0];
+		}
+		Grid.DecreaseVisibility(currentTravelLocation, VisionRange);
+		int currentColumn = currentTravelLocation.ColumnIndex;
 
         float t = Time.deltaTime * travelSpeed;
         for (int i = 1; i < pathToTravel.Count; i++)
@@ -64,8 +69,24 @@ public class HexUnit : MonoBehaviour
 
             a = c;
             b = pathToTravel[i - 1].Position;
+            //c = (b + currentTravelLocation.Position) * 0.5f;
+            //Grid.IncreaseVisibility(pathToTravel[i], visionRange);
+            
+			int nextColumn = currentTravelLocation.ColumnIndex;
+			if (currentColumn != nextColumn) {
+                if (nextColumn < currentColumn - 1) {
+					a.x -= HexMetrics.innerDiameter * HexMetrics.wrapSize;
+					b.x -= HexMetrics.innerDiameter * HexMetrics.wrapSize;
+				}
+				else if (nextColumn > currentColumn + 1) {
+					a.x += HexMetrics.innerDiameter * HexMetrics.wrapSize;
+					b.x += HexMetrics.innerDiameter * HexMetrics.wrapSize;
+				}
+				Grid.MakeChildOfColumn(transform, nextColumn);
+				currentColumn = nextColumn;
+			}
             c = (b + currentTravelLocation.Position) * 0.5f;
-            Grid.IncreaseVisibility(pathToTravel[i], visionRange);
+			Grid.IncreaseVisibility(pathToTravel[i], VisionRange);
 
             for (; t < 1f; t += Time.deltaTime * travelSpeed)
             {
@@ -122,6 +143,7 @@ public class HexUnit : MonoBehaviour
                 Grid.DecreaseVisibility(location, visionRange);
                 location.Unit = null;
             }
+            Grid.MakeChildOfColumn(transform, value.ColumnIndex);
 
             location = value;
             //make the cell aware that there is a unit standing on it.
@@ -200,6 +222,15 @@ public class HexUnit : MonoBehaviour
 
     IEnumerator LookAt(Vector3 point)
     {
+        if (HexMetrics.Wrapping) {
+			float xDistance = point.x - transform.localPosition.x;
+			if (xDistance < -HexMetrics.innerRadius * HexMetrics.wrapSize) {
+				point.x += HexMetrics.innerDiameter * HexMetrics.wrapSize;
+			}
+			else if (xDistance > HexMetrics.innerRadius * HexMetrics.wrapSize) {
+				point.x -= HexMetrics.innerDiameter * HexMetrics.wrapSize;
+			}
+		}
         point.y = transform.localPosition.y;
 
         Quaternion fromRotation = transform.localRotation;
