@@ -214,6 +214,10 @@ public class HexGrid : MonoBehaviour
         if (x > 0)
         {
             cell.SetNeighbor(HexDirection.W, cells[i - 1]);
+            if (wrapping && x == cellCountX - 1) {
+				cell.SetNeighbor(HexDirection.E, cells[i - x]);
+			}
+            
         }
         if (z > 0)
         {
@@ -227,6 +231,9 @@ public class HexGrid : MonoBehaviour
                 {
                     cell.SetNeighbor(HexDirection.SW, cells[i - cellCountX - 1]);
                 }
+                else if (wrapping) {
+					cell.SetNeighbor(HexDirection.SW, cells[i - 1]);
+				}
             }
             //doing same logic for odd rows
             else
@@ -236,6 +243,11 @@ public class HexGrid : MonoBehaviour
                 {
                     cell.SetNeighbor(HexDirection.SE, cells[i - cellCountX + 1]);
                 }
+                else if (wrapping) {
+					cell.SetNeighbor(
+						HexDirection.SE, cells[i - cellCountX * 2 + 1]
+					);
+				}
             }
         }
 
