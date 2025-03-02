@@ -9,6 +9,11 @@ public class NewMapMenu : MonoBehaviour
 	public HexMapGenerator mapGenerator;
 
 	bool generateMaps = true;
+	bool wrapping = true;
+
+	public void ToggleWrapping (bool toggle) {
+		wrapping = toggle;
+	}
 
 	public void ToggleMapGeneration(bool toggle)
 	{
@@ -31,11 +36,11 @@ public class NewMapMenu : MonoBehaviour
 	{
 		if (generateMaps)
 		{
-			mapGenerator.GenerateMap(x, z);
+			mapGenerator.GenerateMap(x, z, wrapping);
 		}
 		else
 		{
-			hexGrid.CreateMap(x, z);
+			hexGrid.CreateMap(x, z, wrapping);
 		}
 		HexMapCamera.ValidatePosition();
 		Close();

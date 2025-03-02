@@ -12,6 +12,7 @@ public class HexGrid : MonoBehaviour
     //public Color defaultColor = Color.white;
     //public Color touchedColor = Color.green;
     public int cellCountX = 20, cellCountZ = 15;
+    public bool wrapping;
     int chunkCountX, chunkCountZ;
     public HexCell cellPrefab;       // HexCell prefab
     public Text cellLabelPrefab;     // Text prefab for cell labels
@@ -50,10 +51,10 @@ public class HexGrid : MonoBehaviour
         cellShaderData = gameObject.AddComponent<HexCellShaderData>();
         // setup the grid reference after creating shader data
         cellShaderData.Grid = this;
-        CreateMap(cellCountX, cellCountZ);
+        CreateMap(cellCountX, cellCountZ, wrapping);
     }
 
-    public bool CreateMap(int x, int z)
+    public bool CreateMap(int x, int z, bool wrapping)
     {
 
         if (
@@ -80,6 +81,7 @@ public class HexGrid : MonoBehaviour
         //support for any size map
         cellCountX = x;
         cellCountZ = z;
+        this.wrapping = wrapping;
 
         chunkCountX = cellCountX / HexMetrics.chunkSizeX;
         chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
@@ -282,7 +284,7 @@ public class HexGrid : MonoBehaviour
         if (x != cellCountX || z != cellCountZ)
         {
             //abort map loading, when the map creation failed.
-            if (!CreateMap(x, z))
+            if (!CreateMap(x, z, wrapping))
             {
                 return;
             }

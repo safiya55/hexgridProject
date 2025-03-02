@@ -193,7 +193,7 @@ public class HexMapGenerator : MonoBehaviour
 	}
 
 
-    public void GenerateMap(int x, int z)
+    public void GenerateMap(int x, int z, bool wrapping)
     {
         //It first stores the current state of the number generator, 
         // initialized it with a specific seed,
@@ -213,7 +213,7 @@ public class HexMapGenerator : MonoBehaviour
         cellCount = x * z;
 
         //new map new map created
-        grid.CreateMap(x, z);
+        grid.CreateMap(x, z, wrapping);
 
         //Make sure that the priority queue exists before we will need it.
         if (searchFrontier == null)
