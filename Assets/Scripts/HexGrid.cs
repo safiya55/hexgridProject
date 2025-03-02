@@ -251,6 +251,7 @@ public class HexGrid : MonoBehaviour
     {
         writer.Write(cellCountX);
         writer.Write(cellCountZ);
+        writer.Write(wrapping);
 
         for (int i = 0; i < cells.Length; i++)
         {
@@ -278,10 +279,12 @@ public class HexGrid : MonoBehaviour
             z = reader.ReadInt32();
         }
 
+        bool wrapping = header >= 5 ? reader.ReadBoolean() : false;
+
         //Because loading overwrites all the data of the existing cells, 
         //we actually don't have to create a new map if we end up loading one 
         //with the same size. So it's possible to skip this step.
-        if (x != cellCountX || z != cellCountZ)
+        if (x != cellCountX || z != cellCountZ || this.wrapping != wrapping)
         {
             //abort map loading, when the map creation failed.
             if (!CreateMap(x, z, wrapping))
