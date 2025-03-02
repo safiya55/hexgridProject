@@ -41,6 +41,7 @@ public class HexGrid : MonoBehaviour
     public HexUnit unitPrefab;
 
     HexCellShaderData cellShaderData;
+    Transform[] columns;
 
     void Awake()
     {
@@ -70,11 +71,11 @@ public class HexGrid : MonoBehaviour
         //remove old map
         ClearPath();
         ClearUnits();
-        if (chunks != null)
+        if (columns != null)
         {
-            for (int i = 0; i < chunks.Length; i++)
+            for (int i = 0; i < columns.Length; i++)
             {
-                Destroy(chunks[i].gameObject);
+                Destroy(columns[i].gameObject);
             }
         }
 
@@ -97,6 +98,12 @@ public class HexGrid : MonoBehaviour
 
     void CreateChunks()
     {
+        columns = new Transform[chunkCountX];
+		for (int x = 0; x < chunkCountX; x++) {
+			columns[x] = new GameObject("Column").transform;
+			columns[x].SetParent(transform, false);
+		}
+
         chunks = new HexGridChunk[chunkCountX * chunkCountZ];
 
         for (int z = 0, i = 0; z < chunkCountZ; z++)
@@ -104,7 +111,7 @@ public class HexGrid : MonoBehaviour
             for (int x = 0; x < chunkCountX; x++)
             {
                 HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
-                chunk.transform.SetParent(transform);
+                chunk.transform.SetParent(columns[x], false);
             }
         }
     }
