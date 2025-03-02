@@ -32,6 +32,7 @@ public class HexCell : MonoBehaviour
 	int specialIndex;
 
 	public int terrainTypeIndex;
+	
 
 	//cell's distance
 	int distance;
@@ -50,6 +51,8 @@ public class HexCell : MonoBehaviour
 	public HexCellShaderData ShaderData { get; set; }
 
 	public int Index { get; set; }
+
+	public int ColumnIndex { get; set; }
 
 	int visibility;
 
