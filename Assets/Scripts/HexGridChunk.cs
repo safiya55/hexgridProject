@@ -3,10 +3,6 @@ using UnityEngine.UI;
 
 public class HexGridChunk : MonoBehaviour
 {
-    static Color weights1 = new Color(1f, 0f, 0f);
-    static Color weights2 = new Color(0f, 1f, 0f);
-    static Color weights3 = new Color(0f, 0f, 1f);
-
     public HexMesh terrain, rivers, roads, water, waterShore, estuaries;
 
     public HexFeatureManager features;
@@ -14,6 +10,11 @@ public class HexGridChunk : MonoBehaviour
     HexCell[] cells;
 
     Canvas gridCanvas;
+    
+    static Color weights1 = new Color(1f, 0f, 0f);
+    static Color weights2 = new Color(0f, 1f, 0f);
+    static Color weights3 = new Color(0f, 0f, 1f);
+
 
     void Awake()
     {
