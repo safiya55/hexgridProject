@@ -308,7 +308,6 @@ public class HexMapEditor : MonoBehaviour
 
 	public void SetTerrainTypeIndex(int index)
 	{
-		Debug.Log("here");
 		activeTerrainTypeIndex = index;
 	}
 

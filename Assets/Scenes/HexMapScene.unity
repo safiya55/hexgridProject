@@ -1228,7 +1228,6 @@ RectTransform:
   m_Children:
   - {fileID: 1393277131}
   - {fileID: 1951292337}
-  - {fileID: 1964697401}
   m_Father: {fileID: 1053218178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1874,7 +1873,7 @@ Transform:
   m_GameObject: {fileID: 280979341}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1030.0092, y: 534.6783, z: 53.944225}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5454,11 +5453,11 @@ RectTransform:
   - {fileID: 1739806050}
   - {fileID: 773568493}
   - {fileID: 1388547107}
-  m_Father: {fileID: 1298911720}
+  m_Father: {fileID: 1053218178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -16, y: -23.5}
+  m_AnchoredPosition: {x: 1.2000732, y: -103.5}
   m_SizeDelta: {x: 130, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &694122283
@@ -8663,7 +8662,7 @@ GameObject:
   - component: {fileID: 1005618776}
   - component: {fileID: 1005618777}
   m_Layer: 5
-  m_Name: Urban
+  m_Name: Urban Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9052,8 +9051,11 @@ RectTransform:
   - {fileID: 1446219308}
   - {fileID: 477694647}
   - {fileID: 141491650}
+  - {fileID: 1964697401}
   - {fileID: 1298911720}
+  - {fileID: 694122282}
   - {fileID: 1624004366}
+  - {fileID: 1736677284}
   - {fileID: 598020872}
   - {fileID: 120669472}
   m_Father: {fileID: 2103055424}
@@ -11039,7 +11041,6 @@ RectTransform:
   m_Children:
   - {fileID: 534711051}
   - {fileID: 300753768}
-  - {fileID: 694122282}
   m_Father: {fileID: 1053218178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -13248,7 +13249,6 @@ RectTransform:
   m_Children:
   - {fileID: 453633345}
   - {fileID: 1805168610}
-  - {fileID: 1736677284}
   m_Father: {fileID: 1053218178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -14402,11 +14402,11 @@ RectTransform:
   - {fileID: 305130341}
   - {fileID: 1636799309}
   - {fileID: 1428426662}
-  m_Father: {fileID: 1624004366}
+  m_Father: {fileID: 1053218178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -15, y: -23.5}
+  m_AnchoredPosition: {x: 2.2000732, y: -164.5}
   m_SizeDelta: {x: 130, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1736677285
@@ -16025,11 +16025,11 @@ RectTransform:
   - {fileID: 853365873}
   - {fileID: 393007195}
   - {fileID: 724403623}
-  m_Father: {fileID: 141491650}
+  m_Father: {fileID: 1053218178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -16, y: -23}
+  m_AnchoredPosition: {x: 0, y: -48}
   m_SizeDelta: {x: 130, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1964697402
@@ -17147,7 +17147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexGrid: {fileID: 1340313918}
-  terrainMaterial: {fileID: 2100000, guid: 5382dd8f9ea153d4291f88f2a2dcfdb0, type: 2}
+  terrainMaterial: {fileID: 2100000, guid: da66e8f0c1d16476bae8e2d228492d7f, type: 2}
 --- !u!114 &2103055421
 MonoBehaviour:
   m_ObjectHideFlags: 0
