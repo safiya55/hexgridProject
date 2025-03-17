@@ -53,6 +53,11 @@ public class HexCellPriorityQueue
         //declaring the head of the old priority list to be the current cell
         HexCell current = list[oldPriority];
         //keep track of the next cell. We can directly grab the next cell
+
+        if (current.NextWithSamePriority == null || cell.NextWithSamePriority == null)
+        {
+            return;
+        }
         HexCell next = current.NextWithSamePriority;
 
         //If the current cell is the changed cell, then it is the head cell 
@@ -72,6 +77,11 @@ public class HexCellPriorityQueue
                 if (current == null)
                     break;
                 next = current.NextWithSamePriority;
+            }
+
+            if (current.NextWithSamePriority == null || cell.NextWithSamePriority == null)
+            {
+                return;
             }
             //can remove the changed cell from the linked list, by skipping it.
             current.NextWithSamePriority = cell.NextWithSamePriority;

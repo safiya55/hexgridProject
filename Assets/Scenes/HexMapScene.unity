@@ -16995,12 +16995,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 1340313918}
-  useFixedSeed: 0
-  seed: 0
+  useFixedSeed: 1
+  seed: 1208905299
   jitterProbability: 0.25
   chunkSizeMin: 30
   chunkSizeMax: 100
-  landPercentage: 40
+  landPercentage: 50
   waterLevel: 3
   highRiseProbability: 0.25
   sinkProbability: 0.2
@@ -17015,14 +17015,14 @@ MonoBehaviour:
   evaporationFactor: 0.5
   precipitationFactor: 0.25
   runoffFactor: 0.25
-  seepageFactor: 0.125
+  seepageFactor: 0.25
   windDirection: 5
   windStrength: 4
   riverPercentage: 10
   extraLakeProbability: 0.25
   lowTemperature: 0
   highTemperature: 1
-  temperatureJitter: 0.1
+  temperatureJitter: 0
   hemisphere: 0
 --- !u!4 &2074458353
 Transform:
