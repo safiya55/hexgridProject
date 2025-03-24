@@ -52,8 +52,8 @@ public class HexMapEditor : MonoBehaviour
 
 	void Awake()
 	{
-		terrainMaterial.DisableKeyword("GRID_ON");
-		Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
+		terrainMaterial.DisableKeyword("_GRID_ON");
+		Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
 		SetEditMode(true);
 	}
 
@@ -315,11 +315,11 @@ public class HexMapEditor : MonoBehaviour
 	{
 		if (visible)
 		{
-			terrainMaterial.EnableKeyword("GRID_ON");
+			terrainMaterial.EnableKeyword("_GRID_ON");
 		}
 		else
 		{
-			terrainMaterial.DisableKeyword("GRID_ON");
+			terrainMaterial.DisableKeyword("_GRID_ON");
 		}
 	}
 

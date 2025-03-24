@@ -11,13 +11,13 @@ public class NewMapMenu : MonoBehaviour
 	bool generateMaps = true;
 	bool wrapping = true;
 
-	public void ToggleWrapping (bool toggle) {
-		wrapping = toggle;
-	}
-
 	public void ToggleMapGeneration(bool toggle)
 	{
 		generateMaps = toggle;
+	}
+
+	public void ToggleWrapping (bool toggle) {
+		wrapping = toggle;
 	}
 
 	public void Open()

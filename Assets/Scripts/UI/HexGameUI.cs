@@ -23,11 +23,11 @@ public class HexGameUI : MonoBehaviour
 
         if (toggle)
         {
-            Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
+            Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
         }
         else
         {
-            Shader.DisableKeyword("HEX_MAP_EDIT_MODE");
+            Shader.DisableKeyword("_HEX_MAP_EDIT_MODE");
         }
     }
 
