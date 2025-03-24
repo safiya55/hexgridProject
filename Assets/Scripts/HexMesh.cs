@@ -195,13 +195,20 @@ public class HexMesh : MonoBehaviour
         }
     }
 
-    public void AddTriangleUV(Vector2 uv1, Vector2 uv2, Vector2 uv3)
+    public void AddTriangleUV(Vector2 uv1, Vector2 uv2, Vector3 uv3)
     {
         uvs.Add(uv1);
         uvs.Add(uv2);
         uvs.Add(uv3);
     }
 
+    public void AddTriangleUV2(Vector2 uv1, Vector2 uv2, Vector3 uv3)
+    {
+        uv2s.Add(uv1);
+        uv2s.Add(uv2);
+        uv2s.Add(uv3);
+    }
+    
     public void AddQuadUV(Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4)
     {
         uvs.Add(uv1);
@@ -218,12 +225,6 @@ public class HexMesh : MonoBehaviour
         uvs.Add(new Vector2(uMax, vMax));
     }
 
-    public void AddTriangleUV2(Vector2 uv1, Vector2 uv2, Vector3 uv3)
-    {
-        uv2s.Add(uv1);
-        uv2s.Add(uv2);
-        uv2s.Add(uv3);
-    }
 
     public void AddQuadUV2(Vector2 uv1, Vector2 uv2, Vector3 uv3, Vector3 uv4)
     {
