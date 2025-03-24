@@ -208,8 +208,8 @@ public class HexMesh : MonoBehaviour
         uv2s.Add(uv2);
         uv2s.Add(uv3);
     }
-    
-    public void AddQuadUV(Vector2 uv1, Vector2 uv2, Vector2 uv3, Vector2 uv4)
+
+    public void AddQuadUV(Vector2 uv1, Vector2 uv2, Vector3 uv3, Vector3 uv4)
     {
         uvs.Add(uv1);
         uvs.Add(uv2);
