@@ -84,15 +84,15 @@ public class HexMesh : MonoBehaviour
         }
     }
 
-     public void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v4)
+     public void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3)
     {
         int vertexIndex = vertices.Count;
-        vertices.Add(HexMetrics.Perturb(v1));
-        vertices.Add(HexMetrics.Perturb(v2));
-        vertices.Add(HexMetrics.Perturb(v4));
-        triangles.Add(vertexIndex);
-        triangles.Add(vertexIndex + 1);
-        triangles.Add(vertexIndex + 2);
+		vertices.Add(HexMetrics.Perturb(v1));
+		vertices.Add(HexMetrics.Perturb(v2));
+		vertices.Add(HexMetrics.Perturb(v3));
+		triangles.Add(vertexIndex);
+		triangles.Add(vertexIndex + 1);
+		triangles.Add(vertexIndex + 2);
     }
 
     public void AddTriangleCellData (
@@ -110,19 +110,19 @@ public class HexMesh : MonoBehaviour
 		AddTriangleCellData(indices, weights, weights, weights);
 	}
 
-    public void AddQuad(Vector3 v1, Vector3 v2, Vector3 v4, Vector3 v5)
+    public void AddQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4)
     {
         int vertexIndex = vertices.Count;
-        vertices.Add(HexMetrics.Perturb(v1));
-        vertices.Add(HexMetrics.Perturb(v2));
-        vertices.Add(HexMetrics.Perturb(v4));
-        vertices.Add(HexMetrics.Perturb(v5));
-        triangles.Add(vertexIndex);
-        triangles.Add(vertexIndex + 2);
-        triangles.Add(vertexIndex + 1);
-        triangles.Add(vertexIndex + 1);
-        triangles.Add(vertexIndex + 2);
-        triangles.Add(vertexIndex + 3);
+		vertices.Add(HexMetrics.Perturb(v1));
+		vertices.Add(HexMetrics.Perturb(v2));
+		vertices.Add(HexMetrics.Perturb(v3));
+		vertices.Add(HexMetrics.Perturb(v4));
+		triangles.Add(vertexIndex);
+		triangles.Add(vertexIndex + 2);
+		triangles.Add(vertexIndex + 1);
+		triangles.Add(vertexIndex + 1);
+		triangles.Add(vertexIndex + 2);
+		triangles.Add(vertexIndex + 3);
     }
 
     public void AddQuadCellData (
@@ -166,15 +166,15 @@ public class HexMesh : MonoBehaviour
         triangles.Add(vertexIndex + 3);
     }
     
-    public void AddTriangleUnperturbed(Vector3 v1, Vector3 v2, Vector3 v4)
+    public void AddTriangleUnperturbed(Vector3 v1, Vector3 v2, Vector3 v3)
     {
         int vertexIndex = vertices.Count;
-        vertices.Add(v1);
-        vertices.Add(v2);
-        vertices.Add(v4);
-        triangles.Add(vertexIndex);
-        triangles.Add(vertexIndex + 1);
-        triangles.Add(vertexIndex + 2);
+		vertices.Add(v1);
+		vertices.Add(v2);
+		vertices.Add(v3);
+		triangles.Add(vertexIndex);
+		triangles.Add(vertexIndex + 1);
+		triangles.Add(vertexIndex + 2);
     }
 
     public static class ListPool<T>

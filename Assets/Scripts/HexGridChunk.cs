@@ -42,7 +42,7 @@ public class HexGridChunk : MonoBehaviour
     public void ShowUI(bool visible)
     {
         //inverted cause it was causing me confusion
-        gridCanvas.gameObject.SetActive(!visible);
+        gridCanvas.gameObject.SetActive(visible);
     }
 
     //diff between update and late update
@@ -761,8 +761,8 @@ public class HexGridChunk : MonoBehaviour
         );
 
         TriangulateEdgeStrip(
-            m, weights1, cell.TerrainTypeIndex,
-            e, weights1, cell.TerrainTypeIndex
+            m, weights1, cell.Index,
+			e, weights1, cell.Index
         );
         TriangulateEdgeFan(center, e, cell.Index);
 
@@ -1163,16 +1163,16 @@ public class HexGridChunk : MonoBehaviour
     void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, float index)
     {
         terrain.AddTriangle(center, edge.v1, edge.v2);
-        terrain.AddTriangle(center, edge.v2, edge.v4);
-        terrain.AddTriangle(center, edge.v3, edge.v4);
-        terrain.AddTriangle(center, edge.v4, edge.v5);
+		terrain.AddTriangle(center, edge.v2, edge.v3);
+		terrain.AddTriangle(center, edge.v3, edge.v4);
+		terrain.AddTriangle(center, edge.v4, edge.v5);
 
-        Vector3 indices;
-        indices.x = indices.y = indices.z = index;
-        terrain.AddTriangleCellData(indices, weights1);
-        terrain.AddTriangleCellData(indices, weights1);
-        terrain.AddTriangleCellData(indices, weights1);
-        terrain.AddTriangleCellData(indices, weights1);
+		Vector3 indices;
+		indices.x = indices.y = indices.z = index;
+		terrain.AddTriangleCellData(indices, weights1);
+		terrain.AddTriangleCellData(indices, weights1);
+		terrain.AddTriangleCellData(indices, weights1);
+		terrain.AddTriangleCellData(indices, weights1);
     }
 
     void TriangulateEdgeStrip(
