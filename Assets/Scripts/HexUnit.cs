@@ -20,8 +20,6 @@ public class HexUnit : MonoBehaviour
 
     public HexGrid Grid { get; set; }
 
-    const int visionRange = 3;
-
     public int VisionRange
     {
         get
@@ -38,8 +36,8 @@ public class HexUnit : MonoBehaviour
             transform.localPosition = location.Position;
             if (currentTravelLocation)
             {
-                Grid.IncreaseVisibility(location, visionRange);
-                Grid.DecreaseVisibility(currentTravelLocation, visionRange);
+                Grid.IncreaseVisibility(location, VisionRange);
+                Grid.DecreaseVisibility(currentTravelLocation, VisionRange);
                 currentTravelLocation = null;
             }
         }
@@ -99,7 +97,7 @@ public class HexUnit : MonoBehaviour
                 transform.localRotation = Quaternion.LookRotation(d);
                 yield return null;
             }
-            Grid.DecreaseVisibility(pathToTravel[i], visionRange);
+            Grid.DecreaseVisibility(pathToTravel[i], VisionRange);
             t -= 1f;
         }
         currentTravelLocation = null;
@@ -108,7 +106,7 @@ public class HexUnit : MonoBehaviour
         b = location.Position;
         c = b;
 
-        Grid.IncreaseVisibility(location, visionRange);
+        Grid.IncreaseVisibility(location, VisionRange);
         for (; t < 1f; t += Time.deltaTime * travelSpeed)
         {
             transform.localPosition = Bezier.GetPoint(a, b, c, t);
@@ -140,7 +138,7 @@ public class HexUnit : MonoBehaviour
         {
             if (location)
             {
-                Grid.DecreaseVisibility(location, visionRange);
+                Grid.DecreaseVisibility(location, VisionRange);
                 location.Unit = null;
             }
             Grid.MakeChildOfColumn(transform, value.ColumnIndex);
@@ -148,7 +146,7 @@ public class HexUnit : MonoBehaviour
             location = value;
             //make the cell aware that there is a unit standing on it.
             value.Unit = this;
-            Grid.IncreaseVisibility(value, visionRange);
+            Grid.IncreaseVisibility(value, VisionRange);
             transform.localPosition = value.Position;
         }
     }
@@ -191,7 +189,7 @@ public class HexUnit : MonoBehaviour
     {
         if (location)
         {
-            Grid.DecreaseVisibility(location, visionRange);
+            Grid.DecreaseVisibility(location, VisionRange);
         }
         location.Unit = null;
         Destroy(gameObject);

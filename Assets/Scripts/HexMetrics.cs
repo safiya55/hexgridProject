@@ -52,7 +52,7 @@ public static class HexMetrics
 
     public const float wallElevationOffset = verticalTerraceStepSize;
 
-    public const float bridgeDesignLength = 18f;
+    public const float bridgeDesignLength = 7f;
 
     public static int wrapSize;
 
