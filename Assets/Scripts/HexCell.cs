@@ -697,8 +697,8 @@ public class HexCell : MonoBehaviour
 
 	public void SetLabel(string text)
 	{
-		UnityEngine.UI.Text lable = uiRect.GetComponent<Text>();
-		lable.text = text;
+		UnityEngine.UI.Text label = uiRect.GetComponent<Text>();
+		label.text = text;
 	}
 
 	//get and set cell distances

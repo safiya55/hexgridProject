@@ -34,7 +34,7 @@ public class HexCellShaderData : MonoBehaviour
             cellTexture.filterMode = FilterMode.Point;
             //cellTexture.wrapMode = TextureWrapMode.Clamp;
             cellTexture.wrapModeU = TextureWrapMode.Repeat;
-			cellTexture.wrapModeV = TextureWrapMode.Clamp;
+            cellTexture.wrapModeV = TextureWrapMode.Clamp;
             Shader.SetGlobalTexture("_HexCellData", cellTexture);
         }
 
@@ -119,7 +119,7 @@ public class HexCellShaderData : MonoBehaviour
 
             transitioningCells.Add(cell);
         }
-        enabled = transitioningCells.Count > 0;
+        enabled = true;
     }
 
     bool UpdateCellData(HexCell cell, int delta)
@@ -135,12 +135,6 @@ public class HexCellShaderData : MonoBehaviour
             //t is still in transition, so keep track of this fact.
             stillUpdating = true;
 
-
-            if (!stillUpdating)
-            {
-                //only add cells whose B value isn't 255.Immediately Loading Visibility
-                data.b = 0;
-            }
             //add the delta to the cell's G value. 
             int t = data.g + delta;
             //Arithmatic operations don't work on bytes, they are always 
@@ -149,11 +143,26 @@ public class HexCellShaderData : MonoBehaviour
         }
 
         //do the same thing for the visibility, which uses the R value.
-        if (cell.IsVisible && data.r < 255)
+        if (cell.IsVisible)
+        {
+            if (data.r < 255)
+            {
+                stillUpdating = true;
+                int t = data.r + delta;
+                data.r = t >= 255 ? (byte)255 : (byte)t;
+            }
+        }
+        else if (data.r > 0)
         {
             stillUpdating = true;
-            int t = data.r + delta;
-            data.r = t >= 255 ? (byte)255 : (byte)t;
+            int t = data.r - delta;
+            data.r = t < 0 ? (byte)0 : (byte)t;
+        }
+
+        if (!stillUpdating)
+        {
+            //only add cells whose B value isn't 255.Immediately Loading Visibility
+            data.b = 0;
         }
 
         //has to determine whether this cell still requires further updating.

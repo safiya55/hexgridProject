@@ -55,7 +55,8 @@ public class HexFeatureManager : MonoBehaviour
 
 	public void AddFeature(HexCell cell, Vector3 position)
 	{
-		if (cell.IsSpecial) {
+		if (cell.IsSpecial)
+		{
 			return;
 		}
 		// hash grid to obtain a value. Once we use that to set the rotation, 
@@ -324,7 +325,8 @@ public class HexFeatureManager : MonoBehaviour
 	}
 
 	//bridge should be placed between the road centers on either side of a river.
-	public void AddBridge (Vector3 roadCenter1, Vector3 roadCenter2) {
+	public void AddBridge(Vector3 roadCenter1, Vector3 roadCenter2)
+	{
 		//pass along the unperturbed road centers, so we have to perturb them before placing the bridge.
 		roadCenter1 = HexMetrics.Perturb(roadCenter1);
 		roadCenter2 = HexMetrics.Perturb(roadCenter2);
@@ -334,16 +336,17 @@ public class HexFeatureManager : MonoBehaviour
 		instance.forward = roadCenter2 - roadCenter1;
 
 		//set the Z scale of the bridge instance, bridge will be stretched correctly.
-		// float length = Vector3.Distance(roadCenter1, roadCenter2);
-		// instance.localScale = new Vector3(
-		// 	1f,	1f, length * (1f / HexMetrics.bridgeDesignLength)
-		// );
+		float length = Vector3.Distance(roadCenter1, roadCenter2);
+		instance.localScale = new Vector3(
+			1f,	1f, length * (1f / HexMetrics.bridgeDesignLength)
+		);
 		//actual river gap may not be made correcty
 
 		instance.SetParent(container, false);
 	}
 
-		public void AddSpecialFeature (HexCell cell, Vector3 position) {
+	public void AddSpecialFeature(HexCell cell, Vector3 position)
+	{
 		Transform instance = Instantiate(special[cell.SpecialIndex - 1]);
 		instance.localPosition = HexMetrics.Perturb(position);
 		HexHash hash = HexMetrics.SampleHashGrid(position);
